@@ -15,4 +15,6 @@ interface OfertaRepository : JpaRepository<Oferta, Long>{
     @Transactional
     @Query(value = "ALTER TABLE oferta AUTO_INCREMENT = 1", nativeQuery = true)
     fun resetIdOferta()
+
+    fun findByTituloContainingIgnoreCase(titulo : String) : List<Oferta>
 }

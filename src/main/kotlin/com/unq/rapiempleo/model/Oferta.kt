@@ -5,11 +5,13 @@ import jakarta.persistence.*
 
 @Entity
 class Oferta (
-    var nombre : String,
+    var titulo : String,
+    var empresa : String,
     var descripcion : String,
     var modalidad : Modalidad,
     var estado : String,
-    var remuneracion : Double
+    var remuneracion : Double,
+    var ubicacion : String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

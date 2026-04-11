@@ -30,4 +30,5 @@ class PostulanteServiceTests {
         Assertions.assertEquals(postulante.cv.dni, ofertaPostulada.postulantes[0].cv.dni)
         Assertions.assertEquals(1, postulante.postulaciones.size)
     }
+
 }

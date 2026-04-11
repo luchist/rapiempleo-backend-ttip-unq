@@ -21,21 +21,26 @@ class DataBaseInitializer (
     fun initializeDatabase() : CommandLineRunner {
         return CommandLineRunner {
 
-            postulanteRepository.deleteAll();
-            ofertaRepository.deleteAll();
+            postulanteRepository.deleteAll()
+            ofertaRepository.deleteAll()
             postulanteRepository.resetIdPostulante()
             ofertaRepository.resetIdOferta()
 
             val postulante = Postulante(cv = Curriculum("Leon Kennedy", "29.456.125"))
 
             val ofertas = listOf(
-                        Oferta("Desarrollador Sr Full Stack", "Se busca...", Modalidad.Hibrido, "Abierto", 500000.00),
-                        Oferta("Contador Sr", "Se busca perfil...", Modalidad.Presencial, "Finalizado", 450000.00),
-                        Oferta("Desarrollador FrontEnd", "Se busca...", Modalidad.Remoto, "Abierto", 480000.00),
-                        Oferta("Jefe de cocina", "Nos encontramos...", Modalidad.Presencial, "Urgente", 650000.00),
-                        Oferta("Coordinador de Eventos", "Se busca...", Modalidad.Presencial, "Abierto", 500000.00))
-            postulanteRepository.save(postulante);
-            ofertaRepository.saveAll(ofertas);
+                        Oferta("Desarrollador Sr Full Stack", "Tech.Inc", "Se busca...",
+                            Modalidad.Hibrido, "Abierto", 500000.00, "Lomas de Zamora, Buenos Aires"),
+                        Oferta("Contador Sr","Modo Fit", "Se busca perfil...",
+                            Modalidad.Presencial, "Finalizado", 450000.00, "Temperley, Buenos Aires"),
+                        Oferta("Desarrollador FrontEnd","Electro Smart", "Se busca...",
+                            Modalidad.Remoto, "Abierto", 480000.00, "Caballito, Buenos Aires"),
+                        Oferta("Jefe de cocina", "Delicatus", "Nos encontramos...",
+                            Modalidad.Presencial, "Urgente", 650000.00, "Recoleta, Buenoas Aires"),
+                        Oferta("Coordinador de Eventos","Sweet Retro", "Se busca...",
+                            Modalidad.Presencial, "Abierto", 500000.00, "Villa Mercedes, San Luis"))
+            postulanteRepository.save(postulante)
+            ofertaRepository.saveAll(ofertas)
         }
     }
 }
