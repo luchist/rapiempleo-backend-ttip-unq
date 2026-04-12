@@ -7,10 +7,12 @@ import jakarta.persistence.*
 class Oferta (
     var titulo : String,
     var empresa : String,
+    @Column(columnDefinition = "TEXT")
     var descripcion : String,
     var modalidad : Modalidad,
     var estado : String,
-    var remuneracion : Double,
+    var sueldoMin : Int,
+    var sueldoMax : Int,
     var ubicacion : String
 ) {
     @Id

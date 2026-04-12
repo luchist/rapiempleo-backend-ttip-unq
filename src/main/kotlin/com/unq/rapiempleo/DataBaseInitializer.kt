@@ -17,6 +17,11 @@ class DataBaseInitializer (
     private val ofertaRepository: OfertaRepository
 ) {
 
+    fun String.readClasspathFile(): String =
+        object {}.javaClass
+            .getResource("/$this")!!
+            .readText()
+
     @Bean
     fun initializeDatabase() : CommandLineRunner {
         return CommandLineRunner {
@@ -30,15 +35,27 @@ class DataBaseInitializer (
 
             val ofertas = listOf(
                         Oferta("Desarrollador Sr Full Stack", "Tech.Inc", "Se busca...",
-                            Modalidad.Hibrido, "Abierto", 500000.00, "Lomas de Zamora, Buenos Aires"),
+                            Modalidad.Hibrido, "Abierto", 45000, 55000, "Lomas de Zamora, Buenos Aires"),
                         Oferta("Contador Sr","Modo Fit", "Se busca perfil...",
-                            Modalidad.Presencial, "Finalizado", 450000.00, "Temperley, Buenos Aires"),
+                            Modalidad.Presencial, "Finalizado", 40000, 44000, "Temperley, Buenos Aires"),
                         Oferta("Desarrollador FrontEnd","Electro Smart", "Se busca...",
-                            Modalidad.Remoto, "Abierto", 480000.00, "Caballito, Buenos Aires"),
-                        Oferta("Jefe de cocina", "Delicatus", "Nos encontramos...",
-                            Modalidad.Presencial, "Urgente", 650000.00, "Recoleta, Buenoas Aires"),
+                            Modalidad.Remoto, "Abierto", 48000, 54000, "Caballito, Buenos Aires"),
+                        Oferta("Jefe de cocina", "Delicatus", "JefeCocinaOffer.md".readClasspathFile(),
+                            Modalidad.Presencial, "Urgente", 65000, 72000, "Recoleta, Buenos Aires"),
                         Oferta("Coordinador de Eventos","Sweet Retro", "Se busca...",
-                            Modalidad.Presencial, "Abierto", 500000.00, "Villa Mercedes, San Luis"))
+                            Modalidad.Presencial, "Abierto", 42000, 48000, "Villa Mercedes, San Luis"),
+                        Oferta("Frontend Developer","NovaTech", "descriptions/FrontNovatechOffer.md".readClasspathFile(),
+                            Modalidad.Presencial, "Abierto", 51000, 57000, "Buenos Aires, Argentina"),
+                        Oferta("Backend Engineer","CloudSync", "descriptions/CloudSyncBackOffer.md".readClasspathFile(),
+                            Modalidad.Remoto, "Abierto", 47000, 54000, "Ciudad de México, México"),
+                        Oferta("UX Designer","PixelLab", "descriptions/PixelLabUXOffer.md".readClasspathFile(),
+                            Modalidad.Hibrido, "Abierto", 52000, 57000, "Buenos Aires, Argentina"),
+                        Oferta("Analista en Marketing","Onsu", "descriptions/OnsuAnalistaOffer.md".readClasspathFile(),
+                            Modalidad.Presencial, "Abierto", 35000, 39000, "Paraná, Entre Ríos"),
+                        Oferta("Lider de Automatización y Control","Holm Argentina", "descriptions/AutomatizacionHolmOffer.md".readClasspathFile(),
+                            Modalidad.Presencial, "Abierto", 57000, 64000, "Mendoza, Argentina"),
+                        Oferta("Cloud Data Engineer","Mero Marketing", "descriptions/CloudMeroOffer.md".readClasspathFile(),
+                            Modalidad.Hibrido, "Abierto", 45000, 49000, "Capital Federal, Buenos Aires"))
             postulanteRepository.save(postulante)
             ofertaRepository.saveAll(ofertas)
         }

@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.controller
 
+import com.unq.rapiempleo.dto.OfertaCardDTO
 import com.unq.rapiempleo.dto.OfertaDTO
 import com.unq.rapiempleo.service.OfertaService
 import jakarta.transaction.Transactional
@@ -19,14 +20,20 @@ class OfertaController {
     @Autowired
     private lateinit var ofertaService: OfertaService
 
+    @GetMapping("/{id}")
+    fun obtenerOferta(@PathVariable idOferta : Long) : ResponseEntity<OfertaDTO> {
+        val oferta = ofertaService.recuperarOferta(idOferta)
+        return ResponseEntity(oferta, HttpStatus.OK)
+    }
+
     @GetMapping("/obtenerOfertas")
-    fun obtenerOfertas() : ResponseEntity<List<OfertaDTO>> {
+    fun obtenerOfertas() : ResponseEntity<List<OfertaCardDTO>> {
         val ofertas = ofertaService.recuperarTodasLasOfertas()
         return ResponseEntity(ofertas, HttpStatus.OK)
     }
 
     @GetMapping("/{nombreOferta}")
-    fun buscarOfertas(@PathVariable nombreOferta : String) : ResponseEntity<List<OfertaDTO>> {
+    fun buscarOfertas(@PathVariable nombreOferta : String) : ResponseEntity<List<OfertaCardDTO>> {
         val ofertas = ofertaService.buscarOfertas(nombreOferta)
         return ResponseEntity(ofertas, HttpStatus.OK)
     }

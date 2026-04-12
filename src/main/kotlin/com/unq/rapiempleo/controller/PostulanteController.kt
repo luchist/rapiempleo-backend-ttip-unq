@@ -1,6 +1,6 @@
 package com.unq.rapiempleo.controller
 
-import com.unq.rapiempleo.dto.OfertaDTO
+import com.unq.rapiempleo.dto.OfertaCardDTO
 import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.PostulanteService
 import jakarta.transaction.Transactional
@@ -20,7 +20,7 @@ class PostulanteController {
     private lateinit var postulanteService: PostulanteService
 
     @GetMapping
-    fun postularseA (idOferta : Long) :ResponseEntity<List<OfertaDTO>>{
+    fun postularseA (idOferta : Long) :ResponseEntity<List<OfertaCardDTO>>{
 
         return ResponseEntity(HttpStatus.OK)
     }
