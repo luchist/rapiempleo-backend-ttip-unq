@@ -1,4 +1,4 @@
-`Buscamos un Frontend Developer para unirse al equipo de NovaTech.
+Buscamos un Frontend Developer para unirse al equipo de NovaTech.
 
 **Responsabilidades:**
 - Desarrollar interfaces con Vue.js
@@ -21,4 +21,4 @@ A nivel técnico:
 - Consumo de APIs REST
 - Manejo de HTML5 y CSS3
 - Experiencia con control de versiones (Git)
-- Experiencia utilizando Git`
+- Experiencia utilizando Git

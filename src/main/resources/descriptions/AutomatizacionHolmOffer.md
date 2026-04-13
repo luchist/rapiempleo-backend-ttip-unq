@@ -1,4 +1,4 @@
-`**TE ESTAMOS BUSCANDO: Líder de Operaciones - Automatización y Control OT**
+**TE ESTAMOS BUSCANDO: Líder de Operaciones - Automatización y Control OT**
 
 
 Buscamos profesionales con pensamiento lógico, pasión por la transformación digital y compromiso con la excelencia operativa, 

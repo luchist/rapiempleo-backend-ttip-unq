@@ -10,7 +10,8 @@ class OfertaCardDTO (
     var modalidad : Modalidad,
     var sueldoMin : Int,
     var sueldoMax : Int,
-    var ubicacion : String
+    var ubicacion : String,
+    var favorito : Boolean
 ) {
 companion object {
     fun desdeModelo (oferta : Oferta) : OfertaCardDTO {
@@ -21,7 +22,8 @@ companion object {
             modalidad = oferta.modalidad,
             sueldoMin = oferta.sueldoMin,
             sueldoMax = oferta.sueldoMax,
-            ubicacion = oferta.ubicacion
+            ubicacion = oferta.ubicacion,
+            favorito = oferta.favorito
         )
         return ofertaDTOres
     }

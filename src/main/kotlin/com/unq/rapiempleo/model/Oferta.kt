@@ -13,7 +13,8 @@ class Oferta (
     var estado : String,
     var sueldoMin : Int,
     var sueldoMax : Int,
-    var ubicacion : String
+    var ubicacion : String,
+    var favorito : Boolean
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

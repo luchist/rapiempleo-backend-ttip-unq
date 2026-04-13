@@ -1,5 +1,5 @@
 
-`**Responsabilidades**
+**Responsabilidades**
 
 - Ser quien transforme la estrategia en resultados concretos, con foco en expansión regional: Desarrollar, planificar e implementar campañas de marketing digital, incluyendo la publicidad
 en redes sociales, Google Ads, y otras plataformas de medios digitales.
@@ -29,4 +29,4 @@ Cobertura médica privada para grupo familiar.
 
 - Educación mínima: Terciario
 - 3 años de experiencia
-- Edad: A partir de 25 años`
+- Edad: A partir de 25 años

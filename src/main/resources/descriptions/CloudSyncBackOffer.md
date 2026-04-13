@@ -1,4 +1,4 @@
-`CloudSync está buscando un Backend Engineer para diseñar y mantener nuestros servicios en la nube.
+CloudSync está buscando un Backend Engineer para diseñar y mantener nuestros servicios en la nube.
 Somos una compañía de tecnología financiera en plena expansión, dedicada a ofrecer soluciones digitales innovadoras para potenciar y acompañar el crecimiento de
 negocios y proyectos en toda la región.
 

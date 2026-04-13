@@ -1,4 +1,4 @@
-`**Acerca de la función:**
+**Acerca de la función:**
 
 
 Como Diseñador UX en el sector de tecnología de la información, desempeñarás un papel fundamental en la creación de experiencias digitales intuitivas
@@ -44,4 +44,4 @@ wireframes detallados y prototipos interactivos que comunican claramente la inte
 Las habilidades en diseño UX y diseño de interacción se aplican diariamente para crear recorridos de usuario fluidos e interfaces atractivas que satisfacen las
 necesidades del usuario. Los principios de diseño centrado en el usuario guían todo el proceso de diseño, fomentando la empatía y priorizando la satisfacción del usuario.
 El pensamiento de diseño promueve la resolución innovadora de problemas y mejoras iterativas, permitiendo que el Diseñador UX adapte y refine las soluciones basándose en
-la retroalimentación real de los usuarios y en los requisitos cambiantes del proyecto.`
+la retroalimentación real de los usuarios y en los requisitos cambiantes del proyecto.
