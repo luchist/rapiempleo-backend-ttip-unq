@@ -20,7 +20,7 @@ class OfertaController {
     @Autowired
     private lateinit var ofertaService: OfertaService
 
-    @GetMapping("/{id}")
+    @GetMapping("/{idOferta}")
     fun obtenerOferta(@PathVariable idOferta : Long) : ResponseEntity<OfertaDTO> {
         val oferta = ofertaService.recuperarOferta(idOferta)
         return ResponseEntity(oferta, HttpStatus.OK)
@@ -32,9 +32,9 @@ class OfertaController {
         return ResponseEntity(ofertas, HttpStatus.OK)
     }
 
-    @GetMapping("/{nombreOferta}")
-    fun buscarOfertas(@PathVariable nombreOferta : String) : ResponseEntity<List<OfertaCardDTO>> {
-        val ofertas = ofertaService.buscarOfertas(nombreOferta)
-        return ResponseEntity(ofertas, HttpStatus.OK)
-    }
+//    @GetMapping("/{nombreOferta}")
+//    fun buscarOfertas(@PathVariable nombreOferta : String) : ResponseEntity<List<OfertaCardDTO>> {
+//        val ofertas = ofertaService.buscarOfertas(nombreOferta)
+//        return ResponseEntity(ofertas, HttpStatus.OK)
+//    }
 }
