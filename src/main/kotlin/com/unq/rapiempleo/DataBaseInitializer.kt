@@ -3,8 +3,10 @@ package com.unq.rapiempleo
 import com.unq.rapiempleo.model.Curriculum
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
+import com.unq.rapiempleo.model.Ofertante
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
+import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import org.hibernate.internal.util.collections.CollectionHelper.listOf
 import org.springframework.boot.CommandLineRunner
@@ -14,7 +16,8 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class DataBaseInitializer (
     private val postulanteRepository : PostulanteRepository,
-    private val ofertaRepository: OfertaRepository
+    private val ofertaRepository: OfertaRepository,
+    private val ofertanteRepository: OfertanteRepository
 ) {
 
     fun String.readClasspathFile(): String =
@@ -28,10 +31,13 @@ class DataBaseInitializer (
 
             postulanteRepository.deleteAll()
             ofertaRepository.deleteAll()
+            ofertanteRepository.deleteAll()
             postulanteRepository.resetIdPostulante()
             ofertaRepository.resetIdOferta()
+            ofertanteRepository.resetIdOfertante()
 
             val postulante = Postulante(cv = Curriculum("Leon Kennedy", "29.456.125"))
+            val ofertante = Ofertante(false, "No hay nuevas postulaciones")
 
             val ofertas = listOf(
                         Oferta("Desarrollador Sr Full Stack", "Tech.Inc", "Se busca...",
@@ -56,6 +62,8 @@ class DataBaseInitializer (
                             Modalidad.Presencial, "Abierto", 57000, 64000, "Mendoza, Argentina", favorito = false),
                         Oferta("Cloud Data Engineer","Mero Marketing", "descriptions/CloudMeroOffer.md".readClasspathFile(),
                             Modalidad.Hibrido, "Abierto", 45000, 49000, "Capital Federal, Buenos Aires", favorito = true))
+
+            ofertanteRepository.save(ofertante)
             postulanteRepository.save(postulante)
             ofertaRepository.saveAll(ofertas)
         }

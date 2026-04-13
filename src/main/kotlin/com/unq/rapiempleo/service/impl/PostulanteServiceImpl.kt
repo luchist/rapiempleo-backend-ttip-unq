@@ -5,12 +5,15 @@ import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.PostulanteService
+import com.unq.rapiempleo.service.auxiliar.PostulationEvent
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
 class PostulanteServiceImpl (
     private val ofertaRepository: OfertaRepository,
-    private val postulanteRepository: PostulanteRepository
+    private val postulanteRepository: PostulanteRepository,
+    private val publisher : ApplicationEventPublisher
 ) : PostulanteService {
 
     override fun getPostulante(idPostulante: Long) : Postulante {
@@ -26,5 +29,11 @@ class PostulanteServiceImpl (
 
         ofertaRepository.save(ofertaOpt)
         postulanteRepository.save(postulanteop)
+
+        publisher.publishEvent(
+            PostulationEvent(
+                1,
+                ofertaOpt.titulo)
+        )
     }
 }
