@@ -32,7 +32,7 @@ class PostulanteServiceImpl (
 
         publisher.publishEvent(
             PostulationEvent(
-                1,
+                ofertaOpt.ofertante,
                 ofertaOpt.titulo)
         )
     }

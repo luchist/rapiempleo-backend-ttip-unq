@@ -22,7 +22,7 @@ class OfertaServiceTests {
     @Test
     fun obtenerTodasLasOfertas() {
         var todasLasOfertas = this.ofertaService.recuperarTodasLasOfertas()
-        Assertions.assertEquals(5, todasLasOfertas.size)
+        Assertions.assertEquals(11, todasLasOfertas.size)
     }
 
     @Transactional

@@ -4,6 +4,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.OneToMany
 
 @Entity
 class Ofertante (
@@ -14,8 +16,9 @@ class Ofertante (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_ofertante: Long? = null
 
-    //@ManyToOne
-    //var ofertasCreadas : MutableList<Oferta> = mutableListOf()
+    @OneToMany
+    @JoinColumn(name = "id_ofertante")
+    var ofertasCreadas : MutableList<Oferta> = mutableListOf()
 
 
 }

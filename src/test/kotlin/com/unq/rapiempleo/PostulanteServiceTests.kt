@@ -40,7 +40,7 @@ class PostulanteServiceTests {
     @Transactional
     @Test
     fun recibirPostulacionEnOferta() {
-        var postulante = this.postulanteService.getPostulante(1)
+        val postulante = this.postulanteService.getPostulante(1)
         this.postulanteService.postularEnOferta(2, postulante.cv)
 
         val ofertante = this.ofertanteRepository.findById(1).get()

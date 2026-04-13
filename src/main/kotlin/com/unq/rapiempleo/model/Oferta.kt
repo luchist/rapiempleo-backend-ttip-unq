@@ -5,6 +5,7 @@ import jakarta.persistence.*
 
 @Entity
 class Oferta (
+    var ofertante : Long,
     var titulo : String,
     var empresa : String,
     @Column(columnDefinition = "TEXT")
