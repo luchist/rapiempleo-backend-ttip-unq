@@ -8,10 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @Transactional
-@RestController("/postulante")
+@RequestMapping("/postulante")
+@RestController
 class PostulanteController {
 
     @Autowired
@@ -19,9 +23,9 @@ class PostulanteController {
     @Autowired
     private lateinit var postulanteService: PostulanteService
 
-    @GetMapping
-    fun postularseA (idOferta : Long) :ResponseEntity<List<OfertaCardDTO>>{
-
-        return ResponseEntity(HttpStatus.OK)
+    @PostMapping("/{idPostulante}/{idOferta}")
+    fun postularseA (@PathVariable idOferta : Long, @PathVariable idPostulante : Long) :ResponseEntity<String>{
+        postulanteService.postularEnOferta(idOferta, idPostulante)
+        return ResponseEntity("La postulación fue exitosa",HttpStatus.OK)
     }
 }

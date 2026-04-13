@@ -29,9 +29,9 @@ class DataBaseInitializer (
     fun initializeDatabase() : CommandLineRunner {
         return CommandLineRunner {
 
+            ofertanteRepository.deleteAll()
             postulanteRepository.deleteAll()
             ofertaRepository.deleteAll()
-            ofertanteRepository.deleteAll()
             postulanteRepository.resetIdPostulante()
             ofertaRepository.resetIdOferta()
             ofertanteRepository.resetIdOfertante()
@@ -63,11 +63,11 @@ class DataBaseInitializer (
                         Oferta(1,"Cloud Data Engineer","Mero Marketing", "descriptions/CloudMeroOffer.md".readClasspathFile(),
                             Modalidad.Hibrido, "Abierto", 45000, 49000, "Capital Federal, Buenos Aires", favorito = true))
 
-            //ofertante.ofertasCreadas.add(ofertas[1])
-            //ofertante.ofertasCreadas.add(ofertas[2])
+            ofertante.ofertasCreadas.add(ofertas[1])
+            ofertante.ofertasCreadas.add(ofertas[2])
+            ofertaRepository.saveAll(ofertas)
             ofertanteRepository.save(ofertante)
             postulanteRepository.save(postulante)
-            ofertaRepository.saveAll(ofertas)
         }
     }
 }

@@ -20,19 +20,18 @@ class PostulanteServiceImpl (
         return postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
     }
 
-    override fun postularEnOferta(idOferta: Long, cv: Curriculum) {
+    override fun postularEnOferta(idOferta: Long, idPostulante: Long) {
         var ofertaOpt = ofertaRepository.findById(idOferta).orElseThrow{throw RuntimeException()}
-        var postulanteop = postulanteRepository.findById(1).orElseThrow { throw NullPointerException() }
+        var postulanteop = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
 
         ofertaOpt.postulantes.add(postulanteop)
         postulanteop.postulaciones.add(ofertaOpt)
-
         ofertaRepository.save(ofertaOpt)
         postulanteRepository.save(postulanteop)
 
         publisher.publishEvent(
             PostulationEvent(
-                ofertaOpt.ofertante,
+                ofertaOpt.ofertanteId,
                 ofertaOpt.titulo)
         )
     }

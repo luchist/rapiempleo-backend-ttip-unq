@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service
 interface PostulanteService {
 
     fun getPostulante (idPostulante : Long) : Postulante
-    fun postularEnOferta (idOferta : Long, cv : Curriculum)
+    fun postularEnOferta (idOferta : Long, idPostulante: Long)
 
 }
