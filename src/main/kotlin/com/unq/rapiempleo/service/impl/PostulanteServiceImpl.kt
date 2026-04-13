@@ -1,6 +1,5 @@
 package com.unq.rapiempleo.service.impl
 
-import com.unq.rapiempleo.model.Curriculum
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository

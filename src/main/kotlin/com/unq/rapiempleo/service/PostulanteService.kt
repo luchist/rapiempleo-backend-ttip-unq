@@ -1,6 +1,5 @@
 package com.unq.rapiempleo.service
 
-import com.unq.rapiempleo.model.Curriculum
 import com.unq.rapiempleo.model.Postulante
 import org.springframework.stereotype.Service
 
