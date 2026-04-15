@@ -1,8 +1,8 @@
 package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.OfertaCardDTO
-import com.unq.rapiempleo.dto.OfertaDTO
 import com.unq.rapiempleo.service.OfertaService
+import com.unq.rapiempleo.service.SearchService
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -13,22 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @Transactional
-@RequestMapping("/oferta")
+@RequestMapping("/search")
 @RestController
-class OfertaController {
+class SearchController {
 
     @Autowired
-    private lateinit var ofertaService: OfertaService
+    private lateinit var searchService: SearchService
 
-    @GetMapping("/{idOferta}")
-    fun obtenerOferta(@PathVariable idOferta : Long) : ResponseEntity<OfertaDTO> {
-        val oferta = ofertaService.recuperarOferta(idOferta)
-        return ResponseEntity(oferta, HttpStatus.OK)
-    }
-
-    @GetMapping("/obtenerOfertas")
-    fun obtenerOfertas() : ResponseEntity<List<OfertaCardDTO>> {
-        val ofertas = ofertaService.recuperarTodasLasOfertas()
+    @GetMapping("/{title}")
+    fun buscarOfertas(@PathVariable title : String) : ResponseEntity<List<OfertaCardDTO>> {
+        val ofertas = searchService.searchByTitle(title)
         return ResponseEntity(ofertas, HttpStatus.OK)
     }
 }
