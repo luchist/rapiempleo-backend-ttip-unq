@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.service.impl
 
 import com.unq.rapiempleo.dto.OfertaCardDTO
+import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.service.SearchService
 import org.springframework.stereotype.Service
@@ -15,5 +16,24 @@ class SearchServiceImpl(
     override fun searchByTitle(title: String): List<OfertaCardDTO> {
         val ofertasBuscadas = ofertaRepository.findByTituloContainingIgnoreCase(title)
         return ofertasBuscadas.map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
+    }
+
+    @Transactional
+    override fun buscarConFiltros(
+        titulo: String?,
+        empresa: String?,
+        modalidad: String?,
+        ubicacion: String?
+    ): List<OfertaCardDTO> {
+        val modalidadEnum: Modalidad? = modalidad?.let {
+            runCatching { Modalidad.valueOf(it) }.getOrNull()
+        }
+        val resultados = ofertaRepository.buscarConFiltros(
+            titulo = titulo?.ifBlank { null },
+            empresa = empresa?.ifBlank { null },
+            modalidad = modalidadEnum?.name?.lowercase(),
+            ubicacion = ubicacion?.ifBlank { null }
+        )
+        return resultados.map { OfertaCardDTO.desdeModelo(it) }
     }
 }
