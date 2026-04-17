@@ -31,10 +31,4 @@ class OfertaController {
         val ofertas = ofertaService.recuperarTodasLasOfertas()
         return ResponseEntity(ofertas, HttpStatus.OK)
     }
-
-//    @GetMapping("/{nombreOferta}")
-//    fun buscarOfertas(@PathVariable nombreOferta : String) : ResponseEntity<List<OfertaCardDTO>> {
-//        val ofertas = ofertaService.buscarOfertas(nombreOferta)
-//        return ResponseEntity(ofertas, HttpStatus.OK)
-//    }
 }

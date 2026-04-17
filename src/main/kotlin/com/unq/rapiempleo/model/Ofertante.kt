@@ -9,6 +9,8 @@ import jakarta.persistence.OneToMany
 
 @Entity
 class Ofertante (
+    var nombre : String,
+    var empresa : String,
     var nuevaNotifcacion : Boolean = false,
     var avisoNuevaOferta : String,
 ){

@@ -5,11 +5,12 @@ import jakarta.persistence.*
 
 @Entity
 class Oferta (
-    var ofertanteId : Long,
+    var ofertanteACargo : Long,
     var titulo : String,
     var empresa : String,
     @Column(columnDefinition = "TEXT")
     var descripcion : String,
+    @Enumerated(EnumType.STRING)
     var modalidad : Modalidad,
     var estado : String,
     var sueldoMin : Int,
