@@ -16,7 +16,11 @@ class OfertaServiceImpl (
     @Transactional
     override fun recuperarOferta(idOferta: Long): OfertaDTO {
         val oferta = ofertaRepository.findById(idOferta).orElseThrow { throw NullPointerException("No existe la oferta") }
-        return OfertaDTO.desdeModelo(oferta)
+
+        val ID_POSTULANTE_POC = 1L // TODO: cambiar por el Id del SecurityContext cuando tengamos login
+        val yaPostulado = oferta.postulantes.any { it.id_postulante == ID_POSTULANTE_POC }
+
+        return OfertaDTO.desdeModelo(oferta, yaPostulado)
     }
     @Transactional
     override fun recuperarTodasLasOfertas(): List<OfertaCardDTO> {
