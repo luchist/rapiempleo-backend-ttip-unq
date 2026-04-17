@@ -37,7 +37,7 @@ class DataBaseInitializer (
             ofertanteRepository.resetIdOfertante()
 
             val postulante = Postulante(cv = Curriculum("Leon Kennedy", "29.456.125"))
-            val ofertante = Ofertante(false, "No hay nuevas postulaciones")
+            val ofertante = Ofertante("Albert Wesker", "Electro Smart",false, "No hay nuevas postulaciones")
 
             val ofertas = listOf(
                         Oferta(1,"Desarrollador Sr Full Stack", "Tech.Inc", "Se busca...",

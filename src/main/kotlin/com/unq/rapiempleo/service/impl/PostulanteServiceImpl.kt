@@ -30,7 +30,7 @@ class PostulanteServiceImpl (
 
         publisher.publishEvent(
             PostulationEvent(
-                ofertaOpt.ofertanteId,
+                ofertaOpt.ofertanteACargo,
                 ofertaOpt.titulo)
         )
     }

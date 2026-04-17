@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.repository
 
+import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.JpaRepository
@@ -29,7 +30,7 @@ interface OfertaRepository : JpaRepository<Oferta, Long>{
     fun buscarConFiltros(
         @Param("titulo") titulo: String?,
         @Param("empresa") empresa: String?,
-        @Param("modalidad") modalidad: String?,
+        @Param("modalidad") modalidad: Modalidad?,
         @Param("ubicacion") ubicacion: String?
     ): List<Oferta>
 }

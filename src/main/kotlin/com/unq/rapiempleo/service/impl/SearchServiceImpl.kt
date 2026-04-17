@@ -26,12 +26,12 @@ class SearchServiceImpl(
         ubicacion: String?
     ): List<OfertaCardDTO> {
         val modalidadEnum: Modalidad? = modalidad?.let {
-            runCatching { Modalidad.valueOf(it) }.getOrNull()
+            runCatching { Modalidad.valueOf(it.replaceFirstChar(Char::uppercase)) }.getOrNull()
         }
         val resultados = ofertaRepository.buscarConFiltros(
             titulo = titulo?.ifBlank { null },
             empresa = empresa?.ifBlank { null },
-            modalidad = modalidadEnum?.name?.lowercase(),
+            modalidad = modalidadEnum,
             ubicacion = ubicacion?.ifBlank { null }
         )
         return resultados.map { OfertaCardDTO.desdeModelo(it) }
