@@ -13,10 +13,11 @@ class OfertaDTO (
     var sueldoMin : Int,
     var sueldoMax : Int,
     var ubicacion : String,
-    var favorito : Boolean
+    var favorito : Boolean,
+    var yaPostulado : Boolean
 ) {
     companion object {
-        fun desdeModelo (oferta : Oferta) : OfertaDTO {
+        fun desdeModelo (oferta : Oferta, yaPostulado: Boolean) : OfertaDTO {
             val ofertaDTOres = OfertaDTO(
                 id = oferta.id_oferta!!,
                 titulo = oferta.titulo,
@@ -26,7 +27,8 @@ class OfertaDTO (
                 sueldoMin = oferta.sueldoMin,
                 sueldoMax = oferta.sueldoMax,
                 ubicacion = oferta.ubicacion,
-                favorito = oferta.favorito
+                favorito = oferta.favorito,
+                yaPostulado = yaPostulado
             )
             return ofertaDTOres
         }
