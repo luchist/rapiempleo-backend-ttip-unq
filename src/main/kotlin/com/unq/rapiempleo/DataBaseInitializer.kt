@@ -40,15 +40,15 @@ class DataBaseInitializer (
             val ofertante = Ofertante("Albert Wesker", "Electro Smart",false, "No hay nuevas postulaciones")
 
             val ofertas = listOf(
-                        Oferta(1,"Desarrollador Sr Full Stack", "Tech.Inc", "Se busca...",
+                        Oferta(1,"Desarrollador Sr Full Stack", "Tech.Inc", "descriptions/FullstackTechOffer.md".readClasspathFile(),
                             Modalidad.Hibrido, "Abierto", 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true),
-                        Oferta(1,"Contador Sr","Modo Fit", "Se busca perfil...",
+                        Oferta(1,"Contador Sr","Tepago SA", "descriptions/ContadorPagoOffer.md".readClasspathFile(),
                             Modalidad.Presencial, "Finalizado", 40000, 44000, "Temperley, Buenos Aires", favorito = false),
-                        Oferta(1,"Desarrollador FrontEnd","Electro Smart", "Se busca...",
+                        Oferta(1,"Desarrollador FrontEnd","Electro Smart", "descriptions/FrontElectroOffer.md".readClasspathFile(),
                             Modalidad.Remoto, "Abierto", 48000, 54000, "Caballito, Buenos Aires", favorito = false),
                         Oferta(1,"Jefe de cocina", "Delicatus", "descriptions/JefeCocinaOffer.md".readClasspathFile(),
                             Modalidad.Presencial, "Urgente", 65000, 72000, "Recoleta, Buenos Aires", favorito = false),
-                        Oferta(1,"Coordinador de Eventos","Sweet Retro", "Se busca...",
+                        Oferta(1,"Organizador de Eventos","Sweet Retro", "descriptions/OrganizadorSweet.md".readClasspathFile(),
                             Modalidad.Presencial, "Abierto", 42000, 48000, "Villa Mercedes, San Luis", favorito = false),
                         Oferta(1,"Frontend Developer","NovaTech", "descriptions/FrontNovatechOffer.md".readClasspathFile(),
                             Modalidad.Presencial, "Abierto", 51000, 57000, "Buenos Aires, Argentina", favorito = true),
