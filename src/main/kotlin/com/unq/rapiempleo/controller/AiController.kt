@@ -12,7 +12,13 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class AiController @Autowired constructor(
-    private val chatModel: GoogleGenAiChatModel
+    private val chatModel: GoogleGenAiChatModel,
+    private val chatInstructionsForSearchRecommendation: String =
+        "You are a job search recommendation engine." +
+        "Based on the user profile preferences provided, please give me a" +
+        "valid search query with the following format:" +
+        "'titulo: <job title>, ubicacion: <preferred city or country>, modalidad: <preferred work type, can be Local, Remoto, Hibrido>'" +
+        "Your responses should ONLY contain the search query string without any greetings or extra text"
 ) {
 //    @GetMapping("/ai/generate")
 //    fun generate(
@@ -41,16 +47,10 @@ class AiController @Autowired constructor(
     fun context(
         @RequestParam(value = "message", defaultValue = "") message: String
     ) : Map<String, String> {
+        val context = "Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota"
 
-        var context = "Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota"
-
-        var userMessage = UserMessage.builder()
-            .text("You are a job search recommendation engine." +
-                    "Based on the user profile preferences provided, please give me a" +
-                    "valid search query with the following format:" +
-                    "'titulo: <job title>, ubicacion: <preferred city or country>, modalidad: <preferred work type, can be Local, Remoto, Hibrido>'" +
-                    "Your responses should ONLY contain the search query string without any greetings or extra text" +
-                    "User context:" + context )
+        val userMessage = UserMessage.builder()
+            .text(chatInstructionsForSearchRecommendation + "User context:" + context )
             .build()
 
         return mapOf("response" to chatModel.call(userMessage))
