@@ -5,12 +5,11 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToMany
-import org.hibernate.internal.util.collections.CollectionHelper.listOf
 
 @Entity
 class Postulante (
     var cv : Curriculum,
-
+    var preferencias : String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

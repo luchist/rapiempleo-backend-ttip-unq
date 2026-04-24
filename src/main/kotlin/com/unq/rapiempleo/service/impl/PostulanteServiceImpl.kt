@@ -34,4 +34,9 @@ class PostulanteServiceImpl (
                 ofertaOpt.titulo)
         )
     }
+
+    override fun getPreferencias(idPostulante: Long) : String {
+        var postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+        return postulante.preferencias
+    }
 }
