@@ -8,5 +8,6 @@ interface PostulanteService {
 
     fun getPostulante (idPostulante : Long) : Postulante
     fun postularEnOferta (idOferta : Long, idPostulante: Long)
+    fun getPreferencias(idPostulante: Long) : String
 
 }
