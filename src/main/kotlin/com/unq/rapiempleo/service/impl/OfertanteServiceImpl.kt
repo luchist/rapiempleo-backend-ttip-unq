@@ -1,6 +1,8 @@
 package com.unq.rapiempleo.service.impl
 
 import com.unq.rapiempleo.dto.OfertanteDTO
+import com.unq.rapiempleo.dto.OfertanteRegistryDTO
+import com.unq.rapiempleo.model.Ofertante
 import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.service.OfertanteService
 import jakarta.transaction.Transactional
@@ -16,6 +18,14 @@ class OfertanteServiceImpl (
     override fun recuperarOfertante(idOfertante: Long): OfertanteDTO {
         val ofertante = ofertanteRepository.findById(idOfertante).orElseThrow { throw NullPointerException("No existe ese ofertante") }
         return OfertanteDTO.desdeModelo(ofertante)
+    }
+
+    override fun registroOfertante(ofertanteRegistro: OfertanteRegistryDTO) {
+        val nuevoOfertante = Ofertante(ofertanteRegistro.nombre,
+            ofertanteRegistro.empresa,
+            ofertanteRegistro.email,
+            ofertanteRegistro.password)
+        ofertanteRepository.save(nuevoOfertante)
     }
 
 }

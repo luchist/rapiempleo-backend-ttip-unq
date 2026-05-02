@@ -36,8 +36,12 @@ class DataBaseInitializer (
             ofertaRepository.resetIdOferta()
             ofertanteRepository.resetIdOfertante()
 
-            val postulante = Postulante(cv = Curriculum("Leon Kennedy", "29.456.125"), "Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota")
-            val ofertante = Ofertante("Albert Wesker", "Electro Smart",false, "No hay nuevas postulaciones")
+            val postulante = Postulante("Leon Kenney",
+                Curriculum("Leon Kenney","29.456.125"),
+                "Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota",
+                "leon0126@gmail.com", "passpass")
+            val ofertante = Ofertante("Albert Wesker", "Electro Smart",
+                "wesker8180@gmail.com", "passpass")
 
             val ofertas = listOf(
                         Oferta(1,"Desarrollador Sr Full Stack", "Tech.Inc", "descriptions/FullstackTechOffer.md".readClasspathFile(),

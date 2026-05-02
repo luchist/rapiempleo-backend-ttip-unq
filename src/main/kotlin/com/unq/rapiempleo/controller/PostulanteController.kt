@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.controller
 
+import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.PostulanteService
 import jakarta.transaction.Transactional
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -25,5 +27,11 @@ class PostulanteController {
     fun postularseA (@PathVariable idOferta : Long, @PathVariable idPostulante : Long) :ResponseEntity<String>{
         postulanteService.postularEnOferta(idOferta, idPostulante)
         return ResponseEntity("La postulación fue exitosa",HttpStatus.OK)
+    }
+
+    @PostMapping("/registrar")
+    fun registroPostulante(@RequestBody registroPortulante : PostulanteRegistryDTO) : ResponseEntity<String> {
+        postulanteService.registrarUserPostulante(registroPortulante)
+        return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
     }
 }

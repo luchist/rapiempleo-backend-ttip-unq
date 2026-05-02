@@ -9,10 +9,12 @@ import jakarta.persistence.OneToMany
 
 @Entity
 class Ofertante (
-    var nombre : String,
+    var nombreOfertante : String,
     var empresa : String,
+    var email: String,
+    var password : String,
     var nuevaNotifcacion : Boolean = false,
-    var avisoNuevaOferta : String,
+    var avisosNuevaOferta : MutableList<String> = mutableListOf()
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +23,10 @@ class Ofertante (
     @OneToMany
     @JoinColumn(name = "id_ofertante")
     var ofertasCreadas : MutableList<Oferta> = mutableListOf()
+
+    fun addNuevaNotificacion( tituloOferta: String ) {
+        avisosNuevaOferta.add(0, tituloOferta)
+    }
 
 
 }

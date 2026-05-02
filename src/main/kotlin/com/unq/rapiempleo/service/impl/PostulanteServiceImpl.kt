@@ -1,5 +1,7 @@
 package com.unq.rapiempleo.service.impl
 
+import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.model.Curriculum
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
@@ -38,5 +40,16 @@ class PostulanteServiceImpl (
     override fun getPreferencias(idPostulante: Long) : String {
         var postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
         return postulante.preferencias
+    }
+
+    override fun registrarUserPostulante(postulanteRegistro: PostulanteRegistryDTO) {
+        var nuevoPostulante = Postulante(
+            postulanteRegistro.nombre,
+            Curriculum(postulanteRegistro.nombre, "37.465.132"),
+            "Estoy en la búsqueda de un trabajo que...",
+            postulanteRegistro.email,
+            postulanteRegistro.password
+        )
+        postulanteRepository.save(nuevoPostulante)
     }
 }

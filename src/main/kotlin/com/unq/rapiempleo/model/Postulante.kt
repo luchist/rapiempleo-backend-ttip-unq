@@ -8,8 +8,11 @@ import jakarta.persistence.ManyToMany
 
 @Entity
 class Postulante (
+    var nombrPostulante : String,
     var cv : Curriculum,
-    var preferencias : String
+    var preferencias : String,
+    var email : String,
+    var password : String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,4 +20,7 @@ class Postulante (
 
     @ManyToMany
     var postulaciones : MutableList<Oferta> = mutableListOf()
+
+    @ManyToMany
+    var favoritos : MutableList<Oferta> = mutableListOf()
 }
