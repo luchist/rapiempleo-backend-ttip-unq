@@ -14,4 +14,6 @@ interface PostulanteRepository : JpaRepository<Postulante, Long> {
     @Transactional
     @Query(value = "ALTER TABLE postulante AUTO_INCREMENT = 1", nativeQuery = true)
     fun resetIdPostulante()
+
+    fun findByEmail(email : String) : Postulante?
 }
