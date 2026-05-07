@@ -27,7 +27,7 @@ class PostulanteController {
 
     @GetMapping("/{idPostulante}")
     fun postulantePorId (@PathVariable idPostulante: Long) : ResponseEntity<PostulanteDTO> {
-        val postulante = postulanteService.getPostulante(idPostulante);
+        val postulante = postulanteService.getPostulante(idPostulante)
         return ResponseEntity(postulante, HttpStatus.OK)
     }
 
