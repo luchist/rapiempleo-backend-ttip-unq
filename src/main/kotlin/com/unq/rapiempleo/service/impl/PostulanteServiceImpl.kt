@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.service.impl
 
+import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
@@ -15,8 +16,9 @@ class PostulanteServiceImpl (
     private val publisher : ApplicationEventPublisher
 ) : PostulanteService {
 
-    override fun getPostulante(idPostulante: Long) : Postulante {
-        return postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+    override fun getPostulante(idPostulante: Long) : PostulanteDTO {
+        var postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+        return PostulanteDTO.desdeModelo(postulante)
     }
 
     override fun postularEnOferta(idOferta: Long, idPostulante: Long) {
