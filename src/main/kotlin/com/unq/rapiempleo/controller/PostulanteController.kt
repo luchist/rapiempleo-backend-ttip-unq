@@ -1,19 +1,13 @@
 package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.PostulanteDTO
-import com.unq.rapiempleo.model.Postulante
-import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.PostulanteService
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Transactional
 @RequestMapping("/postulante")
@@ -33,7 +27,7 @@ class PostulanteController {
 
     @GetMapping("/{idPostulante}")
     fun postulantePorId (@PathVariable idPostulante: Long) : ResponseEntity<PostulanteDTO> {
-        var postulante = postulanteService.getPostulante(idPostulante);
+        val postulante = postulanteService.getPostulante(idPostulante);
         return ResponseEntity(postulante, HttpStatus.OK)
     }
 

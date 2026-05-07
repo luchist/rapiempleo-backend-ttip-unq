@@ -10,7 +10,7 @@ class PostulanteDTO (
 {
     companion object{
         fun desdeModelo( postulante : Postulante) : PostulanteDTO {
-            var postulanteDTORes = PostulanteDTO (
+            val postulanteDTORes = PostulanteDTO (
                 id = postulante.id_postulante!!,
                 nombre = postulante.cv.nombre,
                 preferencia = postulante.preferencias
