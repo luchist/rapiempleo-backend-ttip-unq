@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.service.impl
 
+import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.LoginResponseDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.dto.UsuarioLoginDTO
@@ -25,13 +26,14 @@ class PostulanteServiceImpl (
     private val passwordEncoder: PasswordEncoder,
 ) : PostulanteService {
 
-    override fun getPostulante(idPostulante: Long) : Postulante {
-        return postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+    override fun getPostulante(idPostulante: Long) : PostulanteDTO {
+        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+        return PostulanteDTO.desdeModelo(postulante)
     }
 
     override fun postularEnOferta(idOferta: Long, idPostulante: Long) {
-        var ofertaOpt = ofertaRepository.findById(idOferta).orElseThrow{throw RuntimeException()}
-        var postulanteop = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+        val ofertaOpt = ofertaRepository.findById(idOferta).orElseThrow{throw RuntimeException()}
+        val postulanteop = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
 
         ofertaOpt.postulantes.add(postulanteop)
         postulanteop.postulaciones.add(ofertaOpt)
@@ -46,7 +48,7 @@ class PostulanteServiceImpl (
     }
 
     override fun getPreferencias(idPostulante: Long) : String {
-        var postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
         return postulante.preferencias
     }
 

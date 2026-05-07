@@ -5,21 +5,19 @@ import com.unq.rapiempleo.model.Postulante
 class PostulanteDTO (
     var id : Long,
     var nombre : String,
-    var email : String,
-    var preferencias : String,
+    var preferencia : String,
     var ofertasFavoritas : List<OfertaCardDTO>
-
-) {
-    companion object {
-        fun desdeModelo(postulante: Postulante): PostulanteDTO {
-            val postulanteRec = PostulanteDTO(
+)
+{
+    companion object{
+        fun desdeModelo( postulante : Postulante) : PostulanteDTO {
+            val postulanteDTORes = PostulanteDTO (
                 id = postulante.id_postulante!!,
-                nombre = postulante.nombrPostulante,
-                email = postulante.email,
-                preferencias = postulante.preferencias,
+                nombre = postulante.cv.nombre,
+                preferencia = postulante.preferencias,
                 ofertasFavoritas = postulante.favoritos.map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
             )
-            return postulanteRec
+            return postulanteDTORes
         }
     }
 }
