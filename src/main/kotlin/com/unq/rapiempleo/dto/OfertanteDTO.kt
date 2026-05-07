@@ -9,7 +9,7 @@ class OfertanteDTO (
     var empresa: String,
     var cantidadNotifacion: Int,
     var nuevaNotifcacion : Boolean,
-    var avisoNuevaOferta : List<String>,
+    var avisosPostulacion : List<String>,
     var ofertasCreadas : List<OfertaCreadaDTO>
 ) {
     companion object {
@@ -18,9 +18,9 @@ class OfertanteDTO (
                 id = ofertante.id_ofertante!!,
                 nombre = ofertante.nombreOfertante,
                 empresa = ofertante.empresa,
-                cantidadNotifacion = ofertante.avisosNuevaOferta.size,
+                cantidadNotifacion = ofertante.avisosPostulacion.size,
                 nuevaNotifcacion = ofertante.nuevaNotifcacion,
-                avisoNuevaOferta = ofertante.avisosNuevaOferta,
+                avisosPostulacion = ofertante.avisosPostulacion,
                 ofertasCreadas = ofertante.ofertasCreadas.map { oferta -> OfertaCreadaDTO.desdeModelo(oferta) }
             )
             return ofertaCreadaDTOres

@@ -5,6 +5,8 @@ import com.unq.rapiempleo.dto.LoginResponseDTO
 import com.unq.rapiempleo.dto.OfertanteDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.UsuarioLoginDTO
+import com.unq.rapiempleo.exceptions.InvalidPasswordException
+import com.unq.rapiempleo.exceptions.UserNotFoundException
 import com.unq.rapiempleo.model.Ofertante
 import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.security.JwtTokenProvider
@@ -38,10 +40,10 @@ class OfertanteServiceImpl (
     }
 
     override fun loginOfertante(usuarioLoginData: UsuarioLoginDTO): LoginResponseDTO {
-        val user = ofertanteRepository.findByEmail(usuarioLoginData.email) ?: throw RuntimeException("Usuario no existe")
+        val user = ofertanteRepository.findByEmail(usuarioLoginData.email) ?: throw UserNotFoundException("El email ingresado no es válido")
 
         if (!passwordEncoder.matches(usuarioLoginData.password, user.password)) {
-            throw RuntimeException("Contraseña invalida")
+            throw InvalidPasswordException("La contraseña es incorrecta")
         }
         val token = jwtTokenProvider.generateToken(user.email)
         return LoginResponseDTO(user.id_ofertante!!, user.nombreOfertante, false, token)

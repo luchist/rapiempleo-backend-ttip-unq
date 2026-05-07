@@ -33,7 +33,7 @@ class OfertanteServiceTests {
 
         Assertions.assertEquals(datosDeRegistro.nombre, ofertanteRegistrado.nombre)
         Assertions.assertEquals(datosDeRegistro.empresa, ofertanteRegistrado.empresa)
-        Assertions.assertEquals(0, ofertanteRegistrado.avisoNuevaOferta.size)
+        Assertions.assertEquals(0, ofertanteRegistrado.avisosPostulacion.size)
         Assertions.assertEquals(0, ofertanteRegistrado.ofertasCreadas.size)
     }
 }

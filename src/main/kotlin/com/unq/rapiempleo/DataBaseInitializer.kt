@@ -44,6 +44,11 @@ class DataBaseInitializer (
 
             ofertanteService.registroOfertante(
                 OfertanteRegistryDTO("Albert Wesker", "Electro Smart","wesker8180@gmail.com", "passpass"))
+            ofertanteService.registroOfertante(
+                OfertanteRegistryDTO("Ramon Salazar", "PixelLab", "salazar_ram@gmail.com", "wordpass"))
+            ofertanteService.registroOfertante(
+                OfertanteRegistryDTO("Jack Baker", "Tech.Inc", "baker_jack7@gmail.com", "wordpass")
+            )
             postulanteService.registrarUserPostulante(
                 PostulanteRegistryDTO("Leon Kennedy", "leon0126@gmail.com", "passpass"))
 
@@ -71,12 +76,24 @@ class DataBaseInitializer (
                         Oferta("Cloud Data Engineer","Mero Marketing", "descriptions/CloudMeroOffer.md".readClasspathFile(),
                             Modalidad.Hibrido, "Abierto", 45000, 49000, "Capital Federal, Buenos Aires", favorito = true))
 
-            val ofertanteTest = ofertanteRepository.findById(1).orElseThrow { RuntimeException() }
-            ofertas[1].ofertante = ofertanteTest
-            ofertas[2].ofertante = ofertanteTest
-            ofertas[3].ofertante = ofertanteTest
+            val ofertanteTest1 = ofertanteRepository.findById(1).orElseThrow { RuntimeException() }
+            val ofertanteTest2 = ofertanteRepository.findById(2).orElseThrow { RuntimeException() }
+            val ofertanteTest3 = ofertanteRepository.findById(3).orElseThrow { RuntimeException() }
+            ofertas[1].ofertante = ofertanteTest1
+            ofertas[2].ofertante = ofertanteTest1
+            ofertas[3].ofertante = ofertanteTest1
+            ofertas[4].ofertante = ofertanteTest1
+            ofertas[9].ofertante = ofertanteTest1
+
+            ofertas[6].ofertante = ofertanteTest2
+            ofertas[7].ofertante = ofertanteTest2
+            ofertas[8].ofertante = ofertanteTest2
+            ofertas[10].ofertante = ofertanteTest2
+
+            ofertas[0].ofertante = ofertanteTest3
+            ofertas[5].ofertante = ofertanteTest3
             ofertaRepository.saveAll(ofertas)
-            //ofertanteRepository.save(ofertanteTest)
+
         }
     }
 }

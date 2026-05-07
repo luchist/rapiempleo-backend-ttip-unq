@@ -13,21 +13,17 @@ class Ofertante (
     var email: String,
     var password : String,
     var nuevaNotifcacion : Boolean = false,
-    var avisosNuevaOferta : MutableList<String> = mutableListOf()
+    var avisosPostulacion : MutableList<String> = mutableListOf()
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_ofertante: Long? = null
 
-    //@OneToMany
-    //@JoinColumn(name = "id_ofertante")
-    //var ofertasCreadas : MutableList<Oferta> = mutableListOf()
-
     @OneToMany(mappedBy = "ofertante")
     var ofertasCreadas: MutableList<Oferta> = mutableListOf()
 
     fun addNuevaNotificacion( tituloOferta: String ) {
-        avisosNuevaOferta.add(0, tituloOferta)
+        avisosPostulacion.add(0, tituloOferta)
     }
 
 
