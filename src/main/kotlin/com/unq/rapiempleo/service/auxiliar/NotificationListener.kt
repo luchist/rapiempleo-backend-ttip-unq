@@ -14,7 +14,7 @@ class NotificationListener(
         val ofertante = ofertanteRepository.findById(event.ofertanteId).orElseThrow { throw NullPointerException("") }
 
         ofertante.nuevaNotifcacion = true
-        ofertante.avisoNuevaOferta = "Hay una nueva postulación en la oferta: ${event.ofertaTitulo}"
+        ofertante.addNuevaNotificacion(event.ofertaTitulo)
         ofertanteRepository.save(ofertante)
     }
 }

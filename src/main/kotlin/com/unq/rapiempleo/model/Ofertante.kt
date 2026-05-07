@@ -4,23 +4,27 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
 
 @Entity
 class Ofertante (
-    var nombre : String,
+    var nombreOfertante : String,
     var empresa : String,
+    var email: String,
+    var password : String,
     var nuevaNotifcacion : Boolean = false,
-    var avisoNuevaOferta : String,
+    var avisosPostulacion : MutableList<String> = mutableListOf()
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_ofertante: Long? = null
 
-    @OneToMany
-    @JoinColumn(name = "id_ofertante")
-    var ofertasCreadas : MutableList<Oferta> = mutableListOf()
+    @OneToMany(mappedBy = "ofertante")
+    var ofertasCreadas: MutableList<Oferta> = mutableListOf()
+
+    fun addNuevaNotificacion( tituloOferta: String ) {
+        avisosPostulacion.add(0, tituloOferta)
+    }
 
 
 }

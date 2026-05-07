@@ -5,7 +5,7 @@ import jakarta.persistence.*
 
 @Entity
 class Oferta (
-    var ofertanteACargo : Long,
+    //var ofertanteACargo : Long,
     var titulo : String,
     var empresa : String,
     @Column(columnDefinition = "TEXT")
@@ -24,4 +24,8 @@ class Oferta (
 
     @ManyToMany
     var postulantes : MutableList<Postulante> = mutableListOf()
+
+    @ManyToOne
+    @JoinColumn(name = "id_ofertante")
+    var ofertante: Ofertante? = null
 }

@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.PostulanteDTO
+import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.PostulanteService
 import jakarta.transaction.Transactional
@@ -31,4 +32,9 @@ class PostulanteController {
         return ResponseEntity(postulante, HttpStatus.OK)
     }
 
+    @PostMapping("/registrar")
+    fun registroPostulante(@RequestBody registroPortulante : PostulanteRegistryDTO) : ResponseEntity<String> {
+        postulanteService.registrarUserPostulante(registroPortulante)
+        return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
+    }
 }

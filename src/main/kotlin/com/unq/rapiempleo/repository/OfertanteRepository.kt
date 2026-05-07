@@ -15,5 +15,7 @@ interface OfertanteRepository : JpaRepository<Ofertante, Long> {
     @Query(value = "ALTER TABLE ofertante AUTO_INCREMENT = 1", nativeQuery = true)
     fun resetIdOfertante()
 
+    fun findByEmail(email : String) : Ofertante?
+
 }
 
