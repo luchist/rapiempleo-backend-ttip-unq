@@ -31,7 +31,7 @@ class PostulanteServiceTests {
         this.postulanteService.postularEnOferta(3, 1)
 
         val ofertaPostulada = this.ofertaRepository.findById(3).get()
-        var postulante = this.postulanteService.getPostulante(1)
+        val postulante = this.postulanteService.getPostulante(1)
 
         Assertions.assertEquals(1, ofertaPostulada.postulantes.size)
         //Assertions.assertEquals(1, postulante.postulaciones.size)
