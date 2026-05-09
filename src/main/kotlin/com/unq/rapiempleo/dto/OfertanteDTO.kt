@@ -7,18 +7,20 @@ class OfertanteDTO (
     var id : Long,
     var nombre : String,
     var empresa: String,
+    var cantidadNotifacion: Int,
     var nuevaNotifcacion : Boolean,
-    var avisoNuevaOferta : String,
+    var avisosPostulacion : List<String>,
     var ofertasCreadas : List<OfertaCreadaDTO>
 ) {
     companion object {
         fun desdeModelo (ofertante : Ofertante) : OfertanteDTO {
             val ofertaCreadaDTOres = OfertanteDTO (
                 id = ofertante.id_ofertante!!,
-                nombre = ofertante.nombre,
+                nombre = ofertante.nombreOfertante,
                 empresa = ofertante.empresa,
+                cantidadNotifacion = ofertante.avisosPostulacion.size,
                 nuevaNotifcacion = ofertante.nuevaNotifcacion,
-                avisoNuevaOferta = ofertante.avisoNuevaOferta,
+                avisosPostulacion = ofertante.avisosPostulacion,
                 ofertasCreadas = ofertante.ofertasCreadas.map { oferta -> OfertaCreadaDTO.desdeModelo(oferta) }
             )
             return ofertaCreadaDTOres

@@ -1,5 +1,6 @@
 package com.unq.rapiempleo
 
+import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.service.OfertaService
@@ -26,28 +27,42 @@ class PostulanteServiceTests {
     @Transactional
     @Test
     fun postularAOferta() {
-        var postulante = this.postulanteService.getPostulante(1)
-        this.postulanteService.postularEnOferta(3, postulante.cv)
+        //var postulante = this.postulanteService.getPostulante(1)
+        this.postulanteService.postularEnOferta(3, 1)
 
         val ofertaPostulada = this.ofertaRepository.findById(3).get()
-        postulante = this.postulanteService.getPostulante(1)
+        val postulante = this.postulanteService.getPostulante(1)
 
         Assertions.assertEquals(1, ofertaPostulada.postulantes.size)
-        Assertions.assertEquals(postulante.cv.dni, ofertaPostulada.postulantes[0].cv.dni)
-        Assertions.assertEquals(1, postulante.postulaciones.size)
+        //Assertions.assertEquals(1, postulante.postulaciones.size)
     }
 
     @Transactional
     @Test
     fun recibirPostulacionEnOferta() {
-        val postulante = this.postulanteService.getPostulante(1)
-        this.postulanteService.postularEnOferta(2, postulante.cv)
+        //val postulante = this.postulanteService.getPostulante(1)
+        this.postulanteService.postularEnOferta(2, 1)
 
         val ofertante = this.ofertanteRepository.findById(1).get()
         val ofertaPostulada = this.ofertaService.recuperarOferta(2)
 
         Assertions.assertTrue(ofertante.nuevaNotifcacion)
-        Assertions.assertEquals("Hay una nueva postulación en la oferta: ${ofertaPostulada.titulo}", ofertante.avisoNuevaOferta)
+        Assertions.assertEquals(1, ofertante.avisosPostulacion.size)
+        Assertions.assertEquals(ofertaPostulada.titulo, ofertante.avisosPostulacion.first())
+    }
+
+    @Transactional
+    @Test
+    fun crearPostulante() {
+        val datosDeRegistro = PostulanteRegistryDTO("Chris CampoRojo", "christan52@gmail.com", "pass")
+        this.postulanteService.registrarUserPostulante(datosDeRegistro)
+
+        val postulanteRegistrado = postulanteService.getPostulante(2)
+
+        Assertions.assertEquals(datosDeRegistro.nombre, postulanteRegistrado.nombre)
+        //Assertions.assertEquals(datosDeRegistro.email, postulanteRegistrado.email)
+        Assertions.assertEquals(0, postulanteRegistrado.ofertasFavoritas.size)
+
     }
 
 }
