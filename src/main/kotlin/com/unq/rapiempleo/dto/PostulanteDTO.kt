@@ -14,7 +14,7 @@ class PostulanteDTO (
         fun desdeModelo( postulante : Postulante) : PostulanteDTO {
             val postulanteDTORes = PostulanteDTO (
                 id = postulante.id_postulante!!,
-                nombre = postulante.cv.nombre,
+                nombre = postulante.nombrPostulante,
                 preferencia = postulante.preferencias,
                 ofertasFavoritas = postulante.favoritos.map { oferta -> OfertaCardDTO.desdeModelo(oferta) },
                 cvPaths = postulante.cvEntries.map { it.cvPath }
