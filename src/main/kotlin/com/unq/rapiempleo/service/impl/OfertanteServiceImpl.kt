@@ -5,6 +5,7 @@ import com.unq.rapiempleo.dto.LoginResponseDTO
 import com.unq.rapiempleo.dto.OfertanteDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.UsuarioLoginDTO
+import com.unq.rapiempleo.exceptions.InvalidEmailException
 import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.UserNotFoundException
 import com.unq.rapiempleo.model.Ofertante
@@ -40,13 +41,22 @@ class OfertanteServiceImpl (
     }
 
     override fun loginOfertante(usuarioLoginData: UsuarioLoginDTO): LoginResponseDTO {
-        val user = ofertanteRepository.findByEmail(usuarioLoginData.email) ?: throw UserNotFoundException("El email ingresado no es válido")
+        val user = ofertanteRepository.findByEmail(usuarioLoginData.email) ?: throw InvalidEmailException()
 
         if (!passwordEncoder.matches(usuarioLoginData.password, user.password)) {
-            throw InvalidPasswordException("La contraseña es incorrecta")
+            throw InvalidPasswordException()
         }
         val token = jwtTokenProvider.generateToken(user.email)
         return LoginResponseDTO(user.id_ofertante!!, user.nombreOfertante, false, token)
+    }
+
+    override fun eliminarNotificacion(idOfertante: Long, idNotificacion: Long) {
+        val userToModify = ofertanteRepository.findById(idOfertante).orElseThrow { throw UserNotFoundException() }
+        userToModify!!.eliminarNotificacionEn(idNotificacion.toInt())
+        if (userToModify.avisosPostulacion.isEmpty()) {
+            userToModify.nuevaNotifcacion = false
+        }
+        ofertanteRepository.save(userToModify)
     }
 
 }
