@@ -65,12 +65,18 @@ class PostulanteServiceImpl (
     }
 
     override fun loginPostulante(usuarioLoginData: UsuarioLoginDTO): LoginResponseDTO {
-        val postulante = postulanteRepository.findByEmail(usuarioLoginData.email) ?: throw UserNotFoundException("El email es incrrecto")
+        val postulante = postulanteRepository.findByEmail(usuarioLoginData.email) ?: throw UserNotFoundException("El email es incorrecto")
 
         if (!passwordEncoder.matches(usuarioLoginData.password, postulante.password)) {
             throw InvalidPasswordException("Contraseña invalida")
         }
         val token = jwtTokenProvider.generateToken(usuarioLoginData.email)
         return LoginResponseDTO(postulante.id_postulante!!, postulante.nombrPostulante, true, token)
+    }
+
+    override fun agregarCv(idPostulante: Long, cvPath: String) {
+        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { UserNotFoundException("Postulante no encontrado") }
+        postulante.cvPaths.add(cvPath)
+        postulanteRepository.save(postulante)
     }
 }

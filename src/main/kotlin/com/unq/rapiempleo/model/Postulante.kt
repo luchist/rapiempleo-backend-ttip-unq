@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.model
 
+import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -12,7 +13,9 @@ class Postulante (
     var cv : Curriculum,
     var preferencias : String,
     var email : String,
-    var password : String
+    var password : String,
+    @ElementCollection
+    val cvPaths: MutableList<String> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

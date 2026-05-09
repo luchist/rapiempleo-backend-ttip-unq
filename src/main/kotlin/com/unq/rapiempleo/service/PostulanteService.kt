@@ -4,7 +4,6 @@ import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.LoginResponseDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.dto.UsuarioLoginDTO
-import com.unq.rapiempleo.model.Postulante
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,4 +14,5 @@ interface PostulanteService {
     fun getPreferencias(idPostulante: Long) : String
     fun registrarUserPostulante(postulanteRegistro: PostulanteRegistryDTO)
     fun loginPostulante (usuarioLoginData: UsuarioLoginDTO) : LoginResponseDTO
+    fun agregarCv(idPostulante: Long, cvPath: String)
 }

@@ -6,7 +6,8 @@ class PostulanteDTO (
     var id : Long,
     var nombre : String,
     var preferencia : String,
-    var ofertasFavoritas : List<OfertaCardDTO>
+    var ofertasFavoritas : List<OfertaCardDTO>,
+    var cvPaths : List<String>
 )
 {
     companion object{
@@ -15,7 +16,8 @@ class PostulanteDTO (
                 id = postulante.id_postulante!!,
                 nombre = postulante.cv.nombre,
                 preferencia = postulante.preferencias,
-                ofertasFavoritas = postulante.favoritos.map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
+                ofertasFavoritas = postulante.favoritos.map { oferta -> OfertaCardDTO.desdeModelo(oferta) },
+                cvPaths = postulante.cvPaths.toList()
             )
             return postulanteDTORes
         }
