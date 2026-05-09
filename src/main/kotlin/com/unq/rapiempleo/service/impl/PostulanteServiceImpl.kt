@@ -9,7 +9,6 @@ import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.exceptions.UserNotFoundException
 import com.unq.rapiempleo.model.CvEntry
-import com.unq.rapiempleo.model.Curriculum
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
@@ -61,7 +60,6 @@ class PostulanteServiceImpl (
         val encodedPassword = passwordEncoder.encode(postulanteRegistro.password)
         val nuevoPostulante = Postulante(
             postulanteRegistro.nombre,
-            Curriculum(postulanteRegistro.nombre, "37.465.132"),
             "Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota",
             postulanteRegistro.email,
             encodedPassword!!

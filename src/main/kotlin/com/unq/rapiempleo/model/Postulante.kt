@@ -11,7 +11,6 @@ import jakarta.persistence.OrderBy
 @Entity
 class Postulante (
     var nombrPostulante : String,
-    var cv : Curriculum,
     var preferencias : String,
     var email : String,
     var password : String,
