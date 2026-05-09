@@ -17,7 +17,7 @@ class PostulanteDTO (
                 nombre = postulante.cv.nombre,
                 preferencia = postulante.preferencias,
                 ofertasFavoritas = postulante.favoritos.map { oferta -> OfertaCardDTO.desdeModelo(oferta) },
-                cvPaths = postulante.cvPaths.toList()
+                cvPaths = postulante.cvEntries.map { it.cvPath }
             )
             return postulanteDTORes
         }

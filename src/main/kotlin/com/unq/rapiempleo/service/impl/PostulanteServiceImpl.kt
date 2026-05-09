@@ -8,6 +8,7 @@ import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.exceptions.UserNotFoundException
+import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.Curriculum
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
@@ -61,7 +62,7 @@ class PostulanteServiceImpl (
         val nuevoPostulante = Postulante(
             postulanteRegistro.nombre,
             Curriculum(postulanteRegistro.nombre, "37.465.132"),
-            "Estoy en la búsqueda de un trabajo que...",
+            "Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota",
             postulanteRegistro.email,
             encodedPassword!!
         )
@@ -82,10 +83,10 @@ class PostulanteServiceImpl (
         val postulante = postulanteRepository.findById(idPostulante)
             .orElseThrow { PostulanteNotFoundException() }
 
-        if (postulante.cvPaths.size >= 4) {
+        if (postulante.cvEntries.size >= 4) {
             throw CvLimitExceededException()
         }
-        postulante.cvPaths.add(cvPath)
+        postulante.cvEntries.add(CvEntry(cvPath))
         postulanteRepository.save(postulante)
     }
 }

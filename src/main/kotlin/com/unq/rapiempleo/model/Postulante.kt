@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToMany
+import jakarta.persistence.OrderBy
 
 @Entity
 class Postulante (
@@ -15,7 +16,8 @@ class Postulante (
     var email : String,
     var password : String,
     @ElementCollection
-    val cvPaths: MutableList<String> = mutableListOf()
+    @OrderBy("uploadedAt ASC")
+    val cvEntries: MutableList<CvEntry> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
