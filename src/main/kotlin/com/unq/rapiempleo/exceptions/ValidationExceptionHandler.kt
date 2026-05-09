@@ -17,4 +17,14 @@ class ValidationExceptionHandler {
     fun handleInvalidPasswordException(exc : InvalidPasswordException) : ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to "Contraseña inválida"))
     }
+
+    @ExceptionHandler(CvLimitExceededException::class)
+    fun handleCvLimitExceededException(exc : CvLimitExceededException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(PostulanteNotFoundException::class)
+    fun handlePostulanteNotFoundException(exc : PostulanteNotFoundException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
+    }
 }

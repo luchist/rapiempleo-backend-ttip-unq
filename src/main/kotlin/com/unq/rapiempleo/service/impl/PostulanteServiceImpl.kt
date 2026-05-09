@@ -4,7 +4,9 @@ import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.LoginResponseDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.dto.UsuarioLoginDTO
+import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.InvalidPasswordException
+import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.exceptions.UserNotFoundException
 import com.unq.rapiempleo.model.Curriculum
 import com.unq.rapiempleo.model.Postulante
@@ -27,7 +29,8 @@ class PostulanteServiceImpl (
 ) : PostulanteService {
 
     override fun getPostulante(idPostulante: Long) : PostulanteDTO {
-        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
         return PostulanteDTO.desdeModelo(postulante)
     }
 
@@ -48,7 +51,8 @@ class PostulanteServiceImpl (
     }
 
     override fun getPreferencias(idPostulante: Long) : String {
-        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
         return postulante.preferencias
     }
 
@@ -75,7 +79,12 @@ class PostulanteServiceImpl (
     }
 
     override fun agregarCv(idPostulante: Long, cvPath: String) {
-        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { UserNotFoundException("Postulante no encontrado") }
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
+
+        if (postulante.cvPaths.size >= 4) {
+            throw CvLimitExceededException()
+        }
         postulante.cvPaths.add(cvPath)
         postulanteRepository.save(postulante)
     }
