@@ -26,5 +26,10 @@ class Ofertante (
         avisosPostulacion.add(0, tituloOferta)
     }
 
+    fun eliminarNotificacionEn(idNotificacion : Int) {
+        val listToModify = avisosPostulacion.toMutableList()
+        listToModify.removeAt(idNotificacion)
+        this.avisosPostulacion = listToModify
+    }
 
 }
