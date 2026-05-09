@@ -37,8 +37,8 @@ class PostulanteController {
     }
 
     @PostMapping("/registrar")
-    fun registroPostulante(@RequestBody registroPortulante : PostulanteRegistryDTO) : ResponseEntity<String> {
-        postulanteService.registrarUserPostulante(registroPortulante)
+    fun registroPostulante(@RequestBody registroPostulante : PostulanteRegistryDTO) : ResponseEntity<String> {
+        postulanteService.registrarUserPostulante(registroPostulante)
         return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
     }
 

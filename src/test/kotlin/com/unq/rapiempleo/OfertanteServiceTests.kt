@@ -29,7 +29,7 @@ class OfertanteServiceTests {
         val datosDeRegistro = OfertanteRegistryDTO("Marcos", "Compu-Hyper-MegaRed", "marco@gmail.com", "pass")
         ofertanteService.registroOfertante(datosDeRegistro)
 
-        val ofertanteRegistrado = ofertanteService.recuperarOfertante(2)
+        val ofertanteRegistrado = ofertanteService.recuperarOfertante(4)
 
         Assertions.assertEquals(datosDeRegistro.nombre, ofertanteRegistrado.nombre)
         Assertions.assertEquals(datosDeRegistro.empresa, ofertanteRegistrado.empresa)
