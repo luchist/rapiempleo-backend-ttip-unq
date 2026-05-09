@@ -2,6 +2,7 @@ package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.service.CvStorageService
 import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.PostulanteService
 import jakarta.transaction.Transactional
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @Transactional
 @RequestMapping("/postulante")
@@ -19,6 +21,8 @@ class PostulanteController {
     private lateinit var ofertaService: OfertaService
     @Autowired
     private lateinit var postulanteService: PostulanteService
+    @Autowired
+    private lateinit var cvStorageService: CvStorageService
 
     @PostMapping("/{idPostulante}/{idOferta}")
     fun postularseA (@PathVariable idOferta : Long, @PathVariable idPostulante : Long) :ResponseEntity<String>{
@@ -33,8 +37,18 @@ class PostulanteController {
     }
 
     @PostMapping("/registrar")
-    fun registroPostulante(@RequestBody registroPortulante : PostulanteRegistryDTO) : ResponseEntity<String> {
-        postulanteService.registrarUserPostulante(registroPortulante)
+    fun registroPostulante(@RequestBody registroPostulante : PostulanteRegistryDTO) : ResponseEntity<String> {
+        postulanteService.registrarUserPostulante(registroPostulante)
         return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
+    }
+
+    @PostMapping("/{idPostulante}/cv")
+    fun subirCv(
+        @PathVariable idPostulante: Long,
+        @RequestParam("file") archivo: MultipartFile
+    ): ResponseEntity<Map<String, String>> {
+        val cvPath = cvStorageService.guardarCv(idPostulante, archivo)
+        postulanteService.agregarCv(idPostulante, cvPath)
+        return ResponseEntity(mapOf("cvPath" to cvPath), HttpStatus.OK)
     }
 }

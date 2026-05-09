@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.model
 
+import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -13,6 +14,7 @@ class Ofertante (
     var email: String,
     var password : String,
     var nuevaNotifcacion : Boolean = false,
+    @ElementCollection
     var avisosPostulacion : MutableList<String> = mutableListOf()
 ){
     @Id

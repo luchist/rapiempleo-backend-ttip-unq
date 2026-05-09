@@ -8,8 +8,11 @@ import com.unq.rapiempleo.exceptions.InvalidEmailException
 import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.UserNotAvailable
-
-import com.unq.rapiempleo.model.Curriculum
+import com.unq.rapiempleo.exceptions.CvLimitExceededException
+import com.unq.rapiempleo.exceptions.InvalidPasswordException
+import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
+import com.unq.rapiempleo.exceptions.UserNotFoundException
+import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
@@ -30,7 +33,8 @@ class PostulanteServiceImpl (
 ) : PostulanteService {
 
     override fun getPostulante(idPostulante: Long) : PostulanteDTO {
-        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
         return PostulanteDTO.desdeModelo(postulante)
     }
 
@@ -51,7 +55,8 @@ class PostulanteServiceImpl (
     }
 
     override fun getPreferencias(idPostulante: Long) : String {
-        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw NullPointerException() }
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
         return postulante.preferencias
     }
 
@@ -59,8 +64,7 @@ class PostulanteServiceImpl (
         val encodedPassword = passwordEncoder.encode(postulanteRegistro.password)
         val nuevoPostulante = Postulante(
             postulanteRegistro.nombre,
-            Curriculum(postulanteRegistro.nombre, "37.465.132"),
-            "Estoy en la búsqueda de un trabajo que...",
+            "Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota",
             postulanteRegistro.email,
             encodedPassword!!
         )
@@ -75,5 +79,16 @@ class PostulanteServiceImpl (
         }
         val token = jwtTokenProvider.generateToken(usuarioLoginData.email)
         return LoginResponseDTO(postulante.id_postulante!!, postulante.nombrPostulante, true, token)
+    }
+
+    override fun agregarCv(idPostulante: Long, cvPath: String) {
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
+
+        if (postulante.cvEntries.size >= 4) {
+            throw CvLimitExceededException()
+        }
+        postulante.cvEntries.add(CvEntry(cvPath))
+        postulanteRepository.save(postulante)
     }
 }

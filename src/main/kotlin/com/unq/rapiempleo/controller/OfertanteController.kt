@@ -25,13 +25,13 @@ class OfertanteController {
 
 
     @GetMapping("/{idOfertante}")
-    fun obtenerOferta(@PathVariable idOfertante : Long) : ResponseEntity<OfertanteDTO> {
+    fun obtenerOfertante(@PathVariable idOfertante : Long) : ResponseEntity<OfertanteDTO> {
         val ofertante = ofertanteService.recuperarOfertante(idOfertante)
         return ResponseEntity(ofertante, HttpStatus.OK)
     }
 
     @PostMapping("/registrar")
-    fun registroPostulante(@RequestBody registroOfertante : OfertanteRegistryDTO) : ResponseEntity<String> {
+    fun registroOfertante(@RequestBody registroOfertante : OfertanteRegistryDTO) : ResponseEntity<String> {
         ofertanteService.registroOfertante(registroOfertante)
         return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
     }

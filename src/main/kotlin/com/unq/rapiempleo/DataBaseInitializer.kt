@@ -10,7 +10,6 @@ import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertanteService
 import com.unq.rapiempleo.service.PostulanteService
 import jakarta.transaction.Transactional
-import org.hibernate.internal.util.collections.CollectionHelper.listOf
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
