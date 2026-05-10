@@ -10,7 +10,6 @@ import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
-import com.unq.rapiempleo.security.JwtTokenProvider
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.service.auxiliar.PostulationEvent
 import org.springframework.context.ApplicationEventPublisher
