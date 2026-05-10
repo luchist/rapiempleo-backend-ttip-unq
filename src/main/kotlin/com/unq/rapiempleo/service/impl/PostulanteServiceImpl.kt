@@ -1,17 +1,11 @@
 package com.unq.rapiempleo.service.impl
 
 import com.unq.rapiempleo.dto.PostulanteDTO
-import com.unq.rapiempleo.dto.LoginResponseDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
-import com.unq.rapiempleo.dto.UsuarioLoginDTO
-import com.unq.rapiempleo.exceptions.InvalidEmailException
-import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.UserNotAvailable
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
-import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
-import com.unq.rapiempleo.exceptions.UserNotFoundException
 import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
@@ -28,7 +22,6 @@ class PostulanteServiceImpl (
     private val ofertaRepository: OfertaRepository,
     private val postulanteRepository: PostulanteRepository,
     private val publisher : ApplicationEventPublisher,
-    private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder,
 ) : PostulanteService {
 
@@ -71,15 +64,6 @@ class PostulanteServiceImpl (
         postulanteRepository.save(nuevoPostulante)
     }
 
-    override fun loginPostulante(usuarioLoginData: UsuarioLoginDTO): LoginResponseDTO {
-        val postulante = postulanteRepository.findByEmail(usuarioLoginData.email) ?: throw InvalidEmailException()
-
-        if (!passwordEncoder.matches(usuarioLoginData.password, postulante.password)) {
-            throw InvalidPasswordException()
-        }
-        val token = jwtTokenProvider.generateToken(usuarioLoginData.email)
-        return LoginResponseDTO(postulante.id_postulante!!, postulante.nombrPostulante, true, token)
-    }
 
     override fun agregarCv(idPostulante: Long, cvPath: String) {
         val postulante = postulanteRepository.findById(idPostulante)

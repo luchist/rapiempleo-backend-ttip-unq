@@ -13,6 +13,5 @@ interface PostulanteService {
     fun postularEnOferta (idOferta : Long, idPostulante: Long)
     fun getPreferencias(idPostulante: Long) : String
     fun registrarUserPostulante(postulanteRegistro: PostulanteRegistryDTO)
-    fun loginPostulante (usuarioLoginData: UsuarioLoginDTO) : LoginResponseDTO
     fun agregarCv(idPostulante: Long, cvPath: String)
 }

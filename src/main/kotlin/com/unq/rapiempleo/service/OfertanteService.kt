@@ -10,6 +10,5 @@ import org.springframework.stereotype.Service
 interface OfertanteService {
     fun recuperarOfertante (idOfertante : Long) : OfertanteDTO
     fun registroOfertante (ofertanteRegistro : OfertanteRegistryDTO)
-    fun loginOfertante (usuarioLoginData: UsuarioLoginDTO) : LoginResponseDTO
     fun eliminarNotificacion (idOfertante : Long, idNotificacion: Long)
 }

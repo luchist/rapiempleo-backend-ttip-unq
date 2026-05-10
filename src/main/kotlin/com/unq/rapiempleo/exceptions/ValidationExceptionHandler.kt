@@ -2,7 +2,6 @@ package com.unq.rapiempleo.exceptions
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.ErrorResponse
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
@@ -14,9 +13,9 @@ class ValidationExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to "El email ingresado no es correcto"))
     }
 
-    @ExceptionHandler(UserNotFoundException::class)
-    fun handleUserNotFoundException(exc : UserNotFoundException) : ResponseEntity<Map<String, String>> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to "Su usuario no esta disponible ahora mismo"))
+    @ExceptionHandler(OfertanteNotFoundException::class)
+    fun handleOfertanteNotFoundException(exc : OfertanteNotFoundException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to "Ofertante no encontrado"))
     }
 
     @ExceptionHandler(InvalidPasswordException::class)
