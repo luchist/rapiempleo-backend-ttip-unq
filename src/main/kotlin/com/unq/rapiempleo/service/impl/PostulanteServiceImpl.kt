@@ -9,9 +9,7 @@ import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.UserNotAvailable
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
-import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
-import com.unq.rapiempleo.exceptions.UserNotFoundException
 import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository

@@ -2,7 +2,6 @@ package com.unq.rapiempleo.exceptions
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.ErrorResponse
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
@@ -42,5 +41,10 @@ class ValidationExceptionHandler {
     @ExceptionHandler(PostulanteNotFoundException::class)
     fun handlePostulanteNotFoundException(exc : PostulanteNotFoundException) : ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(FileNotAllowedToUploadException::class)
+    fun handleFileNotAllowedToUploadException(exc : FileNotAllowedToUploadException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
 }

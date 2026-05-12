@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.service.impl
 
+import com.unq.rapiempleo.exceptions.FileNotAllowedToUploadException
 import com.unq.rapiempleo.service.CvStorageService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -15,7 +16,7 @@ class CvStorageServiceImpl(
 
     override fun guardarCv(idPostulante: Long, archivo: MultipartFile): String {
         if (archivo.contentType != "application/pdf") {
-            throw IllegalArgumentException("Solo se permiten archivos PDF")
+            throw FileNotAllowedToUploadException()
         }
 
         val dirPostulante = Paths.get(uploadDir, idPostulante.toString())
