@@ -20,12 +20,16 @@ class CvStorageServiceImpl(
             throw FileNotAllowedToUploadException()
         }
 
+        val nombreArchivo = Paths.get(archivo.originalFilename ?: "cv.pdf").fileName.toString()
+        if (!nombreArchivo.lowercase().endsWith(".pdf")) {
+            throw FileNameNotAllowedException()
+        }
+
         val dirPostulante = Paths.get(uploadDir, idPostulante.toString())
         if (!Files.exists(dirPostulante)) {
             Files.createDirectories(dirPostulante)
         }
 
-        val nombreArchivo = Paths.get(archivo.originalFilename ?: "cv.pdf").fileName.toString()
         val destino = dirPostulante.resolve(nombreArchivo)
 
         if (!destino.normalize().startsWith(dirPostulante.normalize())) {
