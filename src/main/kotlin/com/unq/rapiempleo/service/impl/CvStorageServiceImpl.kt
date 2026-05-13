@@ -1,5 +1,7 @@
 package com.unq.rapiempleo.service.impl
 
+import com.unq.rapiempleo.exceptions.FileNameNotAllowedException
+import com.unq.rapiempleo.exceptions.FileNotAllowedToUploadException
 import com.unq.rapiempleo.service.CvStorageService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -15,7 +17,12 @@ class CvStorageServiceImpl(
 
     override fun guardarCv(idPostulante: Long, archivo: MultipartFile): String {
         if (archivo.contentType != "application/pdf") {
-            throw IllegalArgumentException("Solo se permiten archivos PDF")
+            throw FileNotAllowedToUploadException()
+        }
+
+        val nombreArchivo = Paths.get(archivo.originalFilename ?: "cv.pdf").fileName.toString()
+        if (!nombreArchivo.lowercase().endsWith(".pdf")) {
+            throw FileNameNotAllowedException()
         }
 
         val dirPostulante = Paths.get(uploadDir, idPostulante.toString())
@@ -23,8 +30,12 @@ class CvStorageServiceImpl(
             Files.createDirectories(dirPostulante)
         }
 
-        val nombreArchivo = archivo.originalFilename ?: "cv.pdf"
         val destino = dirPostulante.resolve(nombreArchivo)
+
+        if (!destino.normalize().startsWith(dirPostulante.normalize())) {
+            throw FileNameNotAllowedException()
+        }
+
         Files.copy(archivo.inputStream, destino, StandardCopyOption.REPLACE_EXISTING)
 
         return "$uploadDir/$idPostulante/$nombreArchivo"

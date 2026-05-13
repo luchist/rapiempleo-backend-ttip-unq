@@ -42,4 +42,24 @@ class ValidationExceptionHandler {
     fun handlePostulanteNotFoundException(exc : PostulanteNotFoundException) : ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(FileNotAllowedToUploadException::class)
+    fun handleFileNotAllowedToUploadException(exc : FileNotAllowedToUploadException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(FileNameNotAllowedException::class)
+    fun handleFileNameNotAllowedException(exc : FileNameNotAllowedException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(AccessDeniedToFileException::class)
+    fun handleAccessDeniedToFileException(exc: AccessDeniedToFileException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(FileNotFoundException::class)
+    fun handleFileNotFoundException(exc: FileNotFoundException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
+    }
 }
