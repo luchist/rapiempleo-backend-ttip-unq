@@ -52,4 +52,9 @@ class ValidationExceptionHandler {
     fun handleFileNameNotAllowedException(exc : FileNameNotAllowedException) : ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(AccessDeniedToFileException::class)
+    fun handleAccessDeniedToFileException(exc: AccessDeniedToFileException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to exc.message!!))
+    }
 }
