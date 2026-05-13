@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.FileNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.repository.PostulanteRepository
 import jakarta.transaction.Transactional
@@ -52,7 +53,7 @@ class CvController(
 
         val recurso = FileSystemResource(archivoPath)
         if (!recurso.exists()) {
-            throw PostulanteNotFoundException()
+            throw FileNotFoundException()
         }
 
         return ResponseEntity.ok()
