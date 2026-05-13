@@ -5,7 +5,6 @@ import jakarta.persistence.*
 
 @Entity
 class Oferta (
-    //var ofertanteACargo : Long,
     var titulo : String,
     var empresa : String,
     @Column(columnDefinition = "TEXT")
@@ -21,6 +20,9 @@ class Oferta (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_oferta: Long? = null
+
+    @ElementCollection
+    var postulatesOferta : MutableList<String> = mutableListOf()
 
     @ManyToMany
     var postulantes : MutableList<Postulante> = mutableListOf()

@@ -20,7 +20,7 @@ class OfertanteServiceImpl (
 
     @Transactional
     override fun recuperarOfertante(idOfertante: Long): OfertanteDTO {
-        val ofertante = ofertanteRepository.findById(idOfertante).orElseThrow { throw NullPointerException("No existe ese ofertante") }
+        val ofertante = ofertanteRepository.findById(idOfertante).orElseThrow { throw OfertanteNotFoundException() }
         return OfertanteDTO.desdeModelo(ofertante)
     }
 
