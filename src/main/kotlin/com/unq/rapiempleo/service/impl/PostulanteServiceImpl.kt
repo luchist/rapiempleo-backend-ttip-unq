@@ -7,7 +7,6 @@ import com.unq.rapiempleo.dto.UsuarioLoginDTO
 import com.unq.rapiempleo.exceptions.InvalidEmailException
 import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
-import com.unq.rapiempleo.exceptions.UserNotAvailable
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
@@ -37,10 +36,13 @@ class PostulanteServiceImpl (
     }
 
     override fun postularEnOferta(idOferta: Long, idPostulante: Long) {
-        val ofertaOpt = ofertaRepository.findById(idOferta).orElseThrow{ throw OfferNotFoundException() }
-        val postulanteop = postulanteRepository.findById(idPostulante).orElseThrow { throw UserNotAvailable() }
+        val ofertaOpt = ofertaRepository.findById(idOferta)
+            .orElseThrow{ throw OfferNotFoundException() }
+        val postulanteop = postulanteRepository.findById(idPostulante)
+            .orElseThrow { throw PostulanteNotFoundException() }
 
         ofertaOpt.postulantes.add(postulanteop)
+        ofertaOpt.cvPostulantes.add(postulanteop.cvEntries[0])
         postulanteop.postulaciones.add(ofertaOpt)
         ofertaRepository.save(ofertaOpt)
         postulanteRepository.save(postulanteop)
