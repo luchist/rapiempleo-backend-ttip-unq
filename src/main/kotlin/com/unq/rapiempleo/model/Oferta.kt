@@ -17,15 +17,11 @@ class Oferta (
     var ubicacion : String,
     var favorito : Boolean,
     @ElementCollection
-    @OrderBy("uploadedAt ASC")
-    val cvPostulantes: MutableList<CvEntry> = mutableListOf()
+    val cvPostulantes: MutableList<PostulacionCv> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_oferta: Long? = null
-
-    @ElementCollection
-    var postulatesOferta : MutableList<String> = mutableListOf()
 
     @ManyToMany
     var postulantes : MutableList<Postulante> = mutableListOf()

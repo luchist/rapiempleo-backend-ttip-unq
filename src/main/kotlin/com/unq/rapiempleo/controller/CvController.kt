@@ -2,7 +2,7 @@ package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.FileNotFoundException
-import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
+import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
@@ -23,6 +23,7 @@ import java.nio.file.Paths
 @RequestMapping("/files")
 class CvController(
     private val postulanteRepository: PostulanteRepository,
+    private val ofertanteRepository: OfertanteRepository,
     @Value("\${app.upload.dir}") private val uploadDir: String
 ) {
 
@@ -36,12 +37,22 @@ class CvController(
         val emailDelToken = SecurityContextHolder.getContext().authentication?.principal as? String
             ?: throw AccessDeniedToFileException()
 
+        // Ruptura si ofertante revisa cv de otro
         val postulante = postulanteRepository.findByEmail(emailDelToken)
-            ?: throw PostulanteNotFoundException()
-
-        if (postulante.id_postulante != idPostulante) {
-            throw AccessDeniedToFileException()
+        if(postulante != null) {
+            if (postulante.id_postulante != idPostulante) {
+                throw AccessDeniedToFileException()
+            }
+        } else {
+            val ofertante = ofertanteRepository.findByEmail(emailDelToken) ?: throw AccessDeniedToFileException()
         }
+
+        //val postulante = postulanteRepository.findByEmail(emailDelToken)
+        //    ?: throw PostulanteNotFoundException()
+
+        //if (postulante.id_postulante != idPostulante) {
+        //    throw AccessDeniedToFileException()
+        //}
 
         // Path traversal
         val dirPostulante = Paths.get(uploadDir, idPostulante.toString()).normalize()

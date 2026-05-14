@@ -1,11 +1,13 @@
 package com.unq.rapiempleo.service.impl
 
+import com.unq.rapiempleo.dto.AvisoPostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
+import com.unq.rapiempleo.model.PostulacionCv
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
@@ -36,7 +38,8 @@ class PostulanteServiceImpl (
             .orElseThrow { throw PostulanteNotFoundException() }
 
         ofertaOpt.postulantes.add(postulanteop)
-        ofertaOpt.cvPostulantes.add(postulanteop.cvEntries[0])
+        ofertaOpt.cvPostulantes.add(
+            PostulacionCv(postulanteop.id_postulante!!,postulanteop.cvEntries[0].cvPath, ofertaOpt.id_oferta!!))
         postulanteop.postulaciones.add(ofertaOpt)
         ofertaRepository.save(ofertaOpt)
         postulanteRepository.save(postulanteop)
@@ -75,5 +78,19 @@ class PostulanteServiceImpl (
         }
         postulante.cvEntries.add(CvEntry(cvPath))
         postulanteRepository.save(postulante)
+    }
+
+    override fun notificarCvVisto(idsNotificacion: AvisoPostulanteDTO) {
+        val ofertaPostulada = ofertaRepository.findById(idsNotificacion.id_oferta)
+            .orElseThrow { OfferNotFoundException() }
+        val postulanteANotificar = postulanteRepository.findById(idsNotificacion.id_postulante)
+            .orElseThrow { PostulanteNotFoundException() }
+        val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -> postulacion.id_postulante == idsNotificacion.id_postulante}
+
+        postulacion!!.cvVisto = true
+        postulanteANotificar.notificacionesCv.add(ofertaPostulada.titulo)
+        ofertaRepository.save(ofertaPostulada)
+        postulanteRepository.save(postulanteANotificar)
+
     }
 }

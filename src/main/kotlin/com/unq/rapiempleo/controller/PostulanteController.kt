@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.controller
 
+import com.unq.rapiempleo.dto.AvisoPostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.service.CvStorageService
@@ -50,5 +51,11 @@ class PostulanteController {
         val cvPath = cvStorageService.guardarCv(idPostulante, archivo)
         postulanteService.agregarCv(idPostulante, cvPath)
         return ResponseEntity(mapOf("cvPath" to cvPath), HttpStatus.OK)
+    }
+
+    @PostMapping("/cvViewed")
+    fun marcarCvComoVisto(@RequestBody postulacionNotif : AvisoPostulanteDTO) : ResponseEntity<String> {
+        postulanteService.notificarCvVisto(postulacionNotif)
+        return ResponseEntity("Postulante notificado exitosamente", HttpStatus.OK)
     }
 }

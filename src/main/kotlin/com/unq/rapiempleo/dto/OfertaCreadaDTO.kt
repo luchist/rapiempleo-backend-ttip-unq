@@ -2,6 +2,7 @@ package com.unq.rapiempleo.dto
 
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
+import com.unq.rapiempleo.model.PostulacionCv
 
 class OfertaCreadaDTO(var id : Long,
                       var titulo : String,
@@ -10,7 +11,7 @@ class OfertaCreadaDTO(var id : Long,
                       var sueldoMin : Int,
                       var sueldoMax : Int,
                       var ubicacion : String,
-                      var cvsRecibidos : List<String>
+                      var cvsRecibidos : List<PostulacionCv>
 ) {
     companion object {
         fun desdeModelo (oferta : Oferta) : OfertaCreadaDTO {
@@ -22,7 +23,7 @@ class OfertaCreadaDTO(var id : Long,
                 sueldoMin = oferta.sueldoMin,
                 sueldoMax = oferta.sueldoMax,
                 ubicacion = oferta.ubicacion,
-                cvsRecibidos = oferta.postulatesOferta
+                cvsRecibidos = oferta.cvPostulantes
             )
             return ofertaCreadaDTOres
         }
