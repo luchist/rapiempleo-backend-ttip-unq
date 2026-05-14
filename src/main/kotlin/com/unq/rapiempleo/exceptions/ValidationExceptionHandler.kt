@@ -62,4 +62,14 @@ class ValidationExceptionHandler {
     fun handleFileNotFoundException(exc: FileNotFoundException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(NoCvAvailableException::class)
+    fun handleNoCvAvailableException(exc: NoCvAvailableException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(CvNotFoundException::class)
+    fun handleCvNotFoundException(exc: CvNotFoundException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
+    }
 }
