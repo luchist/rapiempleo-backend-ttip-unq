@@ -15,4 +15,5 @@ interface PostulanteService {
     fun registrarUserPostulante(postulanteRegistro: PostulanteRegistryDTO)
     fun loginPostulante (usuarioLoginData: UsuarioLoginDTO) : LoginResponseDTO
     fun agregarCv(idPostulante: Long, cvPath: String)
+    fun setearCvFavorito(idPostulante: Long, cvPath: String)
 }

@@ -8,6 +8,8 @@ import com.unq.rapiempleo.exceptions.InvalidEmailException
 import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
+import com.unq.rapiempleo.exceptions.CvNotFoundException
+import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.Postulante
@@ -41,9 +43,16 @@ class PostulanteServiceImpl (
         val postulanteop = postulanteRepository.findById(idPostulante)
             .orElseThrow { throw PostulanteNotFoundException() }
 
+        if (postulanteop.cvEntries.isEmpty()) throw NoCvAvailableException()
+
+        val cvAEnviar = postulanteop.cvEntries
+            .find { it.cvPath == postulanteop.cvFavorito }
+            ?: postulanteop.cvEntries[0]
+
         ofertaOpt.postulantes.add(postulanteop)
-        ofertaOpt.cvPostulantes.add(postulanteop.cvEntries[0])
+        ofertaOpt.cvPostulantes.add(cvAEnviar)
         postulanteop.postulaciones.add(ofertaOpt)
+
         ofertaRepository.save(ofertaOpt)
         postulanteRepository.save(postulanteop)
 
@@ -88,7 +97,25 @@ class PostulanteServiceImpl (
         if (postulante.cvEntries.size >= 4) {
             throw CvLimitExceededException()
         }
+
+        val esPrimerCv = postulante.cvEntries.isEmpty()
+        if (esPrimerCv) {
+            postulante.cvFavorito = cvPath
+        }
+
         postulante.cvEntries.add(CvEntry(cvPath))
+
+        postulanteRepository.save(postulante)
+    }
+
+    override fun setearCvFavorito(idPostulante: Long, cvPath: String) {
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
+
+        if (postulante.cvEntries.none { it.cvPath == cvPath }) {
+            throw CvNotFoundException()
+        }
+        postulante.cvFavorito = cvPath
         postulanteRepository.save(postulante)
     }
 }
