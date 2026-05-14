@@ -1,21 +1,18 @@
 package com.unq.rapiempleo.service.impl
 
+import com.unq.rapiempleo.dto.AvisoPostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
-import com.unq.rapiempleo.dto.LoginResponseDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
-import com.unq.rapiempleo.dto.UsuarioLoginDTO
-import com.unq.rapiempleo.exceptions.InvalidEmailException
-import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
+import com.unq.rapiempleo.model.PostulacionCv
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
-import com.unq.rapiempleo.security.JwtTokenProvider
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.service.auxiliar.PostulationEvent
 import org.springframework.context.ApplicationEventPublisher
@@ -27,7 +24,6 @@ class PostulanteServiceImpl (
     private val ofertaRepository: OfertaRepository,
     private val postulanteRepository: PostulanteRepository,
     private val publisher : ApplicationEventPublisher,
-    private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder,
 ) : PostulanteService {
 
@@ -50,7 +46,8 @@ class PostulanteServiceImpl (
             ?: postulanteop.cvEntries[0]
 
         ofertaOpt.postulantes.add(postulanteop)
-        ofertaOpt.cvPostulantes.add(cvAEnviar)
+        ofertaOpt.cvPostulantes.add(
+            PostulacionCv(postulanteop.id_postulante!!,cvAEnviar.cvPath, ofertaOpt.id_oferta!!))
         postulanteop.postulaciones.add(ofertaOpt)
 
         ofertaRepository.save(ofertaOpt)
@@ -80,15 +77,6 @@ class PostulanteServiceImpl (
         postulanteRepository.save(nuevoPostulante)
     }
 
-    override fun loginPostulante(usuarioLoginData: UsuarioLoginDTO): LoginResponseDTO {
-        val postulante = postulanteRepository.findByEmail(usuarioLoginData.email) ?: throw InvalidEmailException()
-
-        if (!passwordEncoder.matches(usuarioLoginData.password, postulante.password)) {
-            throw InvalidPasswordException()
-        }
-        val token = jwtTokenProvider.generateToken(usuarioLoginData.email)
-        return LoginResponseDTO(postulante.id_postulante!!, postulante.nombrPostulante, true, token)
-    }
 
     override fun agregarCv(idPostulante: Long, cvPath: String) {
         val postulante = postulanteRepository.findById(idPostulante)
@@ -117,5 +105,19 @@ class PostulanteServiceImpl (
         }
         postulante.cvFavorito = cvPath
         postulanteRepository.save(postulante)
+    }
+
+    override fun notificarCvVisto(idsNotificacion: AvisoPostulanteDTO) {
+        val ofertaPostulada = ofertaRepository.findById(idsNotificacion.id_oferta)
+            .orElseThrow { OfferNotFoundException() }
+        val postulanteANotificar = postulanteRepository.findById(idsNotificacion.id_postulante)
+            .orElseThrow { PostulanteNotFoundException() }
+        val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -> postulacion.id_postulante == idsNotificacion.id_postulante}
+
+        postulacion!!.cvVisto = true
+        postulanteANotificar.notificacionesCv.add(ofertaPostulada.titulo)
+        ofertaRepository.save(ofertaPostulada)
+        postulanteRepository.save(postulanteANotificar)
+
     }
 }

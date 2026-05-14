@@ -16,7 +16,9 @@ class Postulante (
     var password : String,
     @ElementCollection
     @OrderBy("uploadedAt ASC")
-    val cvEntries: MutableList<CvEntry> = mutableListOf()
+    val cvEntries: MutableList<CvEntry> = mutableListOf(),
+    @ElementCollection
+    val notificacionesCv : MutableList<String> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
