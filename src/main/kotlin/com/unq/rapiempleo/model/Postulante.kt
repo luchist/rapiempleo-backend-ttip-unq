@@ -22,6 +22,8 @@ class Postulante (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_postulante: Long? = null
 
+    var cvFavorito: String? = null
+
     @ManyToMany
     var postulaciones : MutableList<Oferta> = mutableListOf()
 
