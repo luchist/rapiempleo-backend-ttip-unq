@@ -67,4 +67,10 @@ class PostulanteController {
         postulanteService.notificarCvVisto(postulacionNotif)
         return ResponseEntity("Postulante notificado exitosamente", HttpStatus.OK)
     }
+
+    @DeleteMapping("/deleteNotify/{idPostulante}/{idNotify}")
+    fun deleteNotificaction(@PathVariable idPostulante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
+        postulanteService.eliminarNotificacion(idPostulante, idNotify)
+        return ResponseEntity("Notificación eliminada exitosamente", HttpStatus.OK)
+    }
 }

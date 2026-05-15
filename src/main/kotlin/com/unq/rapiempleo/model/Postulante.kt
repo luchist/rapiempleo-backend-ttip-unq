@@ -18,7 +18,7 @@ class Postulante (
     @OrderBy("uploadedAt ASC")
     val cvEntries: MutableList<CvEntry> = mutableListOf(),
     @ElementCollection
-    val notificacionesCv : MutableList<String> = mutableListOf()
+    var notificacionesCv : MutableList<String> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +31,10 @@ class Postulante (
 
     @ManyToMany
     var favoritos : MutableList<Oferta> = mutableListOf()
+
+    fun eliminarNotificacionCvVisto (idNotificacion : Int) {
+        val listToModify = notificacionesCv
+        listToModify.removeAt(idNotificacion)
+        this.notificacionesCv = listToModify
+    }
 }

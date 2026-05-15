@@ -7,6 +7,7 @@ import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
+import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.PostulacionCv
@@ -114,10 +115,19 @@ class PostulanteServiceImpl (
             .orElseThrow { PostulanteNotFoundException() }
         val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -> postulacion.id_postulante == idsNotificacion.id_postulante}
 
-        postulacion!!.cvVisto = true
-        postulanteANotificar.notificacionesCv.add(ofertaPostulada.titulo)
-        ofertaRepository.save(ofertaPostulada)
-        postulanteRepository.save(postulanteANotificar)
+        if (!postulacion!!.cvVisto) {
+            postulacion.cvVisto = true
+            postulanteANotificar.notificacionesCv.add(ofertaPostulada.titulo)
+            ofertaRepository.save(ofertaPostulada)
+            postulanteRepository.save(postulanteANotificar)
+        }
 
+    }
+
+    override fun eliminarNotificacion(idPostulante: Long, idNotificacion: Long) {
+        val userToModify = postulanteRepository.findById(idPostulante).orElseThrow { throw OfertanteNotFoundException() }
+        userToModify!!.eliminarNotificacionCvVisto(idNotificacion.toInt())
+
+        postulanteRepository.save(userToModify)
     }
 }

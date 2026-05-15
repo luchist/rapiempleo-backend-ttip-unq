@@ -15,4 +15,5 @@ interface PostulanteService {
     fun agregarCv(idPostulante: Long, cvPath: String)
     fun setearCvFavorito(idPostulante: Long, cvPath: String)
     fun notificarCvVisto(idsNotificacion : AvisoPostulanteDTO)
+    fun eliminarNotificacion (idPostulante : Long, idNotificacion: Long)
 }
