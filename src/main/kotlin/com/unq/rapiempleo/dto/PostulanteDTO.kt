@@ -7,6 +7,7 @@ class PostulanteDTO (
     var nombre : String,
     var preferencia : String,
     var ofertasFavoritas : List<OfertaCardDTO>,
+    var notificacionesCv : List<String>,
     var cvPaths : List<String>
 )
 {
@@ -17,6 +18,7 @@ class PostulanteDTO (
                 nombre = postulante.nombrPostulante,
                 preferencia = postulante.preferencias,
                 ofertasFavoritas = postulante.favoritos.map { oferta -> OfertaCardDTO.desdeModelo(oferta) },
+                notificacionesCv = postulante.notificacionesCv,
                 cvPaths = postulante.cvEntries.map { it.cvPath }
             )
             return postulanteDTORes
