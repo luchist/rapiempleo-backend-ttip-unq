@@ -13,5 +13,6 @@ interface PostulanteService {
     fun getPreferencias(idPostulante: Long) : String
     fun registrarUserPostulante(postulanteRegistro: PostulanteRegistryDTO)
     fun agregarCv(idPostulante: Long, cvPath: String)
+    fun setearCvFavorito(idPostulante: Long, cvPath: String)
     fun notificarCvVisto(idsNotificacion : AvisoPostulanteDTO)
 }

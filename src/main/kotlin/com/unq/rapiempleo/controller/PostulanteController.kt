@@ -43,6 +43,15 @@ class PostulanteController {
         return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
     }
 
+    @PatchMapping("/{idPostulante}/cv/favorito")
+    fun setearCvFavorito(
+        @PathVariable idPostulante: Long,
+        @RequestParam cvPath: String
+    ): ResponseEntity<String> {
+        postulanteService.setearCvFavorito(idPostulante, cvPath)
+        return ResponseEntity("CV favorito actualizado", HttpStatus.OK)
+    }
+
     @PostMapping("/{idPostulante}/cv")
     fun subirCv(
         @PathVariable idPostulante: Long,
