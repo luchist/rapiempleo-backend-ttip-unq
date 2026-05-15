@@ -20,7 +20,6 @@ import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.service.auxiliar.PostulationEvent
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
