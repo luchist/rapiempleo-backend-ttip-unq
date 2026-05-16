@@ -34,6 +34,10 @@ class Postulante (
 
     fun eliminarNotificacionCvVisto (idNotificacion : Int) {
         val listToModify = notificacionesCv
+
+        if (idNotificacion >= listToModify.size || idNotificacion < 0)
+            throw IllegalArgumentException("Id de notificación inválido")
+
         listToModify.removeAt(idNotificacion)
         this.notificacionesCv = listToModify
     }
