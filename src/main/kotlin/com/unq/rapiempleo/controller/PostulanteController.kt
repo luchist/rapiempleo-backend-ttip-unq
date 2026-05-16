@@ -76,7 +76,7 @@ class PostulanteController {
     }
     
     @DeleteMapping("/deleteNotify/{idPostulante}/{idNotify}")
-    fun deleteNotificaction(@PathVariable idPostulante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
+    fun deleteNotification(@PathVariable idPostulante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
         postulanteService.eliminarNotificacion(idPostulante, idNotify)
         return ResponseEntity("Notificación eliminada exitosamente", HttpStatus.OK)
     }
