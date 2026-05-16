@@ -16,15 +16,29 @@ class Postulante (
     var password : String,
     @ElementCollection
     @OrderBy("uploadedAt ASC")
-    val cvEntries: MutableList<CvEntry> = mutableListOf()
+    val cvEntries: MutableList<CvEntry> = mutableListOf(),
+    @ElementCollection
+    var notificacionesCv : MutableList<String> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_postulante: Long? = null
+
+    var cvFavorito: String? = null
 
     @ManyToMany
     var postulaciones : MutableList<Oferta> = mutableListOf()
 
     @ManyToMany
     var favoritos : MutableList<Oferta> = mutableListOf()
+
+    fun eliminarNotificacionCvVisto (idNotificacion : Int) {
+        val listToModify = notificacionesCv
+
+        if (idNotificacion >= listToModify.size || idNotificacion < 0)
+            throw IllegalArgumentException("Id de notificación inválido")
+
+        listToModify.removeAt(idNotificacion)
+        this.notificacionesCv = listToModify
+    }
 }

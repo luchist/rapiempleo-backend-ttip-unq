@@ -7,17 +7,21 @@ class PostulanteDTO (
     var nombre : String,
     var preferencia : String,
     var ofertasFavoritas : List<OfertaCardDTO>,
-    var cvPaths : List<String>
+    var notificacionesCv : List<String>,
+    var cvPaths : List<String>,
+    var cvFavorito : String?
 )
 {
     companion object{
-        fun desdeModelo( postulante : Postulante) : PostulanteDTO {
+        fun desdeModelo(postulante : Postulante) : PostulanteDTO {
             val postulanteDTORes = PostulanteDTO (
                 id = postulante.id_postulante!!,
                 nombre = postulante.nombrPostulante,
                 preferencia = postulante.preferencias,
                 ofertasFavoritas = postulante.favoritos.map { oferta -> OfertaCardDTO.desdeModelo(oferta) },
-                cvPaths = postulante.cvEntries.map { it.cvPath }
+                notificacionesCv = postulante.notificacionesCv,
+                cvPaths = postulante.cvEntries.map { it.cvPath },
+                cvFavorito = postulante.cvFavorito
             )
             return postulanteDTORes
         }

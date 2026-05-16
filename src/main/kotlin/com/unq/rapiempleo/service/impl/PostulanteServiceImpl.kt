@@ -1,22 +1,26 @@
 package com.unq.rapiempleo.service.impl
 
+import com.unq.rapiempleo.dto.AvisoPostulanteDTO
+import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
-import com.unq.rapiempleo.dto.LoginResponseDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
-import com.unq.rapiempleo.dto.UsuarioLoginDTO
-import com.unq.rapiempleo.exceptions.InvalidEmailException
-import com.unq.rapiempleo.exceptions.InvalidPasswordException
+import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
-import com.unq.rapiempleo.exceptions.UserNotAvailable
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
-import com.unq.rapiempleo.exceptions.InvalidPasswordException
+import com.unq.rapiempleo.exceptions.CvNotFoundException
+import com.unq.rapiempleo.exceptions.NoCvAvailableException
+import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
+import com.unq.rapiempleo.exceptions.PostulanteAlreadyPostedOffer
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
-import com.unq.rapiempleo.exceptions.UserNotFoundException
 import com.unq.rapiempleo.model.CvEntry
+import com.unq.rapiempleo.model.EstadoPostulacion
+import com.unq.rapiempleo.model.Oferta
+import com.unq.rapiempleo.model.PostulacionCv
+import com.unq.rapiempleo.model.PostulacionEstado
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
+import com.unq.rapiempleo.repository.PostulacionEstadoRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
-import com.unq.rapiempleo.security.JwtTokenProvider
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.service.auxiliar.PostulationEvent
 import org.springframework.context.ApplicationEventPublisher
@@ -27,8 +31,8 @@ import org.springframework.stereotype.Service
 class PostulanteServiceImpl (
     private val ofertaRepository: OfertaRepository,
     private val postulanteRepository: PostulanteRepository,
+    private val postulacionEstadoRepository: PostulacionEstadoRepository,
     private val publisher : ApplicationEventPublisher,
-    private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder,
 ) : PostulanteService {
 
@@ -39,11 +43,29 @@ class PostulanteServiceImpl (
     }
 
     override fun postularEnOferta(idOferta: Long, idPostulante: Long) {
-        val ofertaOpt = ofertaRepository.findById(idOferta).orElseThrow{ throw OfferNotFoundException() }
-        val postulanteop = postulanteRepository.findById(idPostulante).orElseThrow { throw UserNotAvailable() }
+        val ofertaOpt = ofertaRepository.findById(idOferta)
+            .orElseThrow{ throw OfferNotFoundException() }
+        val postulanteop = postulanteRepository.findById(idPostulante)
+            .orElseThrow { throw PostulanteNotFoundException() }
+
+        if (postulanteop.cvEntries.isEmpty())
+            throw NoCvAvailableException()
+
+        if (yaEstaPostulado(postulanteop, ofertaOpt))
+            throw PostulanteAlreadyPostedOffer()
+
+        val cvAEnviar = postulanteop.cvEntries
+            .find { it.cvPath == postulanteop.cvFavorito }
+            ?: postulanteop.cvEntries[0]
 
         ofertaOpt.postulantes.add(postulanteop)
+        ofertaOpt.cvPostulantes.add(
+            PostulacionCv(postulanteop.id_postulante!!,cvAEnviar.cvPath, ofertaOpt.id_oferta!!))
         postulanteop.postulaciones.add(ofertaOpt)
+
+        val postulacionEstado = PostulacionEstado(postulante = postulanteop, oferta = ofertaOpt, estado = EstadoPostulacion.Aplicado)
+        postulacionEstadoRepository.save(postulacionEstado)
+
         ofertaRepository.save(ofertaOpt)
         postulanteRepository.save(postulanteop)
 
@@ -52,6 +74,13 @@ class PostulanteServiceImpl (
                 ofertaOpt.ofertante!!.id_ofertante!!,
                 ofertaOpt.titulo)
         )
+    }
+
+    fun yaEstaPostulado(postulante: Postulante, oferta: Oferta) : Boolean {
+        val postulacionExistente = postulacionEstadoRepository.findByPostulante(postulante)
+            .any { postulacion -> postulacion.oferta.id_oferta == oferta.id_oferta }
+
+        return (postulacionExistente)
     }
 
     override fun getPreferencias(idPostulante: Long) : String {
@@ -71,24 +100,82 @@ class PostulanteServiceImpl (
         postulanteRepository.save(nuevoPostulante)
     }
 
-    override fun loginPostulante(usuarioLoginData: UsuarioLoginDTO): LoginResponseDTO {
-        val postulante = postulanteRepository.findByEmail(usuarioLoginData.email) ?: throw InvalidEmailException()
-
-        if (!passwordEncoder.matches(usuarioLoginData.password, postulante.password)) {
-            throw InvalidPasswordException()
-        }
-        val token = jwtTokenProvider.generateToken(usuarioLoginData.email)
-        return LoginResponseDTO(postulante.id_postulante!!, postulante.nombrPostulante, true, token)
-    }
-
     override fun agregarCv(idPostulante: Long, cvPath: String) {
         val postulante = postulanteRepository.findById(idPostulante)
             .orElseThrow { PostulanteNotFoundException() }
 
+        val idToSet = obtenerIdDePath(cvPath)
+        if (postulante.id_postulante != idToSet) {
+            throw AccessDeniedToFileException()
+        }
+
         if (postulante.cvEntries.size >= 4) {
             throw CvLimitExceededException()
         }
+
+        val esPrimerCv = postulante.cvEntries.isEmpty()
+        if (esPrimerCv) {
+            postulante.cvFavorito = cvPath
+        }
+
         postulante.cvEntries.add(CvEntry(cvPath))
+
         postulanteRepository.save(postulante)
+    }
+
+    override fun setearCvFavorito(idPostulante: Long, cvPath: String) {
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
+
+        val idToSet = obtenerIdDePath(cvPath)
+        if (postulante.id_postulante != idToSet) {
+            throw AccessDeniedToFileException()
+        }
+
+
+        if (postulante.cvEntries.none { it.cvPath == cvPath }) {
+            throw CvNotFoundException()
+        }
+        postulante.cvFavorito = cvPath
+        postulanteRepository.save(postulante)
+    }
+
+    private fun obtenerIdDePath(cvPath: String): Long {
+        val idPostulante = cvPath.split("/")[2]
+        return idPostulante.toLong()
+    }
+
+    override fun notificarCvVisto(idsNotificacion: AvisoPostulanteDTO) {
+        val ofertaPostulada = ofertaRepository.findById(idsNotificacion.id_oferta)
+            .orElseThrow { OfferNotFoundException() }
+        val postulanteANotificar = postulanteRepository.findById(idsNotificacion.id_postulante)
+            .orElseThrow { PostulanteNotFoundException() }
+        val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -> postulacion.id_postulante == idsNotificacion.id_postulante}
+
+        if (!postulacion!!.cvVisto) {
+            postulacion.cvVisto = true
+            postulanteANotificar.notificacionesCv.add(ofertaPostulada.titulo)
+            ofertaRepository.save(ofertaPostulada)
+            postulanteRepository.save(postulanteANotificar)
+        }
+
+    }
+
+    override fun eliminarNotificacion(idPostulante: Long, idNotificacion: Long) {
+        val userToModify = postulanteRepository.findById(idPostulante).orElseThrow { throw OfertanteNotFoundException() }
+        userToModify!!.eliminarNotificacionCvVisto(idNotificacion.toInt())
+
+        postulanteRepository.save(userToModify)
+    }
+       
+    override fun getBoard(idPostulante: Long) : List<PostulacionBoardItemDTO> {
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
+
+        val postulacionesEstado = postulacionEstadoRepository.findByPostulante(postulante)
+
+        return postulacionesEstado.map {
+            PostulacionBoardItemDTO.desdeModelo(it)
+        }
     }
 }

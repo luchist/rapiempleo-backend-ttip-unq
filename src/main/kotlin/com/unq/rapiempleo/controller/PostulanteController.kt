@@ -1,5 +1,7 @@
 package com.unq.rapiempleo.controller
 
+import com.unq.rapiempleo.dto.AvisoPostulanteDTO
+import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.service.CvStorageService
@@ -42,6 +44,15 @@ class PostulanteController {
         return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
     }
 
+    @PatchMapping("/{idPostulante}/cv/favorito")
+    fun setearCvFavorito(
+        @PathVariable idPostulante: Long,
+        @RequestParam cvPath: String
+    ): ResponseEntity<String> {
+        postulanteService.setearCvFavorito(idPostulante, cvPath)
+        return ResponseEntity("CV favorito actualizado", HttpStatus.OK)
+    }
+
     @PostMapping("/{idPostulante}/cv")
     fun subirCv(
         @PathVariable idPostulante: Long,
@@ -50,5 +61,23 @@ class PostulanteController {
         val cvPath = cvStorageService.guardarCv(idPostulante, archivo)
         postulanteService.agregarCv(idPostulante, cvPath)
         return ResponseEntity(mapOf("cvPath" to cvPath), HttpStatus.OK)
+    }
+
+    @PostMapping("/cvViewed")
+    fun marcarCvComoVisto(@RequestBody postulacionNotif : AvisoPostulanteDTO) : ResponseEntity<String> {
+        postulanteService.notificarCvVisto(postulacionNotif)
+        return ResponseEntity("Postulante notificado exitosamente", HttpStatus.OK)
+    }
+
+    @GetMapping("/{idPostulante}/board")
+    fun getBoard(@PathVariable idPostulante: Long) : ResponseEntity<List<PostulacionBoardItemDTO>> {
+        val statusBoard = postulanteService.getBoard(idPostulante)
+        return ResponseEntity(statusBoard, HttpStatus.OK)
+    }
+    
+    @DeleteMapping("/deleteNotify/{idPostulante}/{idNotify}")
+    fun deleteNotification(@PathVariable idPostulante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
+        postulanteService.eliminarNotificacion(idPostulante, idNotify)
+        return ResponseEntity("Notificación eliminada exitosamente", HttpStatus.OK)
     }
 }

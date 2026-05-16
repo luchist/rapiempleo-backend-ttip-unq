@@ -2,10 +2,13 @@ package com.unq.rapiempleo
 
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
+import com.unq.rapiempleo.model.PostulacionEstado
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.OfertanteRepository
+import com.unq.rapiempleo.repository.PostulacionEstadoRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertanteService
 import com.unq.rapiempleo.service.PostulanteService
@@ -21,7 +24,8 @@ class DataBaseInitializer (
     private val ofertaRepository: OfertaRepository,
     private val ofertanteRepository: OfertanteRepository,
     private val ofertanteService: OfertanteService,
-    private val postulanteService: PostulanteService
+    private val postulanteService: PostulanteService,
+    private val postulacionEstadoRepository: PostulacionEstadoRepository
 ) {
 
     fun String.readClasspathFile(): String =
@@ -34,12 +38,14 @@ class DataBaseInitializer (
     fun initializeDatabase() : CommandLineRunner {
         return CommandLineRunner {
 
+            postulacionEstadoRepository.deleteAll()
             ofertanteRepository.deleteAll()
             postulanteRepository.deleteAll()
             ofertaRepository.deleteAll()
             postulanteRepository.resetIdPostulante()
             ofertaRepository.resetIdOferta()
             ofertanteRepository.resetIdOfertante()
+            postulacionEstadoRepository.resetIdPostulacionEstado()
 
             ofertanteService.registroOfertante(
                 OfertanteRegistryDTO("Albert Wesker", "Electro Smart","wesker8180@gmail.com", "passpass"))
@@ -93,6 +99,19 @@ class DataBaseInitializer (
             ofertas[5].ofertante = ofertanteTest3
             ofertaRepository.saveAll(ofertas)
 
+
+            val leon = postulanteRepository.findById(1).orElseThrow { RuntimeException() }
+
+            // for status board
+            val ofertaEntrevistando = ofertaRepository.findById(6).orElseThrow { RuntimeException() }
+            postulacionEstadoRepository.save(
+                PostulacionEstado(oferta = ofertaEntrevistando, postulante = leon, estado = EstadoPostulacion.Entrevistando)
+            )
+
+            val ofertaCerrada = ofertaRepository.findById(2).orElseThrow { RuntimeException() }
+            postulacionEstadoRepository.save(
+                PostulacionEstado(oferta = ofertaCerrada, postulante = leon, estado = EstadoPostulacion.Cerrado)
+            )
         }
     }
 }

@@ -5,7 +5,6 @@ import jakarta.persistence.*
 
 @Entity
 class Oferta (
-    //var ofertanteACargo : Long,
     var titulo : String,
     var empresa : String,
     @Column(columnDefinition = "TEXT")
@@ -16,7 +15,9 @@ class Oferta (
     var sueldoMin : Int,
     var sueldoMax : Int,
     var ubicacion : String,
-    var favorito : Boolean
+    var favorito : Boolean,
+    @ElementCollection
+    val cvPostulantes: MutableList<PostulacionCv> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
