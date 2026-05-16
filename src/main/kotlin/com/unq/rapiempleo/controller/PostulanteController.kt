@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.AvisoPostulanteDTO
+import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.service.CvStorageService
@@ -68,6 +69,12 @@ class PostulanteController {
         return ResponseEntity("Postulante notificado exitosamente", HttpStatus.OK)
     }
 
+    @GetMapping("/{idPostulante}/board")
+    fun getBoard(@PathVariable idPostulante: Long) : ResponseEntity<List<PostulacionBoardItemDTO>> {
+        val statusBoard = postulanteService.getBoard(idPostulante)
+        return ResponseEntity(statusBoard, HttpStatus.OK)
+    }
+    
     @DeleteMapping("/deleteNotify/{idPostulante}/{idNotify}")
     fun deleteNotificaction(@PathVariable idPostulante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
         postulanteService.eliminarNotificacion(idPostulante, idNotify)

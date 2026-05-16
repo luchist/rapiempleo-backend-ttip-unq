@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.service.impl
 
 import com.unq.rapiempleo.dto.AvisoPostulanteDTO
+import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
@@ -10,9 +11,12 @@ import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
+import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.model.PostulacionCv
+import com.unq.rapiempleo.model.PostulacionEstado
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
+import com.unq.rapiempleo.repository.PostulacionEstadoRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.service.auxiliar.PostulationEvent
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Service
 class PostulanteServiceImpl (
     private val ofertaRepository: OfertaRepository,
     private val postulanteRepository: PostulanteRepository,
+    private val postulacionEstadoRepository: PostulacionEstadoRepository,
     private val publisher : ApplicationEventPublisher,
     private val passwordEncoder: PasswordEncoder,
 ) : PostulanteService {
@@ -51,6 +56,9 @@ class PostulanteServiceImpl (
             PostulacionCv(postulanteop.id_postulante!!,cvAEnviar.cvPath, ofertaOpt.id_oferta!!))
         postulanteop.postulaciones.add(ofertaOpt)
 
+        val postulacionEstado = PostulacionEstado(postulante = postulanteop, oferta = ofertaOpt, estado = EstadoPostulacion.Aplicado)
+        postulacionEstadoRepository.save(postulacionEstado)
+
         ofertaRepository.save(ofertaOpt)
         postulanteRepository.save(postulanteop)
 
@@ -77,7 +85,6 @@ class PostulanteServiceImpl (
         )
         postulanteRepository.save(nuevoPostulante)
     }
-
 
     override fun agregarCv(idPostulante: Long, cvPath: String) {
         val postulante = postulanteRepository.findById(idPostulante)
@@ -129,5 +136,16 @@ class PostulanteServiceImpl (
         userToModify!!.eliminarNotificacionCvVisto(idNotificacion.toInt())
 
         postulanteRepository.save(userToModify)
+    }
+       
+    override fun getBoard(idPostulante: Long) : List<PostulacionBoardItemDTO> {
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
+
+        val postulacionesEstado = postulacionEstadoRepository.findByPostulante(postulante)
+
+        return postulacionesEstado.map {
+            PostulacionBoardItemDTO.desdeModelo(it)
+        }
     }
 }
