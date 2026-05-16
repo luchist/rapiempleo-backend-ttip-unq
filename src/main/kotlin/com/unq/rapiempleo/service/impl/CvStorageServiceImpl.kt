@@ -20,6 +20,15 @@ class CvStorageServiceImpl(
             throw FileNotAllowedToUploadException()
         }
 
+        archivo.inputStream.use { input ->
+            val header = ByteArray(5)
+            val bytesLeidos = input.read(header)
+
+            if (bytesLeidos < 5 || String(header) != "%PDF-") {
+                throw FileNotAllowedToUploadException()
+            }
+        }
+
         val nombreArchivo = Paths.get(archivo.originalFilename ?: "cv.pdf").fileName.toString()
         if (!nombreArchivo.lowercase().endsWith(".pdf")) {
             throw FileNameNotAllowedException()
