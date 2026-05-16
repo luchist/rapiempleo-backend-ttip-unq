@@ -72,4 +72,9 @@ class ValidationExceptionHandler {
     fun handleCvNotFoundException(exc: CvNotFoundException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(PostulanteAlreadyPostedOffer::class)
+    fun handlePostulanteAlreadyPostedOfferException(exc: PostulanteAlreadyPostedOffer): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
 }

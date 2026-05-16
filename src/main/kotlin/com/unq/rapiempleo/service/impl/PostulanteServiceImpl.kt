@@ -9,9 +9,11 @@ import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
+import com.unq.rapiempleo.exceptions.PostulanteAlreadyPostedOffer
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.EstadoPostulacion
+import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.model.PostulacionCv
 import com.unq.rapiempleo.model.PostulacionEstado
 import com.unq.rapiempleo.model.Postulante
@@ -45,7 +47,11 @@ class PostulanteServiceImpl (
         val postulanteop = postulanteRepository.findById(idPostulante)
             .orElseThrow { throw PostulanteNotFoundException() }
 
-        if (postulanteop.cvEntries.isEmpty()) throw NoCvAvailableException()
+        if (postulanteop.cvEntries.isEmpty())
+            throw NoCvAvailableException()
+
+        if (yaEstaPostulado(postulanteop, ofertaOpt))
+            throw PostulanteAlreadyPostedOffer()
 
         val cvAEnviar = postulanteop.cvEntries
             .find { it.cvPath == postulanteop.cvFavorito }
@@ -67,6 +73,13 @@ class PostulanteServiceImpl (
                 ofertaOpt.ofertante!!.id_ofertante!!,
                 ofertaOpt.titulo)
         )
+    }
+
+    fun yaEstaPostulado(postulante: Postulante, oferta: Oferta) : Boolean {
+        val postulacionExistente = postulacionEstadoRepository.findByPostulante(postulante)
+            .any { postulacion -> postulacion.oferta.id_oferta == oferta.id_oferta }
+
+        return (postulacionExistente)
     }
 
     override fun getPreferencias(idPostulante: Long) : String {
