@@ -4,6 +4,7 @@ import com.unq.rapiempleo.dto.AvisoPostulanteDTO
 import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
@@ -103,6 +104,11 @@ class PostulanteServiceImpl (
         val postulante = postulanteRepository.findById(idPostulante)
             .orElseThrow { PostulanteNotFoundException() }
 
+        val idToSet = obtenerIdDePath(cvPath)
+        if (postulante.id_postulante != idToSet) {
+            throw AccessDeniedToFileException()
+        }
+
         if (postulante.cvEntries.size >= 4) {
             throw CvLimitExceededException()
         }
@@ -121,11 +127,22 @@ class PostulanteServiceImpl (
         val postulante = postulanteRepository.findById(idPostulante)
             .orElseThrow { PostulanteNotFoundException() }
 
+        val idToSet = obtenerIdDePath(cvPath)
+        if (postulante.id_postulante != idToSet) {
+            throw AccessDeniedToFileException()
+        }
+
+
         if (postulante.cvEntries.none { it.cvPath == cvPath }) {
             throw CvNotFoundException()
         }
         postulante.cvFavorito = cvPath
         postulanteRepository.save(postulante)
+    }
+
+    private fun obtenerIdDePath(cvPath: String): Long {
+        val idPostulante = cvPath.split("/")[2]
+        return idPostulante.toLong()
     }
 
     override fun notificarCvVisto(idsNotificacion: AvisoPostulanteDTO) {
