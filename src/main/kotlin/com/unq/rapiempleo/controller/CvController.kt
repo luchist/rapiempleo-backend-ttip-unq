@@ -37,7 +37,7 @@ class CvController(
         val emailDelToken = SecurityContextHolder.getContext().authentication?.principal as? String
             ?: throw AccessDeniedToFileException()
 
-        // Ruptura si ofertante revisa cv de otro
+        // Separation of validation for both type of users
         val postulante = postulanteRepository.findByEmail(emailDelToken)
         if(postulante != null) {
             if (postulante.id_postulante != idPostulante) {

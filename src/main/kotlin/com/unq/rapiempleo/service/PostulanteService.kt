@@ -17,4 +17,5 @@ interface PostulanteService {
     fun setearCvFavorito(idPostulante: Long, cvPath: String)
     fun notificarCvVisto(idsNotificacion : AvisoPostulanteDTO)
     fun getBoard(idPostulante: Long) : List<PostulacionBoardItemDTO>
+    fun eliminarNotificacion (idPostulante : Long, idNotificacion: Long)
 }

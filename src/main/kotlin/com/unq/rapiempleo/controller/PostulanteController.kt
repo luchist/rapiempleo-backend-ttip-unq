@@ -74,4 +74,10 @@ class PostulanteController {
         val statusBoard = postulanteService.getBoard(idPostulante)
         return ResponseEntity(statusBoard, HttpStatus.OK)
     }
+    
+    @DeleteMapping("/deleteNotify/{idPostulante}/{idNotify}")
+    fun deleteNotificaction(@PathVariable idPostulante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
+        postulanteService.eliminarNotificacion(idPostulante, idNotify)
+        return ResponseEntity("Notificación eliminada exitosamente", HttpStatus.OK)
+    }
 }

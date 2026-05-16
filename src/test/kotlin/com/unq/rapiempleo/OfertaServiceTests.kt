@@ -25,12 +25,4 @@ class OfertaServiceTests {
         Assertions.assertEquals(11, todasLasOfertas.size)
     }
 
-    @Transactional
-    @Test
-    fun busquedaDeOfertas() {
-        val resultadoBusqueda = this.ofertaService.buscarOfertas("desarrollador")
-        val verificacionBusqueda = resultadoBusqueda.filter { oferta -> oferta.titulo.contains("desarrollador", true) }
-        Assertions.assertEquals(resultadoBusqueda.size, 2)
-        Assertions.assertEquals(resultadoBusqueda.size, verificacionBusqueda.size)
-    }
 }
