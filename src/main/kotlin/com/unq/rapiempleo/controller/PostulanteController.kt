@@ -6,7 +6,6 @@ import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.service.CvStorageService
-import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.PostulanteService
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 class PostulanteController {
 
-    @Autowired
-    private lateinit var ofertaService: OfertaService
     @Autowired
     private lateinit var postulanteService: PostulanteService
     @Autowired

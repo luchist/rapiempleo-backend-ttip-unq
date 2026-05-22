@@ -77,4 +77,14 @@ class ValidationExceptionHandler {
     fun handlePostulanteAlreadyPostedOfferException(exc: PostulanteAlreadyPostedOffer): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(PostulacionEstadoNotFoundException::class)
+    fun handlePostulacionEstadoNotFoundException(exc: PostulacionEstadoNotFoundException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(AccessDeniedToPostulacionException::class)
+    fun handleAccessDeniedToPostulacionException(exc: AccessDeniedToPostulacionException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to exc.message!!))
+    }
 }

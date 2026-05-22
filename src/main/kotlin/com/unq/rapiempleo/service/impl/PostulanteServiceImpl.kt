@@ -5,11 +5,13 @@ import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.AccessDeniedToPostulacionException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
+import com.unq.rapiempleo.exceptions.PostulacionEstadoNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteAlreadyPostedOffer
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
@@ -187,11 +189,13 @@ class PostulanteServiceImpl (
             .orElseThrow { PostulanteNotFoundException() }
 
         val postulacionEstado = postulacionEstadoRepository.findById(idPostulacionEstado)
-            .orElseThrow { throw RuntimeException("Postulación no encontrada") }
+            .orElseThrow { PostulacionEstadoNotFoundException() }
 
         if (postulacionEstado.postulante.id_postulante != postulante.id_postulante) {
-            throw RuntimeException("La postulación no pertenece al postulante")
+            throw AccessDeniedToPostulacionException()
         }
+
+        if (postulacionEstado.estado == nuevoEstado) { return }
 
         postulacionEstado.estado = nuevoEstado
         postulacionEstadoRepository.save(postulacionEstado)
