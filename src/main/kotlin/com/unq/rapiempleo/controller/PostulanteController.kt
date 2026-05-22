@@ -4,6 +4,7 @@ import com.unq.rapiempleo.dto.AvisoPostulanteDTO
 import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.service.CvStorageService
 import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.PostulanteService
@@ -73,6 +74,16 @@ class PostulanteController {
     fun getBoard(@PathVariable idPostulante: Long) : ResponseEntity<List<PostulacionBoardItemDTO>> {
         val statusBoard = postulanteService.getBoard(idPostulante)
         return ResponseEntity(statusBoard, HttpStatus.OK)
+    }
+
+    @PatchMapping("/{idPostulante}/board/{idPostulacionEstado}")
+    fun updateEstadoPostulacion(
+        @PathVariable idPostulante: Long,
+        @PathVariable idPostulacionEstado: Long,
+        @RequestParam nuevoEstado: EstadoPostulacion
+    ): ResponseEntity<String> {
+        postulanteService.updateEstadoPostulacion(idPostulante, idPostulacionEstado, nuevoEstado)
+        return ResponseEntity("Estado de postulación actualizado exitosamente", HttpStatus.OK)
     }
     
     @DeleteMapping("/deleteNotify/{idPostulante}/{idNotify}")

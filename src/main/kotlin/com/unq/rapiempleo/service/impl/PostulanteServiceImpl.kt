@@ -132,7 +132,6 @@ class PostulanteServiceImpl (
             throw AccessDeniedToFileException()
         }
 
-
         if (postulante.cvEntries.none { it.cvPath == cvPath }) {
             throw CvNotFoundException()
         }
@@ -177,5 +176,24 @@ class PostulanteServiceImpl (
         return postulacionesEstado.map {
             PostulacionBoardItemDTO.desdeModelo(it)
         }
+    }
+
+    override fun updateEstadoPostulacion(
+        idPostulante: Long,
+        idPostulacionEstado: Long,
+        nuevoEstado: EstadoPostulacion
+    ) {
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
+
+        val postulacionEstado = postulacionEstadoRepository.findById(idPostulacionEstado)
+            .orElseThrow { throw RuntimeException("Postulación no encontrada") }
+
+        if (postulacionEstado.postulante.id_postulante != postulante.id_postulante) {
+            throw RuntimeException("La postulación no pertenece al postulante")
+        }
+
+        postulacionEstado.estado = nuevoEstado
+        postulacionEstadoRepository.save(postulacionEstado)
     }
 }
