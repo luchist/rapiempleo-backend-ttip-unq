@@ -8,6 +8,7 @@ import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
+import com.unq.rapiempleo.exceptions.DuplicatedEmailException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteAlreadyPostedOffer
@@ -19,6 +20,7 @@ import com.unq.rapiempleo.model.PostulacionCv
 import com.unq.rapiempleo.model.PostulacionEstado
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
+import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.repository.PostulacionEstadoRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.PostulanteService
@@ -32,6 +34,7 @@ class PostulanteServiceImpl (
     private val ofertaRepository: OfertaRepository,
     private val postulanteRepository: PostulanteRepository,
     private val postulacionEstadoRepository: PostulacionEstadoRepository,
+    private val ofertanteRepository: OfertanteRepository,
     private val publisher : ApplicationEventPublisher,
     private val passwordEncoder: PasswordEncoder,
 ) : PostulanteService {
@@ -90,9 +93,15 @@ class PostulanteServiceImpl (
     }
 
     override fun registrarUserPostulante(postulanteRegistro: PostulanteRegistryDTO) {
+        val postulantePorEmail = postulanteRepository.findByEmail(postulanteRegistro.email)
+        val ofertantePorEmail = ofertanteRepository.findByEmail(postulanteRegistro.email)
+        if (postulantePorEmail != null || ofertantePorEmail != null) {
+            throw DuplicatedEmailException()
+        }
+
         val encodedPassword = passwordEncoder.encode(postulanteRegistro.password)
         val nuevoPostulante = Postulante(
-            postulanteRegistro.nombre,
+            postulanteRegistro.name,
             "Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota",
             postulanteRegistro.email,
             encodedPassword!!

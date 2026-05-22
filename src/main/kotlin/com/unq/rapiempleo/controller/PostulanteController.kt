@@ -39,9 +39,9 @@ class PostulanteController {
     }
 
     @PostMapping("/registrar")
-    fun registroPostulante(@RequestBody registroPostulante : PostulanteRegistryDTO) : ResponseEntity<String> {
+    fun registroPostulante(@RequestBody registroPostulante : PostulanteRegistryDTO) : ResponseEntity<Map<String,String>> {
         postulanteService.registrarUserPostulante(registroPostulante)
-        return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
+        return ResponseEntity(mapOf("message" to "Su registro fue exitoso"), HttpStatus.OK)
     }
 
     @PatchMapping("/{idPostulante}/cv/favorito")

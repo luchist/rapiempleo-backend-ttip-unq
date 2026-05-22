@@ -77,4 +77,9 @@ class ValidationExceptionHandler {
     fun handlePostulanteAlreadyPostedOfferException(exc: PostulanteAlreadyPostedOffer): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(DuplicatedEmailException::class)
+    fun handleDuplicatedEmailException(exc: DuplicatedEmailException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
 }
