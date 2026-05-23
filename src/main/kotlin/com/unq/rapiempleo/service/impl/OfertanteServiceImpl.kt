@@ -35,7 +35,8 @@ class OfertanteServiceImpl (
         }
 
         val encodedPassword = passwordEncoder.encode(ofertanteRegistro.password)
-        val nuevoOfertante = Ofertante(ofertanteRegistro.company,
+        val nuevoOfertante = Ofertante(
+            ofertanteRegistro.name,
             ofertanteRegistro.company,
             ofertanteRegistro.email,
             encodedPassword!!)
