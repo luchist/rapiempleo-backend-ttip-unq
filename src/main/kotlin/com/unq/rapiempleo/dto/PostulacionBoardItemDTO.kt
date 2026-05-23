@@ -5,7 +5,7 @@ import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.PostulacionEstado
 
 class PostulacionBoardItemDTO (
-    var id_postulacion_estado: Long?,
+    var id_postulacion_estado: Long,
     var id_oferta: Long,
     var titulo : String,
     var empresa : String,
