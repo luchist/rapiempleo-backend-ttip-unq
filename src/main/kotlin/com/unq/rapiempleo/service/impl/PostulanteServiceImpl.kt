@@ -9,6 +9,7 @@ import com.unq.rapiempleo.exceptions.AccessDeniedToPostulacionException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
+import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.PostulacionEstadoNotFoundException
@@ -26,6 +27,7 @@ import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.service.auxiliar.PostulationEvent
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -181,12 +183,14 @@ class PostulanteServiceImpl (
     }
 
     override fun updateEstadoPostulacion(
-        idPostulante: Long,
         idPostulacionEstado: Long,
         nuevoEstado: EstadoPostulacion
     ) {
-        val postulante = postulanteRepository.findById(idPostulante)
-            .orElseThrow { PostulanteNotFoundException() }
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        val postulante = postulanteRepository.findByEmail(email)
+            ?: throw PostulanteNotFoundException()
 
         val postulacionEstado = postulacionEstadoRepository.findById(idPostulacionEstado)
             .orElseThrow { PostulacionEstadoNotFoundException() }

@@ -79,7 +79,7 @@ class PostulanteController {
         @PathVariable idPostulacionEstado: Long,
         @RequestParam nuevoEstado: EstadoPostulacion
     ): ResponseEntity<String> {
-        postulanteService.updateEstadoPostulacion(idPostulante, idPostulacionEstado, nuevoEstado)
+        postulanteService.updateEstadoPostulacion(idPostulacionEstado, nuevoEstado)
         return ResponseEntity("Estado de postulación actualizado exitosamente", HttpStatus.OK)
     }
     

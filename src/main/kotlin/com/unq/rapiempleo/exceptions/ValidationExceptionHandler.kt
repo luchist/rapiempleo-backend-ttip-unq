@@ -87,4 +87,9 @@ class ValidationExceptionHandler {
     fun handleAccessDeniedToPostulacionException(exc: AccessDeniedToPostulacionException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(UnauthenticatedException::class)
+    fun handleUnauthenticatedException(exc: UnauthenticatedException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("message" to exc.message!!))
+    }
 }

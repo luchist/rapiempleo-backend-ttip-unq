@@ -19,5 +19,5 @@ interface PostulanteService {
     fun notificarCvVisto(idsNotificacion : AvisoPostulanteDTO)
     fun getBoard(idPostulante: Long) : List<PostulacionBoardItemDTO>
     fun eliminarNotificacion (idPostulante : Long, idNotificacion: Long)
-    fun updateEstadoPostulacion(idPostulante: Long, idPostulacionEstado: Long, nuevoEstado: EstadoPostulacion)
+    fun updateEstadoPostulacion(idPostulacionEstado: Long, nuevoEstado: EstadoPostulacion)
 }
