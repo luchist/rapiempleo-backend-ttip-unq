@@ -9,6 +9,7 @@ import com.unq.rapiempleo.exceptions.AccessDeniedToPostulacionException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
+import com.unq.rapiempleo.exceptions.EstadoSinCambiosException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
@@ -183,6 +184,7 @@ class PostulanteServiceImpl (
     }
 
     override fun updateEstadoPostulacion(
+        idPostulante: Long,
         idPostulacionEstado: Long,
         nuevoEstado: EstadoPostulacion
     ) {
@@ -192,6 +194,10 @@ class PostulanteServiceImpl (
         val postulante = postulanteRepository.findByEmail(email)
             ?: throw PostulanteNotFoundException()
 
+        if (postulante.id_postulante != idPostulante) {
+            throw AccessDeniedToPostulacionException()
+        }
+
         val postulacionEstado = postulacionEstadoRepository.findById(idPostulacionEstado)
             .orElseThrow { PostulacionEstadoNotFoundException() }
 
@@ -199,7 +205,8 @@ class PostulanteServiceImpl (
             throw AccessDeniedToPostulacionException()
         }
 
-        if (postulacionEstado.estado == nuevoEstado) { return }
+        if (postulacionEstado.estado == nuevoEstado)
+            throw EstadoSinCambiosException()
 
         postulacionEstado.estado = nuevoEstado
         postulacionEstadoRepository.save(postulacionEstado)

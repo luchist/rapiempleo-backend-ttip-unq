@@ -92,4 +92,9 @@ class ValidationExceptionHandler {
     fun handleUnauthenticatedException(exc: UnauthenticatedException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(EstadoSinCambiosException::class)
+    fun handleEstadoSinCambiosException(exc: EstadoSinCambiosException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.OK).body(mapOf("message" to exc.message!!))
+    }
 }
