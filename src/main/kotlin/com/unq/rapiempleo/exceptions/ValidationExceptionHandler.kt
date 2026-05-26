@@ -82,4 +82,9 @@ class ValidationExceptionHandler {
     fun handleDuplicatedEmailException(exc: DuplicatedEmailException) : ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(InvalidCompanyDataException::class)
+    fun handleInvalidCompanyDataException(exc: InvalidCompanyDataException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
 }

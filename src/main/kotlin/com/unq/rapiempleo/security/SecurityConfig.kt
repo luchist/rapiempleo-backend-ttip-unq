@@ -27,7 +27,7 @@ class SecurityConfig (
             .cors{}
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/login", "/ofertante/registrar", "/postulante/registrar").permitAll()
+                it.requestMatchers("/login", "/ofertante/registrar", "/postulante/registrar", "/verificarEmpresa").permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement {
