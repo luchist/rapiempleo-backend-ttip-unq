@@ -18,7 +18,7 @@ class Postulante (
     @OrderBy("uploadedAt ASC")
     val cvEntries: MutableList<CvEntry> = mutableListOf(),
     @ElementCollection
-    var notificacionesCv : MutableList<String> = mutableListOf()
+    var notificacionesCv : MutableList<NotificationEntry> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

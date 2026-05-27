@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.dto
 
+import com.unq.rapiempleo.model.NotificationEntry
 import com.unq.rapiempleo.model.Postulante
 
 class PostulanteDTO (
@@ -7,7 +8,7 @@ class PostulanteDTO (
     var nombre : String,
     var preferencia : String,
     var ofertasFavoritas : List<OfertaCardDTO>,
-    var notificacionesCv : List<String>,
+    var notificacionesCv : List<NotificationEntry>,
     var cvPaths : List<String>,
     var cvFavorito : String?
 )

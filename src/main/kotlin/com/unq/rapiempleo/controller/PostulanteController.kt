@@ -37,9 +37,9 @@ class PostulanteController {
     }
 
     @PostMapping("/registrar")
-    fun registroPostulante(@RequestBody registroPostulante : PostulanteRegistryDTO) : ResponseEntity<String> {
+    fun registroPostulante(@RequestBody registroPostulante : PostulanteRegistryDTO) : ResponseEntity<Map<String,String>> {
         postulanteService.registrarUserPostulante(registroPostulante)
-        return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
+        return ResponseEntity(mapOf("message" to "Su registro fue exitoso"), HttpStatus.OK)
     }
 
     @PatchMapping("/{idPostulante}/cv/favorito")
@@ -61,9 +61,9 @@ class PostulanteController {
         return ResponseEntity(mapOf("cvPath" to cvPath), HttpStatus.OK)
     }
 
-    @PostMapping("/cvViewed")
-    fun marcarCvComoVisto(@RequestBody postulacionNotif : AvisoPostulanteDTO) : ResponseEntity<String> {
-        postulanteService.notificarCvVisto(postulacionNotif)
+    @PostMapping("/respuestaCV")
+    fun notificarAccionOfertante(@RequestBody avisoPostulacion : AvisoPostulanteDTO) : ResponseEntity<String> {
+        postulanteService.notificarAccionEnCv(avisoPostulacion)
         return ResponseEntity("Postulante notificado exitosamente", HttpStatus.OK)
     }
 

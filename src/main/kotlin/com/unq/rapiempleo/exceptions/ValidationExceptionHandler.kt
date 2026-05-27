@@ -10,7 +10,7 @@ class ValidationExceptionHandler {
 
     @ExceptionHandler(InvalidEmailException::class)
     fun handleInvalidEmailException(exc: InvalidEmailException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to "El email ingresado no es correcto"))
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
 
     @ExceptionHandler(OfertanteNotFoundException::class)
@@ -20,7 +20,7 @@ class ValidationExceptionHandler {
 
     @ExceptionHandler(InvalidPasswordException::class)
     fun handleInvalidPasswordException(exc : InvalidPasswordException) : ResponseEntity<Map<String, String>> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to "Contraseña incorrecta"))
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
 
     @ExceptionHandler(OfferNotFoundException::class)
@@ -78,6 +78,16 @@ class ValidationExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
 
+    @ExceptionHandler(DuplicatedEmailException::class)
+    fun handleDuplicatedEmailException(exc: DuplicatedEmailException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(InvalidCompanyDataException::class)
+    fun handleInvalidCompanyDataException(exc: InvalidCompanyDataException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
+    
     @ExceptionHandler(PostulacionEstadoNotFoundException::class)
     fun handlePostulacionEstadoNotFoundException(exc: PostulacionEstadoNotFoundException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))

@@ -1,4 +1,4 @@
 package com.unq.rapiempleo.exceptions
 
-class InvalidPasswordException : RuntimeException() {
+class InvalidPasswordException : RuntimeException("Contraseña incorrecta") {
 }

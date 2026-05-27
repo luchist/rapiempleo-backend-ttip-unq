@@ -5,11 +5,9 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 
 @Embeddable
-class PostulacionCv (
-    val id_postulante : Long,
-    val cvPathPostulacion : String,
-    val id_oferta : Long,
+class NotificationEntry (
     @Enumerated(EnumType.STRING)
-    var estadoCv : EstadoCvPostulado,
-) {
+    var typeNotif : EstadoCvPostulado,
+    var titleNotif : String
+){
 }
