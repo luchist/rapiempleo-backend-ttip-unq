@@ -87,4 +87,24 @@ class ValidationExceptionHandler {
     fun handleInvalidCompanyDataException(exc: InvalidCompanyDataException) : ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
+    
+    @ExceptionHandler(PostulacionEstadoNotFoundException::class)
+    fun handlePostulacionEstadoNotFoundException(exc: PostulacionEstadoNotFoundException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(AccessDeniedToPostulacionException::class)
+    fun handleAccessDeniedToPostulacionException(exc: AccessDeniedToPostulacionException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(UnauthenticatedException::class)
+    fun handleUnauthenticatedException(exc: UnauthenticatedException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(EstadoSinCambiosException::class)
+    fun handleEstadoSinCambiosException(exc: EstadoSinCambiosException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.OK).body(mapOf("message" to exc.message!!))
+    }
 }

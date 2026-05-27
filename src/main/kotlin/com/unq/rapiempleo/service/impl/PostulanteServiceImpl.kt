@@ -5,12 +5,16 @@ import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.AccessDeniedToPostulacionException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
 import com.unq.rapiempleo.exceptions.DuplicatedEmailException
+import com.unq.rapiempleo.exceptions.EstadoSinCambiosException
+import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
+import com.unq.rapiempleo.exceptions.PostulacionEstadoNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteAlreadyPostedOffer
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
@@ -28,6 +32,7 @@ import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.service.auxiliar.PostulationEvent
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -143,7 +148,6 @@ class PostulanteServiceImpl (
             throw AccessDeniedToFileException()
         }
 
-
         if (postulante.cvEntries.none { it.cvPath == cvPath }) {
             throw CvNotFoundException()
         }
@@ -193,5 +197,34 @@ class PostulanteServiceImpl (
         return postulacionesEstado.map {
             PostulacionBoardItemDTO.desdeModelo(it)
         }
+    }
+
+    override fun updateEstadoPostulacion(
+        idPostulante: Long,
+        idPostulacionEstado: Long,
+        nuevoEstado: EstadoPostulacion
+    ) {
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        val postulante = postulanteRepository.findByEmail(email)
+            ?: throw PostulanteNotFoundException()
+
+        if (postulante.id_postulante != idPostulante) {
+            throw AccessDeniedToPostulacionException()
+        }
+
+        val postulacionEstado = postulacionEstadoRepository.findById(idPostulacionEstado)
+            .orElseThrow { PostulacionEstadoNotFoundException() }
+
+        if (postulacionEstado.postulante.id_postulante != postulante.id_postulante) {
+            throw AccessDeniedToPostulacionException()
+        }
+
+        if (postulacionEstado.estado == nuevoEstado)
+            throw EstadoSinCambiosException()
+
+        postulacionEstado.estado = nuevoEstado
+        postulacionEstadoRepository.save(postulacionEstado)
     }
 }

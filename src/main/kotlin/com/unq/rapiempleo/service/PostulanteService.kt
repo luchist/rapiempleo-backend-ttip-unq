@@ -4,6 +4,7 @@ import com.unq.rapiempleo.dto.AvisoPostulanteDTO
 import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.model.EstadoPostulacion
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,4 +19,5 @@ interface PostulanteService {
     fun getBoard(idPostulante: Long) : List<PostulacionBoardItemDTO>
     fun eliminarNotificacion (idPostulante : Long, idNotificacion: Long)
     fun notificarAccionEnCv(avisoPostulacion: AvisoPostulanteDTO)
+    fun updateEstadoPostulacion(idPostulante: Long, idPostulacionEstado: Long, nuevoEstado: EstadoPostulacion)
 }
