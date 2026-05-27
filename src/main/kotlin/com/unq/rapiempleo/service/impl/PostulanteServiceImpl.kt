@@ -14,7 +14,9 @@ import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteAlreadyPostedOffer
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
+import com.unq.rapiempleo.model.EstadoCvPostulado
 import com.unq.rapiempleo.model.EstadoPostulacion
+import com.unq.rapiempleo.model.NotificationEntry
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.model.PostulacionCv
 import com.unq.rapiempleo.model.PostulacionEstado
@@ -63,7 +65,7 @@ class PostulanteServiceImpl (
 
         ofertaOpt.postulantes.add(postulanteop)
         ofertaOpt.cvPostulantes.add(
-            PostulacionCv(postulanteop.id_postulante!!,cvAEnviar.cvPath, ofertaOpt.id_oferta!!))
+            PostulacionCv(postulanteop.id_postulante!!,cvAEnviar.cvPath, ofertaOpt.id_oferta!!, EstadoCvPostulado.ESPERA))
         postulanteop.postulaciones.add(ofertaOpt)
 
         val postulacionEstado = PostulacionEstado(postulante = postulanteop, oferta = ofertaOpt, estado = EstadoPostulacion.Aplicado)
@@ -154,21 +156,6 @@ class PostulanteServiceImpl (
         return idPostulante.toLong()
     }
 
-    override fun notificarCvVisto(idsNotificacion: AvisoPostulanteDTO) {
-        val ofertaPostulada = ofertaRepository.findById(idsNotificacion.id_oferta)
-            .orElseThrow { OfferNotFoundException() }
-        val postulanteANotificar = postulanteRepository.findById(idsNotificacion.id_postulante)
-            .orElseThrow { PostulanteNotFoundException() }
-        val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -> postulacion.id_postulante == idsNotificacion.id_postulante}
-
-        if (!postulacion!!.cvVisto) {
-            postulacion.cvVisto = true
-            postulanteANotificar.notificacionesCv.add(ofertaPostulada.titulo)
-            ofertaRepository.save(ofertaPostulada)
-            postulanteRepository.save(postulanteANotificar)
-        }
-
-    }
 
     override fun eliminarNotificacion(idPostulante: Long, idNotificacion: Long) {
         val userToModify = postulanteRepository.findById(idPostulante).orElseThrow { throw OfertanteNotFoundException() }
@@ -176,7 +163,27 @@ class PostulanteServiceImpl (
 
         postulanteRepository.save(userToModify)
     }
-       
+
+    override fun notificarAccionEnCv(avisoPostulacion: AvisoPostulanteDTO) {
+        val ofertaPostulada = ofertaRepository.findById(avisoPostulacion.id_oferta)
+            .orElseThrow { OfferNotFoundException() }
+        val postulanteANotificar = postulanteRepository.findById(avisoPostulacion.id_postulante)
+            .orElseThrow { PostulanteNotFoundException() }
+        val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -> postulacion.id_postulante == avisoPostulacion.id_postulante}
+
+        if (postulacion!!.estadoCv == EstadoCvPostulado.ESPERA) {
+            postulacion.estadoCv = EstadoCvPostulado.VISTO
+            postulanteANotificar.notificacionesCv.add(NotificationEntry(avisoPostulacion.tipo_aviso,ofertaPostulada.titulo))
+            ofertaRepository.save(ofertaPostulada)
+            postulanteRepository.save(postulanteANotificar)
+        } else if (avisoPostulacion.tipo_aviso != EstadoCvPostulado.VISTO) {
+            postulacion.estadoCv = avisoPostulacion.tipo_aviso
+            postulanteANotificar.notificacionesCv.add(NotificationEntry(avisoPostulacion.tipo_aviso,ofertaPostulada.titulo))
+            ofertaRepository.save(ofertaPostulada)
+            postulanteRepository.save(postulanteANotificar)
+        }
+    }
+
     override fun getBoard(idPostulante: Long) : List<PostulacionBoardItemDTO> {
         val postulante = postulanteRepository.findById(idPostulante)
             .orElseThrow { PostulanteNotFoundException() }

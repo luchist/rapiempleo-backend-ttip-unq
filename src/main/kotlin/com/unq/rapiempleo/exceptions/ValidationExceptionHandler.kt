@@ -10,7 +10,7 @@ class ValidationExceptionHandler {
 
     @ExceptionHandler(InvalidEmailException::class)
     fun handleInvalidEmailException(exc: InvalidEmailException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to "El email ingresado no es correcto"))
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
 
     @ExceptionHandler(OfertanteNotFoundException::class)
@@ -20,7 +20,7 @@ class ValidationExceptionHandler {
 
     @ExceptionHandler(InvalidPasswordException::class)
     fun handleInvalidPasswordException(exc : InvalidPasswordException) : ResponseEntity<Map<String, String>> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to "Contraseña incorrecta"))
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
 
     @ExceptionHandler(OfferNotFoundException::class)

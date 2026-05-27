@@ -63,9 +63,9 @@ class PostulanteController {
         return ResponseEntity(mapOf("cvPath" to cvPath), HttpStatus.OK)
     }
 
-    @PostMapping("/cvViewed")
-    fun marcarCvComoVisto(@RequestBody postulacionNotif : AvisoPostulanteDTO) : ResponseEntity<String> {
-        postulanteService.notificarCvVisto(postulacionNotif)
+    @PostMapping("/respuestaCV")
+    fun notificarAccionOfertante(@RequestBody avisoPostulacion : AvisoPostulanteDTO) : ResponseEntity<String> {
+        postulanteService.notificarAccionEnCv(avisoPostulacion)
         return ResponseEntity("Postulante notificado exitosamente", HttpStatus.OK)
     }
 
