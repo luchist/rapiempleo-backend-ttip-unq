@@ -79,6 +79,10 @@ class FileController(
             ?: throw AccessDeniedToFileException()
 
         // Path traversal
+        val TIPOS_VALIDOS = setOf("postulante", "ofertante")
+        if (tipo !in TIPOS_VALIDOS)
+            throw AccessDeniedToFileException()
+
         val dirUsuario = Paths.get(fotosDir, tipo, idUsuario.toString()).normalize()
         val archivoPath = dirUsuario.resolve(filename).normalize()
 
