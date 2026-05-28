@@ -26,6 +26,8 @@ class Postulante (
 
     var cvFavorito: String? = null
 
+    var fotoPerfil: String? = null
+
     @ManyToMany
     var postulaciones : MutableList<Oferta> = mutableListOf()
 

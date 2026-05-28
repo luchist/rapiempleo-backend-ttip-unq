@@ -10,7 +10,8 @@ class OfertanteDTO (
     var cantidadNotifacion: Int,
     var nuevaNotifcacion : Boolean,
     var avisosPostulacion : List<String>,
-    var ofertasCreadas : List<OfertaCreadaDTO>
+    var ofertasCreadas : List<OfertaCreadaDTO>,
+    var fotoPerfil : String?
 ) {
     companion object {
         fun desdeModelo (ofertante : Ofertante) : OfertanteDTO {
@@ -21,7 +22,8 @@ class OfertanteDTO (
                 cantidadNotifacion = ofertante.avisosPostulacion.size,
                 nuevaNotifcacion = ofertante.nuevaNotifcacion,
                 avisosPostulacion = ofertante.avisosPostulacion,
-                ofertasCreadas = ofertante.ofertasCreadas.map { oferta -> OfertaCreadaDTO.desdeModelo(oferta) }
+                ofertasCreadas = ofertante.ofertasCreadas.map { oferta -> OfertaCreadaDTO.desdeModelo(oferta) },
+                fotoPerfil = ofertante.fotoPerfil
             )
             return ofertaCreadaDTOres
         }
