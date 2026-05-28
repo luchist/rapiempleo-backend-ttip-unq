@@ -2,12 +2,15 @@ package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.OfertanteDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
+import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.service.ImageStorageService
 import com.unq.rapiempleo.service.OfertanteService
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -46,6 +49,12 @@ class OfertanteController {
         @PathVariable idOfertante: Long,
         @RequestParam("file") archivo: MultipartFile
     ): ResponseEntity<Map<String, String>> {
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        if (ofertanteService.getIdPorEmail(email) != idOfertante)
+            throw AccessDeniedToFileException()
+
         val fotoPath = imageStorageService.guardarImagenPerfilOfertante(idOfertante, archivo)
         ofertanteService.actualizarImagenPerfil(idOfertante, fotoPath)
         return ResponseEntity(mapOf("fotoPath" to fotoPath), HttpStatus.OK)

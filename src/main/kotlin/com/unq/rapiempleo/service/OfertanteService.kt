@@ -10,4 +10,5 @@ interface OfertanteService {
     fun registroOfertante (ofertanteRegistro : OfertanteRegistryDTO)
     fun eliminarNotificacion (idOfertante : Long, idNotificacion: Long)
     fun actualizarImagenPerfil(idOfertante: Long, fotoPath: String)
+    fun getIdPorEmail(email: String): Long
 }

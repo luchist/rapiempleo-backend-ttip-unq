@@ -8,10 +8,13 @@ import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.service.CvStorageService
 import com.unq.rapiempleo.service.ImageStorageService
 import com.unq.rapiempleo.service.PostulanteService
+import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
@@ -69,6 +72,12 @@ class PostulanteController {
         @PathVariable idPostulante: Long,
         @RequestParam("file") archivo: MultipartFile
     ): ResponseEntity<Map<String, String>> {
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        if (postulanteService.getIdPorEmail(email) != idPostulante)
+            throw AccessDeniedToFileException()
+
         val imgPath = imageStorageService.guardarImagenPerfilPostulante(idPostulante, archivo)
         postulanteService.actualizarImagenPerfil(idPostulante, imgPath)
         return ResponseEntity(mapOf("imgPath" to imgPath), HttpStatus.OK)

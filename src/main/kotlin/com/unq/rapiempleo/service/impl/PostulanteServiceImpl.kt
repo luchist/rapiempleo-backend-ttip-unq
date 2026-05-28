@@ -191,6 +191,12 @@ class PostulanteServiceImpl (
         postulanteRepository.save(postulante)
     }
 
+    override fun getIdPorEmail(email: String): Long {
+        val postulante = postulanteRepository.findByEmail(email)
+            ?: throw PostulanteNotFoundException()
+        return postulante.id_postulante!!
+    }
+
     override fun updateEstadoPostulacion(
         idPostulante: Long,
         idPostulacionEstado: Long,

@@ -21,4 +21,5 @@ interface PostulanteService {
     fun eliminarNotificacion (idPostulante : Long, idNotificacion: Long)
     fun updateEstadoPostulacion(idPostulante: Long, idPostulacionEstado: Long, nuevoEstado: EstadoPostulacion)
     fun actualizarImagenPerfil(idPostulante: Long, imagePath: String)
+    fun getIdPorEmail(email: String): Long
 }

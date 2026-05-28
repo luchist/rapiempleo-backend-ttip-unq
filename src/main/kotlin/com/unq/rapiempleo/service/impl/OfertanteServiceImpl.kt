@@ -42,6 +42,12 @@ class OfertanteServiceImpl (
         ofertanteRepository.save(ofertante)
     }
 
+    override fun getIdPorEmail(email: String): Long {
+        val ofertante = ofertanteRepository.findByEmail(email)
+            ?: throw OfertanteNotFoundException()
+        return ofertante.id_ofertante!!
+    }
+
     override fun eliminarNotificacion(idOfertante: Long, idNotificacion: Long) {
         val userToModify = ofertanteRepository.findById(idOfertante).orElseThrow { throw OfertanteNotFoundException() }
         userToModify!!.eliminarNotificacionEn(idNotificacion.toInt())
