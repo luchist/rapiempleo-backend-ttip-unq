@@ -184,8 +184,15 @@ class PostulanteServiceImpl (
     }
 
     override fun actualizarImagenPerfil(idPostulante: Long, imagePath: String) {
-        val postulante = postulanteRepository.findById(idPostulante)
-            .orElseThrow { PostulanteNotFoundException() }
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        val postulante = postulanteRepository.findByEmail(email)
+            ?: throw PostulanteNotFoundException()
+
+        if (postulante.id_postulante != idPostulante) {
+            throw AccessDeniedToFileException()
+        }
 
         postulante.fotoPerfil = imagePath
         postulanteRepository.save(postulante)

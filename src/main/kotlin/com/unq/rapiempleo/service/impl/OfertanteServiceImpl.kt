@@ -3,11 +3,14 @@ package com.unq.rapiempleo.service.impl
 
 import com.unq.rapiempleo.dto.OfertanteDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
+import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
+import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.model.Ofertante
 import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.service.OfertanteService
 import jakarta.transaction.Transactional
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -36,8 +39,16 @@ class OfertanteServiceImpl (
 
 
     override fun actualizarImagenPerfil(idOfertante: Long, fotoPath: String) {
-        val ofertante = ofertanteRepository.findById(idOfertante)
-            .orElseThrow { OfertanteNotFoundException() }
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        val ofertante = ofertanteRepository.findByEmail(email)
+            ?: throw OfertanteNotFoundException()
+
+        if (ofertante.id_ofertante != idOfertante) {
+            throw AccessDeniedToFileException()
+        }
+
         ofertante.fotoPerfil = fotoPath
         ofertanteRepository.save(ofertante)
     }
