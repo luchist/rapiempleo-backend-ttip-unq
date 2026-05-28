@@ -6,6 +6,7 @@ import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.service.CvStorageService
+import com.unq.rapiempleo.service.ImageStorageService
 import com.unq.rapiempleo.service.PostulanteService
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +24,8 @@ class PostulanteController {
     private lateinit var postulanteService: PostulanteService
     @Autowired
     private lateinit var cvStorageService: CvStorageService
+    @Autowired
+    private lateinit var imageStorageService: ImageStorageService
 
     @PostMapping("/{idPostulante}/{idOferta}")
     fun postularseA (@PathVariable idOferta : Long, @PathVariable idPostulante : Long) :ResponseEntity<String>{
@@ -59,6 +62,16 @@ class PostulanteController {
         val cvPath = cvStorageService.guardarCv(idPostulante, archivo)
         postulanteService.agregarCv(idPostulante, cvPath)
         return ResponseEntity(mapOf("cvPath" to cvPath), HttpStatus.OK)
+    }
+
+    @PostMapping("/{idPostulante}/foto")
+    fun subirImagenPerfil(
+        @PathVariable idPostulante: Long,
+        @RequestParam("file") archivo: MultipartFile
+    ): ResponseEntity<Map<String, String>> {
+        val imgPath = imageStorageService.guardarImagenPerfilPostulante(idPostulante, archivo)
+        postulanteService.actualizarImagenPerfil(idPostulante, imgPath)
+        return ResponseEntity(mapOf("imgPath" to imgPath), HttpStatus.OK)
     }
 
     @PostMapping("/cvViewed")

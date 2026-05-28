@@ -20,4 +20,5 @@ interface PostulanteService {
     fun getBoard(idPostulante: Long) : List<PostulacionBoardItemDTO>
     fun eliminarNotificacion (idPostulante : Long, idNotificacion: Long)
     fun updateEstadoPostulacion(idPostulante: Long, idPostulacionEstado: Long, nuevoEstado: EstadoPostulacion)
+    fun actualizarImagenPerfil(idPostulante: Long, imagePath: String)
 }

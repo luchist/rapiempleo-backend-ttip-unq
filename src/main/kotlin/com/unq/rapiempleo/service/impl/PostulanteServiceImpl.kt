@@ -183,6 +183,14 @@ class PostulanteServiceImpl (
         }
     }
 
+    override fun actualizarImagenPerfil(idPostulante: Long, imagePath: String) {
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
+
+        postulante.fotoPerfil = imagePath
+        postulanteRepository.save(postulante)
+    }
+
     override fun updateEstadoPostulacion(
         idPostulante: Long,
         idPostulacionEstado: Long,
