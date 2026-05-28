@@ -35,6 +35,13 @@ class OfertanteServiceImpl (
     }
 
 
+    override fun actualizarImagenPerfil(idOfertante: Long, fotoPath: String) {
+        val ofertante = ofertanteRepository.findById(idOfertante)
+            .orElseThrow { OfertanteNotFoundException() }
+        ofertante.fotoPerfil = fotoPath
+        ofertanteRepository.save(ofertante)
+    }
+
     override fun eliminarNotificacion(idOfertante: Long, idNotificacion: Long) {
         val userToModify = ofertanteRepository.findById(idOfertante).orElseThrow { throw OfertanteNotFoundException() }
         userToModify!!.eliminarNotificacionEn(idNotificacion.toInt())
