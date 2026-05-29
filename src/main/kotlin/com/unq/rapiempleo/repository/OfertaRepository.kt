@@ -33,4 +33,15 @@ interface OfertaRepository : JpaRepository<Oferta, Long>{
         @Param("modalidad") modalidad: Modalidad?,
         @Param("ubicacion") ubicacion: String?
     ): List<Oferta>
+
+    @Query("""
+    SELECT CASE WHEN COUNT(o) > 0 THEN true ELSE false END
+    FROM Oferta o JOIN o.cvPostulantes cv
+    WHERE o.ofertante.id_ofertante = :idOfertante
+    AND cv.id_postulante = :idPostulante
+    """)
+    fun existePostulanteEnOfertasDeOfertante(
+        @Param("idOfertante") idOfertante: Long,
+        @Param("idPostulante") idPostulante: Long
+    ): Boolean
 }
