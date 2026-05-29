@@ -2,6 +2,7 @@ package com.unq.rapiempleo.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -28,6 +29,11 @@ class SecurityConfig (
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it.requestMatchers("/login", "/ofertante/registrar", "/postulante/registrar", "/verificarEmpresa").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/postulante/*/cv").hasRole("POSTULANTE")
+                    .requestMatchers(HttpMethod.POST, "/postulante/*/foto").hasRole("POSTULANTE")
+                    .requestMatchers(HttpMethod.PATCH, "/postulante/*/cv/favorito").hasRole("POSTULANTE")
+                    .requestMatchers(HttpMethod.POST, "/ofertante/*/foto").hasRole("OFERTANTE")
+                    .requestMatchers("/postulante/*/board/**").hasRole("POSTULANTE")
                     .anyRequest().authenticated()
             }
             .sessionManagement {
