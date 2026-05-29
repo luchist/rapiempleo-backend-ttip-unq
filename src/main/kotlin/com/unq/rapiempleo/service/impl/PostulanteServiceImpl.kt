@@ -9,6 +9,7 @@ import com.unq.rapiempleo.exceptions.AccessDeniedToPostulacionException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
+import com.unq.rapiempleo.exceptions.DuplicatedEmailException
 import com.unq.rapiempleo.exceptions.EstadoSinCambiosException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
@@ -17,12 +18,15 @@ import com.unq.rapiempleo.exceptions.PostulacionEstadoNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteAlreadyPostedOffer
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
+import com.unq.rapiempleo.model.EstadoCvPostulado
 import com.unq.rapiempleo.model.EstadoPostulacion
+import com.unq.rapiempleo.model.NotificationEntry
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.model.PostulacionCv
 import com.unq.rapiempleo.model.PostulacionEstado
 import com.unq.rapiempleo.model.Postulante
 import com.unq.rapiempleo.repository.OfertaRepository
+import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.repository.PostulacionEstadoRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.PostulanteService
@@ -37,6 +41,7 @@ class PostulanteServiceImpl (
     private val ofertaRepository: OfertaRepository,
     private val postulanteRepository: PostulanteRepository,
     private val postulacionEstadoRepository: PostulacionEstadoRepository,
+    private val ofertanteRepository: OfertanteRepository,
     private val publisher : ApplicationEventPublisher,
     private val passwordEncoder: PasswordEncoder,
 ) : PostulanteService {
@@ -65,7 +70,7 @@ class PostulanteServiceImpl (
 
         ofertaOpt.postulantes.add(postulanteop)
         ofertaOpt.cvPostulantes.add(
-            PostulacionCv(postulanteop.id_postulante!!,cvAEnviar.cvPath, ofertaOpt.id_oferta!!))
+            PostulacionCv(postulanteop.id_postulante!!,cvAEnviar.cvPath, ofertaOpt.id_oferta!!, EstadoCvPostulado.ESPERA))
         postulanteop.postulaciones.add(ofertaOpt)
 
         val postulacionEstado = PostulacionEstado(postulante = postulanteop, oferta = ofertaOpt, estado = EstadoPostulacion.Aplicado)
@@ -95,9 +100,15 @@ class PostulanteServiceImpl (
     }
 
     override fun registrarUserPostulante(postulanteRegistro: PostulanteRegistryDTO) {
+        val postulantePorEmail = postulanteRepository.findByEmail(postulanteRegistro.email)
+        val ofertantePorEmail = ofertanteRepository.findByEmail(postulanteRegistro.email)
+        if (postulantePorEmail != null || ofertantePorEmail != null) {
+            throw DuplicatedEmailException()
+        }
+
         val encodedPassword = passwordEncoder.encode(postulanteRegistro.password)
         val nuevoPostulante = Postulante(
-            postulanteRegistro.nombre,
+            postulanteRegistro.name,
             "Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota",
             postulanteRegistro.email,
             encodedPassword!!
@@ -149,21 +160,6 @@ class PostulanteServiceImpl (
         return idPostulante.toLong()
     }
 
-    override fun notificarCvVisto(idsNotificacion: AvisoPostulanteDTO) {
-        val ofertaPostulada = ofertaRepository.findById(idsNotificacion.id_oferta)
-            .orElseThrow { OfferNotFoundException() }
-        val postulanteANotificar = postulanteRepository.findById(idsNotificacion.id_postulante)
-            .orElseThrow { PostulanteNotFoundException() }
-        val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -> postulacion.id_postulante == idsNotificacion.id_postulante}
-
-        if (!postulacion!!.cvVisto) {
-            postulacion.cvVisto = true
-            postulanteANotificar.notificacionesCv.add(ofertaPostulada.titulo)
-            ofertaRepository.save(ofertaPostulada)
-            postulanteRepository.save(postulanteANotificar)
-        }
-
-    }
 
     override fun eliminarNotificacion(idPostulante: Long, idNotificacion: Long) {
         val userToModify = postulanteRepository.findById(idPostulante).orElseThrow { throw OfertanteNotFoundException() }
@@ -171,7 +167,27 @@ class PostulanteServiceImpl (
 
         postulanteRepository.save(userToModify)
     }
-       
+
+    override fun notificarAccionEnCv(avisoPostulacion: AvisoPostulanteDTO) {
+        val ofertaPostulada = ofertaRepository.findById(avisoPostulacion.id_oferta)
+            .orElseThrow { OfferNotFoundException() }
+        val postulanteANotificar = postulanteRepository.findById(avisoPostulacion.id_postulante)
+            .orElseThrow { PostulanteNotFoundException() }
+        val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -> postulacion.id_postulante == avisoPostulacion.id_postulante}
+
+        if (postulacion!!.estadoCv == EstadoCvPostulado.ESPERA) {
+            postulacion.estadoCv = EstadoCvPostulado.VISTO
+            postulanteANotificar.notificacionesCv.add(NotificationEntry(avisoPostulacion.tipo_aviso,ofertaPostulada.titulo))
+            ofertaRepository.save(ofertaPostulada)
+            postulanteRepository.save(postulanteANotificar)
+        } else if (avisoPostulacion.tipo_aviso != EstadoCvPostulado.VISTO) {
+            postulacion.estadoCv = avisoPostulacion.tipo_aviso
+            postulanteANotificar.notificacionesCv.add(NotificationEntry(avisoPostulacion.tipo_aviso,ofertaPostulada.titulo))
+            ofertaRepository.save(ofertaPostulada)
+            postulanteRepository.save(postulanteANotificar)
+        }
+    }
+
     override fun getBoard(idPostulante: Long) : List<PostulacionBoardItemDTO> {
         val postulante = postulanteRepository.findById(idPostulante)
             .orElseThrow { PostulanteNotFoundException() }

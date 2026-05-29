@@ -16,9 +16,9 @@ interface PostulanteService {
     fun registrarUserPostulante(postulanteRegistro: PostulanteRegistryDTO)
     fun agregarCv(idPostulante: Long, cvPath: String)
     fun setearCvFavorito(idPostulante: Long, cvPath: String)
-    fun notificarCvVisto(idsNotificacion : AvisoPostulanteDTO)
     fun getBoard(idPostulante: Long) : List<PostulacionBoardItemDTO>
     fun eliminarNotificacion (idPostulante : Long, idNotificacion: Long)
+    fun notificarAccionEnCv(avisoPostulacion: AvisoPostulanteDTO)
     fun updateEstadoPostulacion(idPostulante: Long, idPostulacionEstado: Long, nuevoEstado: EstadoPostulacion)
     fun actualizarImagenPerfil(idPostulante: Long, imagePath: String)
     fun getIdPorEmail(email: String): Long

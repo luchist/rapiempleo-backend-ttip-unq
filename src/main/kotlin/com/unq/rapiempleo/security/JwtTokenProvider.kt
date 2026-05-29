@@ -17,7 +17,7 @@ class JwtTokenProvider {
 
     fun generateToken(email: String): String {
         val now = Date()
-        val expiry = Date(System.currentTimeMillis() + (1000 * 60 * 180))
+        val expiry = Date(System.currentTimeMillis() + (1000 * 60 * 120))
 
         return Jwts.builder()
             .setSubject(email)

@@ -4,10 +4,12 @@ package com.unq.rapiempleo.service.impl
 import com.unq.rapiempleo.dto.OfertanteDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.DuplicatedEmailException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.model.Ofertante
 import com.unq.rapiempleo.repository.OfertanteRepository
+import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertanteService
 import jakarta.transaction.Transactional
 import org.springframework.security.core.context.SecurityContextHolder
@@ -18,7 +20,8 @@ import org.springframework.stereotype.Service
 @Service
 class OfertanteServiceImpl (
     private val ofertanteRepository: OfertanteRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val postulanteRepository: PostulanteRepository,
 ) : OfertanteService{
 
     @Transactional
@@ -28,10 +31,16 @@ class OfertanteServiceImpl (
     }
 
     override fun registroOfertante(ofertanteRegistro: OfertanteRegistryDTO) {
-        val encodedPassword = passwordEncoder.encode(ofertanteRegistro.password)
+        val ofertantePorEmail = ofertanteRepository.findByEmail(ofertanteRegistro.email)
+        val postulantePorEmail = postulanteRepository.findByEmail(ofertanteRegistro.email)
+        if (postulantePorEmail != null || ofertantePorEmail != null) {
+            throw DuplicatedEmailException()
+        }
 
-        val nuevoOfertante = Ofertante(ofertanteRegistro.nombre,
-            ofertanteRegistro.empresa,
+        val encodedPassword = passwordEncoder.encode(ofertanteRegistro.password)
+        val nuevoOfertante = Ofertante(
+            ofertanteRegistro.name,
+            ofertanteRegistro.company,
             ofertanteRegistro.email,
             encodedPassword!!)
         ofertanteRepository.save(nuevoOfertante)

@@ -39,9 +39,9 @@ class OfertanteController {
     }
 
     @PostMapping("/registrar")
-    fun registroOfertante(@RequestBody registroOfertante : OfertanteRegistryDTO) : ResponseEntity<String> {
+    fun registroOfertante(@RequestBody registroOfertante : OfertanteRegistryDTO) : ResponseEntity<Map<String, String>> {
         ofertanteService.registroOfertante(registroOfertante)
-        return ResponseEntity("El registro fue exitoso", HttpStatus.OK)
+        return ResponseEntity(mapOf("message" to "Su registro fue exitoso"), HttpStatus.OK)
     }
 
     @PostMapping("/{idOfertante}/foto")
