@@ -71,6 +71,6 @@ class ImageStorageServiceImpl(
 
         Files.copy(archivo.inputStream, destino, StandardCopyOption.REPLACE_EXISTING)
 
-        return "$fotosDir/$tipo/$id/$nombreArchivo"
+        return "$tipo/$id/$nombreArchivo"
     }
 }

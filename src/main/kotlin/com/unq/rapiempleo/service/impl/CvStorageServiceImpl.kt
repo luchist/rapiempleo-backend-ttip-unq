@@ -47,6 +47,6 @@ class CvStorageServiceImpl(
 
         Files.copy(archivo.inputStream, destino, StandardCopyOption.REPLACE_EXISTING)
 
-        return "$uploadDir/$idPostulante/$nombreArchivo"
+        return "$idPostulante/$nombreArchivo"
     }
 }

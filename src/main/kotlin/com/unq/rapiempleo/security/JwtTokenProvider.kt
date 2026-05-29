@@ -15,17 +15,25 @@ class JwtTokenProvider {
     private val SECRET_KEY = Keys.hmacShaKeyFor(SECRET.toByteArray())
 
 
-    fun generateToken(email: String): String {
+    fun generateToken(email: String, userId: Long, typeUser: Boolean): String {
         val now = Date()
         val expiry = Date(System.currentTimeMillis() + (1000 * 60 * 120))
 
         return Jwts.builder()
             .setSubject(email)
+            .claim("userId", userId)
+            .claim("typeUser", typeUser)
             .setIssuedAt(now)
             .setExpiration(expiry)
             .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
             .compact()
     }
+
+    fun extractUserId(token: String): Long =
+        (extractAllClaims(token)["userId"] as Number).toLong()
+
+    fun extractTypeUser(token: String): Boolean =
+        extractAllClaims(token)["typeUser"] as Boolean
 
     fun getEmail(token: String): String {
         return Jwts.parserBuilder()

@@ -20,17 +20,15 @@ class LoginServiceImpl(
 ) : LoginService {
 
     override fun loginDeUser(usuarioLoginDTO: UsuarioLoginDTO): LoginResponseDTO {
-        val token = jwtTokenProvider.generateToken(usuarioLoginDTO.email)
-
         val userPos = postulanteRepository.findByEmail(usuarioLoginDTO.email)
         if (userPos == null) {
             val userOfer = ofertanteRepository.findByEmail(usuarioLoginDTO.email) ?: throw InvalidEmailException()
             this.passWordChecking(usuarioLoginDTO.password, userOfer.password)
-
+            val token = jwtTokenProvider.generateToken(usuarioLoginDTO.email, userOfer.id_ofertante!!, false)
             return LoginResponseDTO(userOfer.id_ofertante!!, userOfer.nombreOfertante, false, token)
         } else {
             this.passWordChecking(usuarioLoginDTO.password, userPos.password)
-
+            val token = jwtTokenProvider.generateToken(usuarioLoginDTO.email, userPos.id_postulante!!, true)
             return LoginResponseDTO(userPos.id_postulante!!, userPos.nombrPostulante, true, token)
         }
     }

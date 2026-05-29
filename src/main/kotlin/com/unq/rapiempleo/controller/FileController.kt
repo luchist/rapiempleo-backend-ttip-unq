@@ -2,8 +2,7 @@ package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.FileNotFoundException
-import com.unq.rapiempleo.repository.OfertanteRepository
-import com.unq.rapiempleo.repository.PostulanteRepository
+import com.unq.rapiempleo.repository.OfertaRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
@@ -22,8 +21,7 @@ import java.nio.file.Paths
 @RestController
 @RequestMapping("/files")
 class FileController(
-    private val postulanteRepository: PostulanteRepository,
-    private val ofertanteRepository: OfertanteRepository,
+    private val ofertaRepository: OfertaRepository,
     @Value("\${app.upload.dir}") private val uploadDir: String,
     @Value("\${app.upload.fotos.dir}") private val fotosDir: String
 ) {
@@ -34,18 +32,18 @@ class FileController(
         @PathVariable filename: String
     ): ResponseEntity<Resource> {
 
-        // Validations
-        val emailDelToken = SecurityContextHolder.getContext().authentication?.principal as? String
+        val auth = SecurityContextHolder.getContext().authentication
             ?: throw AccessDeniedToFileException()
 
-        // Separation of validation for both type of users
-        val postulante = postulanteRepository.findByEmail(emailDelToken)
-        if(postulante != null) {
-            if (postulante.id_postulante != idPostulante) {
+        val userId = auth.details as Long
+        val isPostulante = auth.authorities.any { it.authority == "ROLE_POSTULANTE" }
+
+        if (isPostulante) {
+            if (userId != idPostulante)
                 throw AccessDeniedToFileException()
-            }
         } else {
-            val ofertante = ofertanteRepository.findByEmail(emailDelToken) ?: throw AccessDeniedToFileException()
+            if (!ofertaRepository.existePostulanteEnOfertasDeOfertante(userId, idPostulante))
+                throw AccessDeniedToFileException()
         }
 
         // Path traversal

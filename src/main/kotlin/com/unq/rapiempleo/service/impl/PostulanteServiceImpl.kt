@@ -156,7 +156,7 @@ class PostulanteServiceImpl (
     }
 
     private fun obtenerIdDePath(cvPath: String): Long {
-        val idPostulante = cvPath.split("/")[2]
+        val idPostulante = cvPath.split("/")[0]
         return idPostulante.toLong()
     }
 
