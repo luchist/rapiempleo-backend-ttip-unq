@@ -199,6 +199,27 @@ class PostulanteServiceImpl (
         }
     }
 
+    override fun actualizarImagenPerfil(idPostulante: Long, imagePath: String) {
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        val postulante = postulanteRepository.findByEmail(email)
+            ?: throw PostulanteNotFoundException()
+
+        if (postulante.id_postulante != idPostulante) {
+            throw AccessDeniedToFileException()
+        }
+
+        postulante.fotoPerfil = imagePath
+        postulanteRepository.save(postulante)
+    }
+
+    override fun getIdPorEmail(email: String): Long {
+        val postulante = postulanteRepository.findByEmail(email)
+            ?: throw PostulanteNotFoundException()
+        return postulante.id_postulante!!
+    }
+
     override fun updateEstadoPostulacion(
         idPostulante: Long,
         idPostulacionEstado: Long,

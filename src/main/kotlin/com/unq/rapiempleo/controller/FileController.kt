@@ -21,10 +21,11 @@ import java.nio.file.Paths
 @Transactional
 @RestController
 @RequestMapping("/files")
-class CvController(
+class FileController(
     private val postulanteRepository: PostulanteRepository,
     private val ofertanteRepository: OfertanteRepository,
-    @Value("\${app.upload.dir}") private val uploadDir: String
+    @Value("\${app.upload.dir}") private val uploadDir: String,
+    @Value("\${app.upload.fotos.dir}") private val fotosDir: String
 ) {
 
     @GetMapping("/cvs/{idPostulante}/{filename}")
@@ -47,13 +48,6 @@ class CvController(
             val ofertante = ofertanteRepository.findByEmail(emailDelToken) ?: throw AccessDeniedToFileException()
         }
 
-        //val postulante = postulanteRepository.findByEmail(emailDelToken)
-        //    ?: throw PostulanteNotFoundException()
-
-        //if (postulante.id_postulante != idPostulante) {
-        //    throw AccessDeniedToFileException()
-        //}
-
         // Path traversal
         val dirPostulante = Paths.get(uploadDir, idPostulante.toString()).normalize()
         val archivoPath = dirPostulante.resolve(filename).normalize()
@@ -70,6 +64,46 @@ class CvController(
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"${filename}\"")
             .contentType(MediaType.APPLICATION_PDF)
+            .body(recurso)
+    }
+
+    @GetMapping("/fotos/{tipo}/{idUsuario}/{filename}")
+    fun servirImagenPerfil(
+        @PathVariable tipo: String,
+        @PathVariable idUsuario: Long,
+        @PathVariable filename: String
+    ): ResponseEntity<Resource> {
+
+        // Validations
+        SecurityContextHolder.getContext().authentication?.principal as? String
+            ?: throw AccessDeniedToFileException()
+
+        // Path traversal
+        val TIPOS_VALIDOS = setOf("postulante", "ofertante")
+        if (tipo !in TIPOS_VALIDOS)
+            throw AccessDeniedToFileException()
+
+        val dirUsuario = Paths.get(fotosDir, tipo, idUsuario.toString()).normalize()
+        val archivoPath = dirUsuario.resolve(filename).normalize()
+
+        if (!archivoPath.startsWith(dirUsuario)) {
+            throw AccessDeniedToFileException()
+        }
+
+        val recurso = FileSystemResource(archivoPath)
+        if (!recurso.exists()) {
+            throw FileNotFoundException()
+        }
+
+        val contentType = when {
+            filename.endsWith(".jpg") || filename.endsWith(".jpeg") -> MediaType.IMAGE_JPEG
+            filename.endsWith(".png") -> MediaType.IMAGE_PNG
+            else -> MediaType.APPLICATION_OCTET_STREAM
+        }
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"${filename}\"")
+            .contentType(contentType)
             .body(recurso)
     }
 }

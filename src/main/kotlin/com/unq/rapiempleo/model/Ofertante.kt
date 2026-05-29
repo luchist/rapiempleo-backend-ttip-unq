@@ -21,6 +21,8 @@ class Ofertante (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_ofertante: Long? = null
 
+    var fotoPerfil: String? = null
+
     @OneToMany(mappedBy = "ofertante")
     var ofertasCreadas: MutableList<Oferta> = mutableListOf()
 

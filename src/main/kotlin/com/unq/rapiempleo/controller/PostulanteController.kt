@@ -6,11 +6,15 @@ import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.service.CvStorageService
+import com.unq.rapiempleo.service.ImageStorageService
 import com.unq.rapiempleo.service.PostulanteService
+import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
@@ -23,6 +27,8 @@ class PostulanteController {
     private lateinit var postulanteService: PostulanteService
     @Autowired
     private lateinit var cvStorageService: CvStorageService
+    @Autowired
+    private lateinit var imageStorageService: ImageStorageService
 
     @PostMapping("/{idPostulante}/{idOferta}")
     fun postularseA (@PathVariable idOferta : Long, @PathVariable idPostulante : Long) :ResponseEntity<String>{
@@ -59,6 +65,22 @@ class PostulanteController {
         val cvPath = cvStorageService.guardarCv(idPostulante, archivo)
         postulanteService.agregarCv(idPostulante, cvPath)
         return ResponseEntity(mapOf("cvPath" to cvPath), HttpStatus.OK)
+    }
+
+    @PostMapping("/{idPostulante}/foto")
+    fun subirImagenPerfil(
+        @PathVariable idPostulante: Long,
+        @RequestParam("file") archivo: MultipartFile
+    ): ResponseEntity<Map<String, String>> {
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        if (postulanteService.getIdPorEmail(email) != idPostulante)
+            throw AccessDeniedToFileException()
+
+        val imgPath = imageStorageService.guardarImagenPerfilPostulante(idPostulante, archivo)
+        postulanteService.actualizarImagenPerfil(idPostulante, imgPath)
+        return ResponseEntity(mapOf("imgPath" to imgPath), HttpStatus.OK)
     }
 
     @PostMapping("/respuestaCV")
