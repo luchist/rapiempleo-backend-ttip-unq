@@ -23,8 +23,8 @@ class Oferta (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_oferta: Long? = null
 
-    @ManyToMany
-    var postulantes : MutableList<Postulante> = mutableListOf()
+    //@ManyToMany
+    //var postulantes : MutableList<Postulante> = mutableListOf()
 
     @ManyToOne
     @JoinColumn(name = "id_ofertante")
