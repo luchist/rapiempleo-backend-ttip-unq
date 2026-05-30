@@ -68,7 +68,7 @@ class PostulanteServiceImpl (
             .find { it.cvPath == postulanteop.cvFavorito }
             ?: postulanteop.cvEntries[0]
 
-        ofertaOpt.postulantes.add(postulanteop)
+        //ofertaOpt.postulantes.add(postulanteop)
         ofertaOpt.cvPostulantes.add(
             PostulacionCv(postulanteop.id_postulante!!,cvAEnviar.cvPath, ofertaOpt.id_oferta!!, EstadoCvPostulado.ESPERA))
         postulanteop.postulaciones.add(ofertaOpt)

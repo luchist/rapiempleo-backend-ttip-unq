@@ -5,16 +5,16 @@ import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.service.SearchService
-import jakarta.transaction.Transactional
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
-
+@ActiveProfiles("test")
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SearchServiceTests {
@@ -24,7 +24,7 @@ class SearchServiceTests {
     @Autowired
     private lateinit var ofertaRepository: OfertaRepository
 
-    @BeforeAll
+    @BeforeEach
     fun setOffers(): Unit {
         val oferta1 = Oferta(
             "Ayudante de cocina", "La Farola", "Vacio", Modalidad.Presencial, "Abierto",
@@ -41,6 +41,11 @@ class SearchServiceTests {
         ofertaRepository.saveAll(listOf(oferta1, oferta2, oferta3))
     }
 
+    @AfterEach
+    fun cleanOffers() {
+        ofertaRepository.deleteAll()
+        ofertaRepository.resetIdOferta()
+    }
 
     //@Transactional
     @Test
@@ -48,7 +53,7 @@ class SearchServiceTests {
         val resultadoBusqueda = this.searchService.searchByTitle("ayudante de cocina")
         val verificacionBusqueda = resultadoBusqueda.filter { oferta -> oferta.titulo.contains("ayudante de cocina", true) }
 
-        Assertions.assertEquals(resultadoBusqueda.size, 1)
+        Assertions.assertEquals(1, resultadoBusqueda.size)
         Assertions.assertEquals(resultadoBusqueda.size, verificacionBusqueda.size)
 
         Assertions.assertEquals("La Farola", verificacionBusqueda.first().empresa)
@@ -85,8 +90,8 @@ class SearchServiceTests {
         val verificacionBusqueda = resultadoBusqAvanzada.filter { oferta -> oferta.modalidad == Modalidad.Hibrido }
         val ofertaAComprobar = resultadoBusqAvanzada.filter { oferta -> oferta.titulo.contains("traductor", true) }
 
-        Assertions.assertEquals(4, resultadoBusqAvanzada.size)
-        Assertions.assertEquals(4, verificacionBusqueda.size)
+        Assertions.assertEquals(1, resultadoBusqAvanzada.size)
+        Assertions.assertEquals(1, verificacionBusqueda.size)
         Assertions.assertEquals(1, ofertaAComprobar.size)
         Assertions.assertEquals("Traductor en Eventos", ofertaAComprobar.first().titulo)
     }
@@ -94,7 +99,7 @@ class SearchServiceTests {
     @Test
     fun busquedaAvanzadaPorUbicacion() {
         val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "", "", "Buenos Aires")
-        Assertions.assertEquals(10, resultadoBusqAvanzada.size)
+        Assertions.assertEquals(3, resultadoBusqAvanzada.size)
         Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -> oferta.titulo == "Ayudante de cocina"}.isNotEmpty())
         Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -> oferta.titulo == "Traductor de documentos"}.isNotEmpty())
         Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -> oferta.titulo == "Traductor en Eventos"}.isNotEmpty())
