@@ -149,21 +149,4 @@ class PostulanteServiceTests {
     }
 
 
-//    @Test
-//    fun postularAOferta() {
-//        postulanteService.agregarCv(1, "1//cv_spanish.pdf")
-//
-//        postulanteService.postularEnOferta(1, 1)
-//
-//        val postulantePostulado = postulanteRepository.findById(1).get()
-//        val ofertaPostulada = ofertaRepository.findById(1).get()
-//
-//        Assertions.assertEquals(1, ofertaPostulada.cvPostulantes.size)
-//        Assertions.assertEquals("1//cv_spanish.pdf", ofertaPostulada.cvPostulantes[0].cvPathPostulacion)
-//        Assertions.assertEquals(1, postulantePostulado.postulaciones.size)
-//        Assertions.assertEquals("Desarrollador Sr", postulantePostulado.postulaciones[0].titulo)
-//    }
-
-
-
 }

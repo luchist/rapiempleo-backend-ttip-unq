@@ -8,7 +8,6 @@ class OfertanteDTO (
     var nombre : String,
     var empresa: String,
     var cantidadNotifacion: Int,
-    var nuevaNotifcacion : Boolean,
     var avisosPostulacion : List<String>,
     var ofertasCreadas : List<OfertaCreadaDTO>,
     var fotoPerfil : String?
@@ -20,7 +19,6 @@ class OfertanteDTO (
                 nombre = ofertante.nombreOfertante,
                 empresa = ofertante.empresa,
                 cantidadNotifacion = ofertante.avisosPostulacion.size,
-                nuevaNotifcacion = ofertante.nuevaNotifcacion,
                 avisosPostulacion = ofertante.avisosPostulacion,
                 ofertasCreadas = ofertante.ofertasCreadas.map { oferta -> OfertaCreadaDTO.desdeModelo(oferta) },
                 fotoPerfil = ofertante.fotoPerfil
