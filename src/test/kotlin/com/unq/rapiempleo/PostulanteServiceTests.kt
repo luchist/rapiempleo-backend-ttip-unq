@@ -7,7 +7,6 @@ import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
-import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.OfertanteService
 import com.unq.rapiempleo.service.PostulanteService
 import jakarta.transaction.Transactional
@@ -30,8 +29,6 @@ class PostulanteServiceTests {
     private lateinit var postulanteService : PostulanteService
     @Autowired
     private lateinit var postulanteRepository : PostulanteRepository
-    @Autowired
-    private lateinit var ofertaService: OfertaService
     @Autowired
     private lateinit var ofertaRepository: OfertaRepository
     @Autowired
@@ -87,37 +84,37 @@ class PostulanteServiceTests {
 
     @Test
     fun agregarUnCVaPostulante() {
-        postulanteService.agregarCv(1, "uploads/cvs/1/cv_spanish.pdf")
+        postulanteService.agregarCv(1, "1/cv_spanish.pdf")
 
         val postulanteConCV = postulanteService.getPostulante(1)
         Assertions.assertEquals(1, postulanteConCV.cvPaths.size)
-        Assertions.assertEquals("uploads/cvs/1/cv_spanish.pdf", postulanteConCV.cvPaths[0])
+        Assertions.assertEquals("1/cv_spanish.pdf", postulanteConCV.cvPaths[0])
     }
 
     @Test
     fun agregarUnUnicoCVLoSeteaComoFavorito() {
-        postulanteService.agregarCv(1, "uploads/cvs/1//cv_spanish.pdf")
+        postulanteService.agregarCv(1, "1//cv_spanish.pdf")
 
         val postulanteConCV = postulanteService.getPostulante(1)
         Assertions.assertEquals(1, postulanteConCV.cvPaths.size)
-        Assertions.assertEquals("uploads/cvs/1//cv_spanish.pdf", postulanteConCV.cvFavorito)
+        Assertions.assertEquals("1//cv_spanish.pdf", postulanteConCV.cvFavorito)
     }
 
     @Test
     fun setearSegundoCvComoFavorito() {
-        postulanteService.agregarCv(1, "uploads/cvs/1//cv_spanish.pdf")
-        postulanteService.agregarCv(1, "uploads/cvs/1//cv_english.pdf")
+        postulanteService.agregarCv(1, "1//cv_spanish.pdf")
+        postulanteService.agregarCv(1, "1//cv_english.pdf")
 
-        postulanteService.setearCvFavorito(1, "uploads/cvs/1//cv_english.pdf")
+        postulanteService.setearCvFavorito(1, "1//cv_english.pdf")
 
         val postulante = postulanteService.getPostulante(1)
-        Assertions.assertEquals("uploads/cvs/1//cv_english.pdf", postulante.cvFavorito)
+        Assertions.assertEquals("1//cv_english.pdf", postulante.cvFavorito)
     }
 
     /*
     @Test
     fun postularAOferta() {
-        postulanteService.agregarCv(1, "uploads/cvs/1//cv_spanish.pdf")
+        postulanteService.agregarCv(1, "1//cv_spanish.pdf")
 
         this.postulanteService.postularEnOferta(1, 1)
 
@@ -125,7 +122,7 @@ class PostulanteServiceTests {
         val ofertaPostulada = this.ofertaRepository.findById(1).get()
 
         Assertions.assertEquals(1, ofertaPostulada.cvPostulantes.size)
-        Assertions.assertEquals("uploads/cvs/1//cv_spanish.pdf", ofertaPostulada.cvPostulantes[0].cvPathPostulacion)
+        Assertions.assertEquals("1//cv_spanish.pdf", ofertaPostulada.cvPostulantes[0].cvPathPostulacion)
         Assertions.assertEquals(1, postulantePostulado.postulaciones.size)
         Assertions.assertEquals("Desarrollador Sr", postulantePostulado.postulaciones[0].titulo)
     }
