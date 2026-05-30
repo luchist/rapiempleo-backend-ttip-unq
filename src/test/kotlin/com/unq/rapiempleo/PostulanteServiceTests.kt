@@ -2,6 +2,7 @@ package com.unq.rapiempleo
 
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.exceptions.CvNotFoundException
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.repository.OfertaRepository
@@ -15,8 +16,12 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 
 @Transactional
@@ -50,6 +55,12 @@ class PostulanteServiceTests {
             Modalidad.Hibrido, "Abierto", 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true)
         oferta.ofertante = ofertante
         ofertaRepository.save(oferta)
+
+        //mock de autenticación postulante
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            "mock05@gmail.com", null,
+            listOf(SimpleGrantedAuthority("ROLE_POSTULANTE")
+        ))
     }
 
     @AfterEach
@@ -111,22 +122,47 @@ class PostulanteServiceTests {
         Assertions.assertEquals("1//cv_english.pdf", postulante.cvFavorito)
     }
 
-    /*
     @Test
-    fun postularAOferta() {
+    fun setearCvFavoritoNoAgregadoLanzaExcepcion() {
         postulanteService.agregarCv(1, "1//cv_spanish.pdf")
 
-        this.postulanteService.postularEnOferta(1, 1)
-
-        val postulantePostulado = this.postulanteRepository.findById(1).get()
-        val ofertaPostulada = this.ofertaRepository.findById(1).get()
-
-        Assertions.assertEquals(1, ofertaPostulada.cvPostulantes.size)
-        Assertions.assertEquals("1//cv_spanish.pdf", ofertaPostulada.cvPostulantes[0].cvPathPostulacion)
-        Assertions.assertEquals(1, postulantePostulado.postulaciones.size)
-        Assertions.assertEquals("Desarrollador Sr", postulantePostulado.postulaciones[0].titulo)
+        assertThrows<CvNotFoundException> {
+            postulanteService.setearCvFavorito(1, "1//cv_english.pdf")
+        }
     }
-    */
+
+    @Test
+    fun subirImagenDePerfilPostulante() {
+        postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
+
+        val postulante = postulanteService.getPostulante(1)
+        Assertions.assertEquals("1//img_profile.jpg", postulante.fotoPerfil)
+    }
+
+    @Test
+    fun subirSegundaImagenDePerfilPostulanteReemplazaLaAnterior() {
+        postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
+        postulanteService.actualizarImagenPerfil(1, "1//img_profile2.jpg")
+
+        val postulante = postulanteService.getPostulante(1)
+        Assertions.assertEquals("1//img_profile2.jpg", postulante.fotoPerfil)
+    }
+
+
+//    @Test
+//    fun postularAOferta() {
+//        postulanteService.agregarCv(1, "1//cv_spanish.pdf")
+//
+//        postulanteService.postularEnOferta(1, 1)
+//
+//        val postulantePostulado = postulanteRepository.findById(1).get()
+//        val ofertaPostulada = ofertaRepository.findById(1).get()
+//
+//        Assertions.assertEquals(1, ofertaPostulada.cvPostulantes.size)
+//        Assertions.assertEquals("1//cv_spanish.pdf", ofertaPostulada.cvPostulantes[0].cvPathPostulacion)
+//        Assertions.assertEquals(1, postulantePostulado.postulaciones.size)
+//        Assertions.assertEquals("Desarrollador Sr", postulantePostulado.postulaciones[0].titulo)
+//    }
 
 
 
