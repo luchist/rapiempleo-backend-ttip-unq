@@ -111,23 +111,5 @@ class PostulanteServiceTests {
         Assertions.assertEquals("1//cv_english.pdf", postulante.cvFavorito)
     }
 
-    /*
-    @Test
-    fun postularAOferta() {
-        postulanteService.agregarCv(1, "1//cv_spanish.pdf")
-
-        this.postulanteService.postularEnOferta(1, 1)
-
-        val postulantePostulado = this.postulanteRepository.findById(1).get()
-        val ofertaPostulada = this.ofertaRepository.findById(1).get()
-
-        Assertions.assertEquals(1, ofertaPostulada.cvPostulantes.size)
-        Assertions.assertEquals("1//cv_spanish.pdf", ofertaPostulada.cvPostulantes[0].cvPathPostulacion)
-        Assertions.assertEquals(1, postulantePostulado.postulaciones.size)
-        Assertions.assertEquals("Desarrollador Sr", postulantePostulado.postulaciones[0].titulo)
-    }
-    */
-
-
 
 }
