@@ -1,0 +1,45 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+jobs:
+
+  build:
+
+    name: Build
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5.2.0
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+          cache-dependency-path: |
+            rapiempleo-backend-ttip-unq/gradle/wrapper/gradle-wrapper.properties
+            rapiempleo-backend-ttip-unq/build.gradle.kts
+
+      - name: Grant execute permission for gradlew
+        working-directory: ./rapiempleo-backend-ttip-unq
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        working-directory: ./rapiempleo-backend-ttip-unq
+        run: ./gradlew build --no-daemon --parallel --console=plain --build-cache
