@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5.2.0
@@ -33,8 +33,8 @@ jobs:
           java-version: '17'
           cache: 'gradle'
           cache-dependency-path: |
-            rapiempleo-backend-ttip-unq/gradle/wrapper/gradle-wrapper.properties
-            rapiempleo-backend-ttip-unq/build.gradle.kts
+            gradle/wrapper/gradle-wrapper.properties
+            build.gradle.kts
 
       - name: Grant execute permission for gradlew
         working-directory: ./rapiempleo-backend-ttip-unq
