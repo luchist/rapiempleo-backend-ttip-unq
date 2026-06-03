@@ -1,0 +1,11 @@
+complexity:
+  LongMethod:
+    allowedLines : 60
+
+style:
+  MagicNumber:
+    active: false # too noisy for JPA entities and test data setup
+
+naming:
+  FunctionNaming:
+    active: false # JUnit test methods use backtick names with spaces
