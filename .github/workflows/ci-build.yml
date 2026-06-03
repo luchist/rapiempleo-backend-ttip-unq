@@ -74,3 +74,11 @@ jobs:
 
       - name: Run tests
         run: gradle test --no-daemon --console=plain
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-report
+          path: build/reports/jacoco/test/html/
+          retention-days: 7
