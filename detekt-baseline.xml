@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ConstructorParameterNaming:AvisoPostulanteDTO.kt:AvisoPostulanteDTO$var id_oferta : Long</ID>
+    <ID>ConstructorParameterNaming:AvisoPostulanteDTO.kt:AvisoPostulanteDTO$var id_postulante : Long</ID>
+    <ID>ConstructorParameterNaming:AvisoPostulanteDTO.kt:AvisoPostulanteDTO$var tipo_aviso : EstadoCvPostulado</ID>
+    <ID>ConstructorParameterNaming:PostulacionBoardItemDTO.kt:PostulacionBoardItemDTO$var id_oferta: Long</ID>
+    <ID>ConstructorParameterNaming:PostulacionBoardItemDTO.kt:PostulacionBoardItemDTO$var id_postulacion_estado: Long</ID>
+    <ID>ConstructorParameterNaming:PostulacionCv.kt:PostulacionCv$val id_oferta : Long</ID>
+    <ID>ConstructorParameterNaming:PostulacionCv.kt:PostulacionCv$val id_postulante : Long</ID>
+    <ID>EmptyClassBlock:AvisoPostulanteDTO.kt:AvisoPostulanteDTO${ }</ID>
+    <ID>EmptyClassBlock:DuplicatedEmailException.kt:DuplicatedEmailException${ }</ID>
+    <ID>EmptyClassBlock:EmpresaCheckDTO.kt:EmpresaCheckDTO${ }</ID>
+    <ID>EmptyClassBlock:InvalidCompanyDataException.kt:InvalidCompanyDataException${ }</ID>
+    <ID>EmptyClassBlock:InvalidEmailException.kt:InvalidEmailException${ }</ID>
+    <ID>EmptyClassBlock:InvalidPasswordException.kt:InvalidPasswordException${ }</ID>
+    <ID>EmptyClassBlock:NotificationEntry.kt:NotificationEntry${ }</ID>
+    <ID>EmptyClassBlock:OfertanteNotFoundException.kt:OfertanteNotFoundException${ }</ID>
+    <ID>EmptyClassBlock:OfertanteRegistryDTO.kt:OfertanteRegistryDTO${ }</ID>
+    <ID>EmptyClassBlock:OfferNotFoundException.kt:OfferNotFoundException${ }</ID>
+    <ID>EmptyClassBlock:PostulacionCv.kt:PostulacionCv${ }</ID>
+    <ID>EmptyClassBlock:PostulanteAlreadyPostedOffer.kt:PostulanteAlreadyPostedOffer${ }</ID>
+    <ID>EmptyClassBlock:PostulanteRegistryDTO.kt:PostulanteRegistryDTO${ }</ID>
+    <ID>EmptyClassBlock:UserNotAvailable.kt:UserNotAvailable${ }</ID>
+    <ID>EmptyClassBlock:UsuarioLoginDTO.kt:UsuarioLoginDTO${ }</ID>
+    <ID>EmptyDefaultConstructor:CvLimitExceededException.kt:CvLimitExceededException</ID>
+    <ID>EmptyDefaultConstructor:DuplicatedEmailException.kt:DuplicatedEmailException</ID>
+    <ID>EmptyDefaultConstructor:PostulacionEstadoNotFoundException.kt:PostulacionEstadoNotFoundException</ID>
+    <ID>EmptyDefaultConstructor:PostulanteNotFoundException.kt:PostulanteNotFoundException</ID>
+    <ID>LongMethod:DataBaseInitializer.kt:DataBaseInitializer$@Transactional @Bean fun initializeDatabase : CommandLineRunner</ID>
+    <ID>MaxLineLength:AiController.kt:AiController$"'titulo: &lt;job title&gt;, ubicacion: &lt;preferred city or country&gt;, modalidad: &lt;preferred work type, can be Local, Remoto, Hibrido&gt;' "</ID>
+    <ID>MaxLineLength:DataBaseInitializer.kt:DataBaseInitializer$Modalidad.Hibrido</ID>
+    <ID>MaxLineLength:DataBaseInitializer.kt:DataBaseInitializer$Modalidad.Presencial</ID>
+    <ID>MaxLineLength:DataBaseInitializer.kt:DataBaseInitializer$Oferta</ID>
+    <ID>MaxLineLength:DataBaseInitializer.kt:DataBaseInitializer$PostulacionEstado(oferta = ofertaEntrevistando, postulante = leon, estado = EstadoPostulacion.Entrevistando)</ID>
+    <ID>MaxLineLength:OfertaServiceImpl.kt:OfertaServiceImpl$val oferta = ofertaRepository.findById(idOferta).orElseThrow { throw NullPointerException("No existe la oferta") }</ID>
+    <ID>MaxLineLength:PostulanteController.kt:PostulanteController$fun</ID>
+    <ID>MaxLineLength:PostulanteServiceImpl.kt:PostulanteServiceImpl$"Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota"</ID>
+    <ID>MaxLineLength:PostulanteServiceImpl.kt:PostulanteServiceImpl$PostulacionCv(postulanteop.id_postulante!!,cvAEnviar.cvPath, ofertaOpt.id_oferta!!, EstadoCvPostulado.ESPERA)</ID>
+    <ID>MaxLineLength:PostulanteServiceImpl.kt:PostulanteServiceImpl$postulanteANotificar.notificacionesCv.add(NotificationEntry(avisoPostulacion.tipo_aviso,ofertaPostulada.titulo))</ID>
+    <ID>MaxLineLength:PostulanteServiceImpl.kt:PostulanteServiceImpl$val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -&gt; postulacion.id_postulante == avisoPostulacion.id_postulante}</ID>
+    <ID>MaxLineLength:PostulanteServiceImpl.kt:PostulanteServiceImpl$val postulacionEstado = PostulacionEstado(postulante = postulanteop, oferta = ofertaOpt, estado = EstadoPostulacion.Aplicado)</ID>
+    <ID>MaxLineLength:PostulanteServiceImpl.kt:PostulanteServiceImpl$val userToModify = postulanteRepository.findById(idPostulante).orElseThrow { throw OfertanteNotFoundException() }</ID>
+    <ID>MaxLineLength:PostulanteServiceTests.kt:PostulanteServiceTests$Assertions.assertEquals("Estoy buscando trabajo como desarrollador, en la ciudad de Buenos Aires. Prefiero los trabajos con modalidad remota", preferencias)</ID>
+    <ID>MaxLineLength:SearchServiceTests.kt:SearchServiceTests$Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -&gt; oferta.titulo == "Ayudante de cocina"}.isNotEmpty())</ID>
+    <ID>MaxLineLength:SearchServiceTests.kt:SearchServiceTests$Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -&gt; oferta.titulo == "Traductor de documentos"}.isNotEmpty())</ID>
+    <ID>MaxLineLength:SearchServiceTests.kt:SearchServiceTests$Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -&gt; oferta.titulo == "Traductor en Eventos"}.isNotEmpty())</ID>
+    <ID>MaxLineLength:SearchServiceTests.kt:SearchServiceTests$val verificacionBusqueda = resultadoBusqueda.filter { oferta -&gt; oferta.titulo.contains("ayudante de cocina", true) }</ID>
+    <ID>MaxLineLength:SecurityConfig.kt:SecurityConfig$it.requestMatchers("/login", "/ofertante/registrar", "/postulante/registrar", "/verificarEmpresa").permitAll()</ID>
+    <ID>MaxLineLength:ValidationExceptionHandler.kt:ValidationExceptionHandler$fun</ID>
+    <ID>MaxLineLength:ValidationExceptionHandler.kt:ValidationExceptionHandler$return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to "Su usuario no esta habilitado para postularse"))</ID>
+    <ID>MaxLineLength:ValidationExceptionHandler.kt:ValidationExceptionHandler$return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to "Sin acceso a la oferta solictada momentaneamente"))</ID>
+    <ID>NewLineAtEndOfFile:AccessDeniedToPostulacionException.kt:com.unq.rapiempleo.exceptions.AccessDeniedToPostulacionException.kt</ID>
+    <ID>NewLineAtEndOfFile:AiController.kt:com.unq.rapiempleo.controller.AiController.kt</ID>
+    <ID>NewLineAtEndOfFile:AvisoPostulanteDTO.kt:com.unq.rapiempleo.dto.AvisoPostulanteDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:CorsConfig.kt:com.unq.rapiempleo.config.CorsConfig.kt</ID>
+    <ID>NewLineAtEndOfFile:EmpresaCheckDTO.kt:com.unq.rapiempleo.dto.EmpresaCheckDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:EstadoCvPostulado.kt:com.unq.rapiempleo.model.EstadoCvPostulado.kt</ID>
+    <ID>NewLineAtEndOfFile:EstadoPostulacion.kt:com.unq.rapiempleo.model.EstadoPostulacion.kt</ID>
+    <ID>NewLineAtEndOfFile:EstadoSinCambiosException.kt:com.unq.rapiempleo.exceptions.EstadoSinCambiosException.kt</ID>
+    <ID>NewLineAtEndOfFile:FileNameNotAllowedException.kt:com.unq.rapiempleo.exceptions.FileNameNotAllowedException.kt</ID>
+    <ID>NewLineAtEndOfFile:FileNotAllowedToUploadException.kt:com.unq.rapiempleo.exceptions.FileNotAllowedToUploadException.kt</ID>
+    <ID>NewLineAtEndOfFile:FileNotFoundException.kt:com.unq.rapiempleo.exceptions.FileNotFoundException.kt</ID>
+    <ID>NewLineAtEndOfFile:InvalidCompanyDataException.kt:com.unq.rapiempleo.exceptions.InvalidCompanyDataException.kt</ID>
+    <ID>NewLineAtEndOfFile:InvalidEmailException.kt:com.unq.rapiempleo.exceptions.InvalidEmailException.kt</ID>
+    <ID>NewLineAtEndOfFile:InvalidPasswordException.kt:com.unq.rapiempleo.exceptions.InvalidPasswordException.kt</ID>
+    <ID>NewLineAtEndOfFile:JwtAuthenticationFilter.kt:com.unq.rapiempleo.security.JwtAuthenticationFilter.kt</ID>
+    <ID>NewLineAtEndOfFile:JwtTokenProvider.kt:com.unq.rapiempleo.security.JwtTokenProvider.kt</ID>
+    <ID>NewLineAtEndOfFile:LoginController.kt:com.unq.rapiempleo.controller.LoginController.kt</ID>
+    <ID>NewLineAtEndOfFile:LoginResponseDTO.kt:com.unq.rapiempleo.dto.LoginResponseDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:LoginService.kt:com.unq.rapiempleo.service.LoginService.kt</ID>
+    <ID>NewLineAtEndOfFile:LoginServiceImpl.kt:com.unq.rapiempleo.service.impl.LoginServiceImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:Modalidad.kt:com.unq.rapiempleo.model.Modalidad.kt</ID>
+    <ID>NewLineAtEndOfFile:NotificationEntry.kt:com.unq.rapiempleo.model.NotificationEntry.kt</ID>
+    <ID>NewLineAtEndOfFile:NotificationListener.kt:com.unq.rapiempleo.service.auxiliar.NotificationListener.kt</ID>
+    <ID>NewLineAtEndOfFile:Oferta.kt:com.unq.rapiempleo.model.Oferta.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertaCardDTO.kt:com.unq.rapiempleo.dto.OfertaCardDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertaController.kt:com.unq.rapiempleo.controller.OfertaController.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertaCreadaDTO.kt:com.unq.rapiempleo.dto.OfertaCreadaDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertaDTO.kt:com.unq.rapiempleo.dto.OfertaDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertaRepository.kt:com.unq.rapiempleo.repository.OfertaRepository.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertaService.kt:com.unq.rapiempleo.service.OfertaService.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertaServiceTests.kt:com.unq.rapiempleo.OfertaServiceTests.kt</ID>
+    <ID>NewLineAtEndOfFile:Ofertante.kt:com.unq.rapiempleo.model.Ofertante.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertanteController.kt:com.unq.rapiempleo.controller.OfertanteController.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertanteRegistryDTO.kt:com.unq.rapiempleo.dto.OfertanteRegistryDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertanteService.kt:com.unq.rapiempleo.service.OfertanteService.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertanteServiceImpl.kt:com.unq.rapiempleo.service.impl.OfertanteServiceImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:OfertanteServiceTests.kt:com.unq.rapiempleo.OfertanteServiceTests.kt</ID>
+    <ID>NewLineAtEndOfFile:OfferNotFoundException.kt:com.unq.rapiempleo.exceptions.OfferNotFoundException.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulacionBoardItemDTO.kt:com.unq.rapiempleo.dto.PostulacionBoardItemDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulacionCv.kt:com.unq.rapiempleo.model.PostulacionCv.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulacionEstado.kt:com.unq.rapiempleo.model.PostulacionEstado.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulacionEstadoNotFoundException.kt:com.unq.rapiempleo.exceptions.PostulacionEstadoNotFoundException.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulacionEstadoRepository.kt:com.unq.rapiempleo.repository.PostulacionEstadoRepository.kt</ID>
+    <ID>NewLineAtEndOfFile:Postulante.kt:com.unq.rapiempleo.model.Postulante.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulanteAlreadyPostedOffer.kt:com.unq.rapiempleo.exceptions.PostulanteAlreadyPostedOffer.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulanteController.kt:com.unq.rapiempleo.controller.PostulanteController.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulanteRegistryDTO.kt:com.unq.rapiempleo.dto.PostulanteRegistryDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulanteRepository.kt:com.unq.rapiempleo.repository.PostulanteRepository.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulanteService.kt:com.unq.rapiempleo.service.PostulanteService.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulanteServiceImpl.kt:com.unq.rapiempleo.service.impl.PostulanteServiceImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:PostulanteServiceTests.kt:com.unq.rapiempleo.PostulanteServiceTests.kt</ID>
+    <ID>NewLineAtEndOfFile:SearchController.kt:com.unq.rapiempleo.controller.SearchController.kt</ID>
+    <ID>NewLineAtEndOfFile:SearchService.kt:com.unq.rapiempleo.service.SearchService.kt</ID>
+    <ID>NewLineAtEndOfFile:SearchServiceImpl.kt:com.unq.rapiempleo.service.impl.SearchServiceImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:SecurityConfig.kt:com.unq.rapiempleo.security.SecurityConfig.kt</ID>
+    <ID>NewLineAtEndOfFile:TempEmpresaChecker.kt:com.unq.rapiempleo.TempEmpresaChecker.kt</ID>
+    <ID>NewLineAtEndOfFile:UserNotAvailable.kt:com.unq.rapiempleo.exceptions.UserNotAvailable.kt</ID>
+    <ID>NewLineAtEndOfFile:UsuarioLoginDTO.kt:com.unq.rapiempleo.dto.UsuarioLoginDTO.kt</ID>
+    <ID>NewLineAtEndOfFile:ValidationExceptionHandler.kt:com.unq.rapiempleo.exceptions.ValidationExceptionHandler.kt</ID>
+    <ID>NewLineAtEndOfFile:VerificationController.kt:com.unq.rapiempleo.controller.VerificationController.kt</ID>
+    <ID>ReturnCount:OfertaServiceImpl.kt:OfertaServiceImpl$private fun ofertaYaPostulada: Boolean</ID>
+    <ID>SwallowedException:JwtAuthenticationFilter.kt:JwtAuthenticationFilter$e: Exception</ID>
+    <ID>SwallowedException:JwtTokenProvider.kt:JwtTokenProvider$e: Exception</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:DataBaseInitializer.kt:DataBaseInitializer$RuntimeException()</ID>
+    <ID>ThrowsCount:CvStorageServiceImpl.kt:CvStorageServiceImpl$override fun guardarCv: String</ID>
+    <ID>ThrowsCount:FileController.kt:FileController$@GetMapping("/cvs/{idPostulante}/{filename}") fun servirCv: ResponseEntity&lt;Resource&gt;</ID>
+    <ID>ThrowsCount:FileController.kt:FileController$@GetMapping("/fotos/{tipo}/{idUsuario}/{filename}") fun servirImagenPerfil: ResponseEntity&lt;Resource&gt;</ID>
+    <ID>ThrowsCount:ImageStorageServiceImpl.kt:ImageStorageServiceImpl$private fun guardarFoto: String</ID>
+    <ID>ThrowsCount:OfertanteServiceImpl.kt:OfertanteServiceImpl$override fun actualizarImagenPerfil</ID>
+    <ID>ThrowsCount:PostulanteServiceImpl.kt:PostulanteServiceImpl$override fun actualizarImagenPerfil</ID>
+    <ID>ThrowsCount:PostulanteServiceImpl.kt:PostulanteServiceImpl$override fun postularEnOferta</ID>
+    <ID>ThrowsCount:PostulanteServiceImpl.kt:PostulanteServiceImpl$override fun updateEstadoPostulacion</ID>
+    <ID>TooGenericExceptionCaught:JwtAuthenticationFilter.kt:JwtAuthenticationFilter$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JwtTokenProvider.kt:JwtTokenProvider$e: Exception</ID>
+    <ID>TooManyFunctions:PostulanteService.kt:PostulanteService</ID>
+    <ID>TooManyFunctions:PostulanteServiceImpl.kt:PostulanteServiceImpl : PostulanteService</ID>
+    <ID>TooManyFunctions:ValidationExceptionHandler.kt:ValidationExceptionHandler</ID>
+    <ID>UnusedParameter:AiController.kt:AiController$@RequestParam(value = "message", defaultValue = "") message: String</ID>
+    <ID>UnusedParameter:ValidationExceptionHandler.kt:ValidationExceptionHandler$exc : OfertanteNotFoundException</ID>
+    <ID>UnusedParameter:ValidationExceptionHandler.kt:ValidationExceptionHandler$exc : OfferNotFoundException</ID>
+    <ID>UnusedParameter:ValidationExceptionHandler.kt:ValidationExceptionHandler$exc : UserNotAvailable</ID>
+    <ID>VariableNaming:FileController.kt:FileController$val TIPOS_VALIDOS = setOf("postulante", "ofertante")</ID>
+    <ID>VariableNaming:JwtTokenProvider.kt:JwtTokenProvider$private val SECRET: String = "BANRASRLIAPOPPARHELHAPWORAFOWPASTTESMORICAEAM"</ID>
+    <ID>VariableNaming:JwtTokenProvider.kt:JwtTokenProvider$private val SECRET_KEY = Keys.hmacShaKeyFor(SECRET.toByteArray())</ID>
+    <ID>VariableNaming:Oferta.kt:Oferta$@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id_oferta: Long? = null</ID>
+    <ID>VariableNaming:Ofertante.kt:Ofertante$@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id_ofertante: Long? = null</ID>
+    <ID>VariableNaming:PostulacionEstado.kt:PostulacionEstado$@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id_postulacion_estado: Long? = null</ID>
+    <ID>VariableNaming:Postulante.kt:Postulante$@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id_postulante: Long? = null</ID>
+    <ID>WildcardImport:Oferta.kt:import jakarta.persistence.*</ID>
+    <ID>WildcardImport:PostulanteController.kt:import org.springframework.web.bind.annotation.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

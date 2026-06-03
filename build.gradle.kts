@@ -4,6 +4,8 @@ plugins {
 	id("org.springframework.boot") version "4.0.5"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "2.2.21"
+	jacoco
+	id("dev.detekt") version "2.0.0-alpha.3"
 }
 
 group = "com.unq"
@@ -48,6 +50,16 @@ dependencyManagement {
 	}
 }
 
+// Prevent Spring from overriding Detekt's bundled Kotlin version.
+// Detekt 2.0.0-alpha.3 was compiled with Kotlin 2.3.21
+configurations.matching { it.name.startsWith("detekt") }.all {
+	resolutionStrategy.eachDependency {
+		if (requested.group == "org.jetbrains.kotlin") {
+			useVersion("2.3.21")
+		}
+	}
+}
+
 kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
@@ -60,6 +72,21 @@ allOpen {
 	annotation("jakarta.persistence.Embeddable")
 }
 
+detekt {
+	buildUponDefaultConfig = true
+	config.setFrom("$projectDir/detekt.yml")
+	baseline = file("$projectDir/detekt-baseline.xml")
+}
+
 tasks.withType<Test> {
 	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.withType<Test>())
+	reports {
+		xml.required = true
+		html.required = true
+	}
 }
