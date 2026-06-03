@@ -18,7 +18,7 @@ jobs:
 
   build:
 
-    name: Build
+    name: Build and Test
     runs-on: ubuntu-latest
 
 
@@ -39,3 +39,6 @@ jobs:
 
       - name: Build with Gradle
         run: gradle assemble --no-daemon --console=plain
+
+      - name: Run tests
+        run: gradle test --no-daemon --console=plain
