@@ -31,4 +31,10 @@ class OfertaController {
         val ofertas = ofertaService.recuperarTodasLasOfertas()
         return ResponseEntity(ofertas, HttpStatus.OK)
     }
+
+    @GetMapping("/recuperarOfertas/{idPostulante}")
+    fun obtenerOfertasConFavoritos(@PathVariable idPostulante: Long) : ResponseEntity<List<OfertaCardDTO>> {
+        val ofertas = ofertaService.recuperarTodasLasOfertasYFavoritos(idPostulante)
+        return ResponseEntity(ofertas, HttpStatus.OK)
+    }
 }

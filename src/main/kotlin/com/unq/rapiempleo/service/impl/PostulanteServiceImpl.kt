@@ -220,6 +220,22 @@ class PostulanteServiceImpl (
         return postulante.id_postulante!!
     }
 
+    override fun agregarOfertaFavorita(idPostulante: Long, idOferta: Long) {
+        val ofertaAFavoritos = ofertaRepository.findById(idOferta).orElseThrow { throw OfferNotFoundException() }
+        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw PostulanteNotFoundException() }
+
+        postulante.favoritos.add(ofertaAFavoritos)
+        postulanteRepository.save(postulante)
+    }
+
+    override fun removerOfertaFavorita(idPostulante: Long, idOferta: Long) {
+        val ofertaASacar = ofertaRepository.findById(idOferta).orElseThrow { throw OfferNotFoundException() }
+        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw PostulanteNotFoundException() }
+
+        postulante.favoritos.remove(ofertaASacar)
+        postulanteRepository.save(postulante)
+    }
+
     override fun updateEstadoPostulacion(
         idPostulante: Long,
         idPostulacionEstado: Long,

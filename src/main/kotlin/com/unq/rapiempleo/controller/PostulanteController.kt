@@ -12,6 +12,7 @@ import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -109,5 +110,17 @@ class PostulanteController {
     fun deleteNotification(@PathVariable idPostulante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
         postulanteService.eliminarNotificacion(idPostulante, idNotify)
         return ResponseEntity("Notificación eliminada exitosamente", HttpStatus.OK)
+    }
+
+    @PostMapping("/addFavorito/{idPostulante}/{idOferta}")
+    fun agregarOfertaFavorita(@PathVariable idPostulante: Long, @PathVariable idOferta: Long) : ResponseEntity<String> {
+        postulanteService.agregarOfertaFavorita(idPostulante, idOferta)
+        return ResponseEntity("Oferta favorita agregada exitosamente", HttpStatus.OK)
+    }
+
+    @PostMapping("/removeFavorito/{idPostulante}/{idOferta}")
+    fun removerOfertaFavorita(@PathVariable idPostulante: Long, @PathVariable idOferta: Long) : ResponseEntity<String> {
+        postulanteService.removerOfertaFavorita(idPostulante, idOferta)
+        return ResponseEntity("Oferta favorita removida exitosamente", HttpStatus.OK)
     }
 }

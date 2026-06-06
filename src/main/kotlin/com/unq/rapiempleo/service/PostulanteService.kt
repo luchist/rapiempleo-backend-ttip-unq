@@ -22,4 +22,6 @@ interface PostulanteService {
     fun updateEstadoPostulacion(idPostulante: Long, idPostulacionEstado: Long, nuevoEstado: EstadoPostulacion)
     fun actualizarImagenPerfil(idPostulante: Long, imagePath: String)
     fun getIdPorEmail(email: String): Long
+    fun agregarOfertaFavorita(idPostulante: Long, idOferta: Long)
+    fun removerOfertaFavorita(idPostulante: Long, idOferta: Long)
 }
