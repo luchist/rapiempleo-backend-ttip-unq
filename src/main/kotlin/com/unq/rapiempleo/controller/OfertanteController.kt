@@ -1,5 +1,7 @@
 package com.unq.rapiempleo.controller
 
+import com.unq.rapiempleo.dto.OfertaCreadaDTO
+import com.unq.rapiempleo.dto.OfertaCreateRequest
 import com.unq.rapiempleo.dto.OfertanteDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
@@ -58,6 +60,21 @@ class OfertanteController {
         val fotoPath = imageStorageService.guardarImagenPerfilOfertante(idOfertante, archivo)
         ofertanteService.actualizarImagenPerfil(idOfertante, fotoPath)
         return ResponseEntity(mapOf("fotoPath" to fotoPath), HttpStatus.OK)
+    }
+
+    @PostMapping("/{idOfertante}/oferta")
+    fun crearOferta(
+        @PathVariable idOfertante: Long,
+        @RequestBody request: OfertaCreateRequest
+    ): ResponseEntity<OfertaCreadaDTO> {
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        if (ofertanteService.getIdPorEmail(email) != idOfertante)
+            throw AccessDeniedToFileException()
+
+        val oferta = ofertanteService.crearOferta(idOfertante, request)
+        return ResponseEntity(oferta, HttpStatus.OK)
     }
 
     @DeleteMapping("/deleteNotify/{idOfertante}/{idNotify}")
