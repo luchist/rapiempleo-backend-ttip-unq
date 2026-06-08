@@ -12,6 +12,7 @@ interface SearchService {
         titulo: String?,
         empresa: String?,
         modalidad: String?, //para no acoplar el enum
-        ubicacion: String?
+        ubicacion: String?,
+        idPostulante: Long?
     ): List<OfertaCardDTO>
 }
