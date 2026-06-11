@@ -79,7 +79,7 @@ class OfertanteServiceImpl (
 
         val oferta = Oferta(
             titulo = request.titulo,
-            empresa = request.empresa,
+            empresa = ofertante.empresa,
             descripcion = request.descripcion,
             modalidad = request.modalidad,
             estado = "Abierto",

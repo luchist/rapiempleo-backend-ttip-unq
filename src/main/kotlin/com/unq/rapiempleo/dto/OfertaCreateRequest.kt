@@ -4,7 +4,6 @@ import com.unq.rapiempleo.model.Modalidad
 
 class OfertaCreateRequest(
     var titulo: String,
-    var empresa: String,
     var descripcion: String,
     var modalidad: Modalidad,
     var sueldoMin: Int,
