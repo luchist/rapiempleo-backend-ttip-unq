@@ -73,13 +73,14 @@ class OfertanteServiceImpl (
         return ofertante.id_ofertante!!
     }
 
+    @Transactional
     override fun crearOferta(idOfertante: Long, request: OfertaCreateRequest): OfertaCreadaDTO {
         val ofertante = ofertanteRepository.findById(idOfertante)
             .orElseThrow { OfertanteNotFoundException() }
 
         val oferta = Oferta(
             titulo = request.titulo,
-            empresa = request.empresa,
+            empresa = ofertante.empresa,
             descripcion = request.descripcion,
             modalidad = request.modalidad,
             estado = "Abierto",
@@ -90,7 +91,6 @@ class OfertanteServiceImpl (
         )
 
         oferta.ofertante = ofertante
-        ofertante.ofertasCreadas.add(oferta)
         ofertaRepository.save(oferta)
         return OfertaCreadaDTO.desdeModelo(oferta)
     }
