@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.AvisoPostulanteDTO
+import com.unq.rapiempleo.dto.CvEntryRequestDTO
 import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
@@ -122,5 +123,11 @@ class PostulanteController {
     fun removerOfertaFavorita(@PathVariable idPostulante: Long, @PathVariable idOferta: Long) : ResponseEntity<String> {
         postulanteService.removerOfertaFavorita(idPostulante, idOferta)
         return ResponseEntity("Oferta favorita removida exitosamente", HttpStatus.OK)
+    }
+
+    @DeleteMapping("/removeCV")
+    fun removerCvDePostulante(@RequestBody cvEntryRequestDTO : CvEntryRequestDTO) : ResponseEntity<String> {
+        postulanteService.removerCvIndicado(cvEntryRequestDTO)
+        return ResponseEntity("Se elimino el CV indicado", HttpStatus.OK)
     }
 }

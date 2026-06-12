@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.service
 
 import com.unq.rapiempleo.dto.AvisoPostulanteDTO
+import com.unq.rapiempleo.dto.CvEntryRequestDTO
 import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
@@ -24,4 +25,5 @@ interface PostulanteService {
     fun getIdPorEmail(email: String): Long
     fun agregarOfertaFavorita(idPostulante: Long, idOferta: Long)
     fun removerOfertaFavorita(idPostulante: Long, idOferta: Long)
+    fun removerCvIndicado(cvEntryReq : CvEntryRequestDTO)
 }
