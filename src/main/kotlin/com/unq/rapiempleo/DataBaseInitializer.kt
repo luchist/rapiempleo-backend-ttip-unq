@@ -61,7 +61,7 @@ class DataBaseInitializer (
 
             val ofertas = listOf(
                         Oferta("Desarrollador Sr Full Stack", "Tech.Inc", "descriptions/FullstackTechOffer.md".readClasspathFile(),
-                            Modalidad.Hibrido, "Abierto", 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true),
+                            Modalidad.Hibrido, "Abierto", 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = false),
                         Oferta("Contador Sr","Tepago SA", "descriptions/ContadorPagoOffer.md".readClasspathFile(),
                             Modalidad.Presencial, "Finalizado", 40000, 44000, "Temperley, Buenos Aires", favorito = false),
                         Oferta("Desarrollador FrontEnd","Electro Smart", "descriptions/FrontElectroOffer.md".readClasspathFile(),
@@ -71,9 +71,9 @@ class DataBaseInitializer (
                         Oferta("Organizador de Eventos","Sweet Retro", "descriptions/OrganizadorSweet.md".readClasspathFile(),
                             Modalidad.Presencial, "Abierto", 42000, 48000, "Villa Mercedes, San Luis", favorito = false),
                         Oferta("Frontend Developer","NovaTech", "descriptions/FrontNovatechOffer.md".readClasspathFile(),
-                            Modalidad.Presencial, "Abierto", 51000, 57000, "Buenos Aires, Argentina", favorito = true),
+                            Modalidad.Presencial, "Abierto", 51000, 57000, "Buenos Aires, Argentina", favorito = false),
                         Oferta("Backend Engineer","CloudSync", "descriptions/CloudSyncBackOffer.md".readClasspathFile(),
-                            Modalidad.Remoto, "Abierto", 47000, 54000, "Ciudad de México, México", favorito = true),
+                            Modalidad.Remoto, "Abierto", 47000, 54000, "Ciudad de México, México", favorito = false),
                         Oferta("UX Designer","PixelLab", "descriptions/PixelLabUXOffer.md".readClasspathFile(),
                             Modalidad.Hibrido, "Abierto", 52000, 57000, "Buenos Aires, Argentina", favorito = false),
                         Oferta("Analista en Marketing","Onsu", "descriptions/OnsuAnalistaOffer.md".readClasspathFile(),
@@ -81,7 +81,7 @@ class DataBaseInitializer (
                         Oferta("Lider de Automatización y Control","Holm Argentina", "descriptions/AutomatizacionHolmOffer.md".readClasspathFile(),
                             Modalidad.Presencial, "Abierto", 57000, 64000, "Mendoza, Argentina", favorito = false),
                         Oferta("Cloud Data Engineer","Mero Marketing", "descriptions/CloudMeroOffer.md".readClasspathFile(),
-                            Modalidad.Hibrido, "Abierto", 45000, 49000, "Capital Federal, Buenos Aires", favorito = true))
+                            Modalidad.Hibrido, "Abierto", 45000, 49000, "Capital Federal, Buenos Aires", favorito = false))
 
             val ofertanteTest1 = ofertanteRepository.findById(1).orElseThrow { RuntimeException() }
             val ofertanteTest2 = ofertanteRepository.findById(2).orElseThrow { RuntimeException() }

@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.service.impl
 
 import com.unq.rapiempleo.dto.AvisoPostulanteDTO
+import com.unq.rapiempleo.dto.CvEntryRequestDTO
 import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
@@ -218,6 +219,45 @@ class PostulanteServiceImpl (
         val postulante = postulanteRepository.findByEmail(email)
             ?: throw PostulanteNotFoundException()
         return postulante.id_postulante!!
+    }
+
+    override fun agregarOfertaFavorita(idPostulante: Long, idOferta: Long) {
+        val ofertaAFavoritos = ofertaRepository.findById(idOferta).orElseThrow { throw OfferNotFoundException() }
+        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw PostulanteNotFoundException() }
+
+        postulante.favoritos.add(ofertaAFavoritos)
+        postulanteRepository.save(postulante)
+    }
+
+    override fun removerOfertaFavorita(idPostulante: Long, idOferta: Long) {
+        val ofertaASacar = ofertaRepository.findById(idOferta).orElseThrow { throw OfferNotFoundException() }
+        val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw PostulanteNotFoundException() }
+
+        postulante.favoritos.remove(ofertaASacar)
+        postulanteRepository.save(postulante)
+    }
+
+    override fun removerCvIndicado(cvEntryReq : CvEntryRequestDTO) {
+        val postulante = postulanteRepository.findById(cvEntryReq.idPostulante).orElseThrow { throw PostulanteNotFoundException() }
+
+        if (postulante.cvFavorito == cvEntryReq.cvPath) {
+            val postulanteModificado = this.removerYCambiarFavorito(postulante, cvEntryReq.cvPath)
+            postulanteRepository.save(postulanteModificado)
+        } else {
+            postulante.cvEntries.removeIf{ cv -> cv.cvPath == cvEntryReq.cvPath }
+            postulanteRepository.save(postulante)
+        }
+    }
+
+    fun removerYCambiarFavorito(postulante : Postulante, cvName: String) : Postulante {
+        if (postulante.cvEntries.size == 1) {
+            postulante.cvEntries.removeFirst()
+            return postulante
+        } else {
+            postulante.cvEntries.removeIf{ cv -> cv.cvPath == cvName }
+            postulante.cvFavorito = postulante.cvEntries[0].cvPath
+            return postulante
+        }
     }
 
     override fun updateEstadoPostulacion(

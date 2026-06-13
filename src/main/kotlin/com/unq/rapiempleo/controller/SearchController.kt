@@ -31,9 +31,10 @@ class SearchController {
         @RequestParam(required = false) title: String?,
         @RequestParam(required = false) company: String?,
         @RequestParam(required = false) workType: String?,
-        @RequestParam(required = false) location: String?
+        @RequestParam(required = false) location: String?,
+        @RequestParam(required = false) idPostulante: Long?
     ): ResponseEntity<List<OfertaCardDTO>> {
-        val ofertas = searchService.buscarConFiltros(title, company, workType, location)
+        val ofertas = searchService.buscarConFiltros(title, company, workType, location, idPostulante)
         return ResponseEntity(ofertas, HttpStatus.OK)
     }
 }

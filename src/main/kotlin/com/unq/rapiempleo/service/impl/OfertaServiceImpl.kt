@@ -16,11 +16,12 @@ class OfertaServiceImpl (
     private val ofertaRepository: OfertaRepository,
     private val postulanteRepository: PostulanteRepository,
     private val postulacionEstadoRepository: PostulacionEstadoRepository
-): OfertaService  {
+): OfertaService {
 
     @Transactional
     override fun recuperarOferta(idOferta: Long): OfertaDTO {
-        val oferta = ofertaRepository.findById(idOferta).orElseThrow { throw NullPointerException("No existe la oferta") }
+        val oferta =
+            ofertaRepository.findById(idOferta).orElseThrow { throw NullPointerException("No existe la oferta") }
         return OfertaDTO.desdeModelo(oferta, ofertaYaPostulada(oferta.id_oferta))
     }
 
@@ -40,5 +41,13 @@ class OfertaServiceImpl (
     override fun buscarOfertas(nombreOferta: String): List<OfertaCardDTO> {
         val ofertasBuscadas = ofertaRepository.findByTituloContainingIgnoreCase(nombreOferta)
         return ofertasBuscadas.map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
+    }
+
+    override fun recuperarTodasLasOfertasYFavoritos(idPostulante: Long): List<OfertaCardDTO> {
+        val favoritosPostulante = postulanteRepository.favoritosDelPostulante(idPostulante)
+        val ofertas = ofertaRepository.findAll()
+        val ofertasCard = ofertas.map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
+        ofertasCard.forEach { oferta -> if (favoritosPostulante.contains(oferta.id))  oferta.favorito = true }
+        return ofertasCard
     }
 }
