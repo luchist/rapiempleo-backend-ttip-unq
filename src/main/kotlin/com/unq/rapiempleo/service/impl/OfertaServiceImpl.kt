@@ -2,6 +2,7 @@ package com.unq.rapiempleo.service.impl
 
 import com.unq.rapiempleo.dto.OfertaCardDTO
 import com.unq.rapiempleo.dto.OfertaDTO
+import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulacionEstadoRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
@@ -21,7 +22,7 @@ class OfertaServiceImpl (
     @Transactional
     override fun recuperarOferta(idOferta: Long): OfertaDTO {
         val oferta =
-            ofertaRepository.findById(idOferta).orElseThrow { throw NullPointerException("No existe la oferta") }
+            ofertaRepository.findById(idOferta).orElseThrow { throw OfferNotFoundException() }
         return OfertaDTO.desdeModelo(oferta, ofertaYaPostulada(oferta.id_oferta))
     }
 

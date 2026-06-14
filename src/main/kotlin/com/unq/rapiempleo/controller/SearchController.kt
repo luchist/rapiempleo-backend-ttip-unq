@@ -1,11 +1,13 @@
 package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.OfertaCardDTO
+import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.service.SearchService
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -32,9 +34,19 @@ class SearchController {
         @RequestParam(required = false) company: String?,
         @RequestParam(required = false) workType: String?,
         @RequestParam(required = false) location: String?,
-        @RequestParam(required = false) idPostulante: Long?
+
     ): ResponseEntity<List<OfertaCardDTO>> {
-        val ofertas = searchService.buscarConFiltros(title, company, workType, location, idPostulante)
-        return ResponseEntity(ofertas, HttpStatus.OK)
+        val auth = SecurityContextHolder.getContext().authentication
+            ?: throw AccessDeniedToFileException()
+        val userId = auth.details as Long
+        val isPostulante = auth.authorities.any { it.authority == "ROLE_POSTULANTE" }
+
+        if (isPostulante) {
+            val ofertas = searchService.buscarConFiltros(title, company, workType, location, userId)
+            return ResponseEntity(ofertas, HttpStatus.OK)
+        } else {
+            val ofertas = searchService.buscarConFiltros(title, company, workType, location, null)
+            return ResponseEntity(ofertas, HttpStatus.OK)
+        }
     }
 }

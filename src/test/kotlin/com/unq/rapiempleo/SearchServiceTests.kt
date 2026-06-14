@@ -73,20 +73,20 @@ class SearchServiceTests {
 
     @Test
     fun busquedaAvanzadaSoloPorTitulo() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("ayudante", "", "", "")
+        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("ayudante", "", "", "", null)
         Assertions.assertEquals(1, resultadoBusqAvanzada.size)
     }
 
     @Test
     fun busquedaAvanzadaPorEmpresa() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "Farola", "", "")
+        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "Farola", "", "", null)
         Assertions.assertEquals(1, resultadoBusqAvanzada.size)
         Assertions.assertEquals("La Farola", resultadoBusqAvanzada.first().empresa)
     }
 
     @Test
     fun busquedaAvanzadaPorModalidad() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "", "Hibrido", "")
+        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "", "Hibrido", "", null)
         val verificacionBusqueda = resultadoBusqAvanzada.filter { oferta -> oferta.modalidad == Modalidad.Hibrido }
         val ofertaAComprobar = resultadoBusqAvanzada.filter { oferta -> oferta.titulo.contains("traductor", true) }
 
@@ -98,7 +98,7 @@ class SearchServiceTests {
 
     @Test
     fun busquedaAvanzadaPorUbicacion() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "", "", "Buenos Aires")
+        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "", "", "Buenos Aires", null)
         Assertions.assertEquals(3, resultadoBusqAvanzada.size)
         Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -> oferta.titulo == "Ayudante de cocina"}.isNotEmpty())
         Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -> oferta.titulo == "Traductor de documentos"}.isNotEmpty())
@@ -107,7 +107,7 @@ class SearchServiceTests {
 
     @Test
     fun busquedaAvanzadaPorMultiplesCampos() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("cocina", "La Farola", "Presencial", "")
+        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("cocina", "La Farola", "Presencial", "", null)
         Assertions.assertEquals(1, resultadoBusqAvanzada.size)
         Assertions.assertEquals("Ayudante de cocina", resultadoBusqAvanzada.first().titulo)
         Assertions.assertEquals(32000, resultadoBusqAvanzada.first().sueldoMin)
@@ -118,7 +118,7 @@ class SearchServiceTests {
     @Test
     fun busquedaAvanzadaPorMultiplesCamposSinResultados() {
         val resultadoBusqAvanzada = this.searchService.buscarConFiltros("Ayudante de cocina", "La Farola",
-                                                                        "Remoto", "Lujan, Buenos Aires")
+                                                                        "Remoto", "Lujan, Buenos Aires", null)
         Assertions.assertEquals(0, resultadoBusqAvanzada.size)
     }
 

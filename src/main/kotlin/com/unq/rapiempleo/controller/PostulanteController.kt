@@ -5,6 +5,7 @@ import com.unq.rapiempleo.dto.CvEntryRequestDTO
 import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.exceptions.AccessDeniedToFavortiteChangeException
 import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.service.CvStorageService
 import com.unq.rapiempleo.service.ImageStorageService
@@ -115,14 +116,26 @@ class PostulanteController {
 
     @PostMapping("/addFavorito/{idPostulante}/{idOferta}")
     fun agregarOfertaFavorita(@PathVariable idPostulante: Long, @PathVariable idOferta: Long) : ResponseEntity<String> {
+        this.checkAuthentication(idPostulante)
         postulanteService.agregarOfertaFavorita(idPostulante, idOferta)
         return ResponseEntity("Oferta favorita agregada exitosamente", HttpStatus.OK)
     }
 
     @PostMapping("/removeFavorito/{idPostulante}/{idOferta}")
     fun removerOfertaFavorita(@PathVariable idPostulante: Long, @PathVariable idOferta: Long) : ResponseEntity<String> {
+        this.checkAuthentication(idPostulante)
         postulanteService.removerOfertaFavorita(idPostulante, idOferta)
         return ResponseEntity("Oferta favorita removida exitosamente", HttpStatus.OK)
+    }
+
+    fun checkAuthentication(idPostulante: Long) {
+        val auth = SecurityContextHolder.getContext().authentication
+            ?: throw AccessDeniedToFavortiteChangeException()
+        val userId = auth.details as Long
+        val isPostulante = auth.authorities.any { it.authority == "ROLE_POSTULANTE" }
+        if (userId != idPostulante || !isPostulante) {
+            throw AccessDeniedToFileException()
+        }
     }
 
     @DeleteMapping("/removeCV")

@@ -112,4 +112,9 @@ class ValidationExceptionHandler {
     fun handleEstadoSinCambiosException(exc: EstadoSinCambiosException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.OK).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(AccessDeniedToFavortiteChangeException::class)
+    fun handleAccessDenidToFavoritoChanceException(exc: AccessDeniedToFavortiteChangeException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to exc.message!!))
+    }
 }

@@ -37,7 +37,6 @@ class SearchServiceImpl(
             modalidad = modalidadEnum,
             ubicacion = ubicacion?.ifBlank { null }
         )
-        println(idPostulante)
         var resultadoSegunUser = resultados.map { OfertaCardDTO.desdeModelo(it) }
         if (idPostulante != null) {
             val favoritos = postulanteRepository.favoritosDelPostulante(idPostulante)
