@@ -1,6 +1,9 @@
 complexity:
   LongMethod:
     allowedLines : 60
+  TooManyFunctions:
+    allowedFunctionsPerClass : 15
+    allowedFunctionsPerFile : 15
 
 style:
   MagicNumber:
