@@ -4,5 +4,4 @@ class EmpresaCheckDTO(
     var company : String,
     var cuit : String,
     var ubication : String,
-) {
-}
+)

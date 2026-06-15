@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -16,4 +17,12 @@ interface PostulanteRepository : JpaRepository<Postulante, Long> {
     fun resetIdPostulante()
 
     fun findByEmail(email : String) : Postulante?
+
+    @Query("""
+        SELECT o.id_oferta 
+        FROM Postulante p
+        JOIN p.favoritos o
+        WHERE p.id_postulante = :idPostulante
+    """)
+    fun favoritosDelPostulante(@Param ("idPostulante") idPostulante : Long) : List<Long>
 }

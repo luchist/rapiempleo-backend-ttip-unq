@@ -1,9 +1,11 @@
 package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.AvisoPostulanteDTO
+import com.unq.rapiempleo.dto.CvEntryRequestDTO
 import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.exceptions.AccessDeniedToFavoriteChangeException
 import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.service.CvStorageService
 import com.unq.rapiempleo.service.ImageStorageService
@@ -109,5 +111,35 @@ class PostulanteController {
     fun deleteNotification(@PathVariable idPostulante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
         postulanteService.eliminarNotificacion(idPostulante, idNotify)
         return ResponseEntity("Notificación eliminada exitosamente", HttpStatus.OK)
+    }
+
+    @PostMapping("/addFavorito/{idPostulante}/{idOferta}")
+    fun agregarOfertaFavorita(@PathVariable idPostulante: Long, @PathVariable idOferta: Long) : ResponseEntity<String> {
+        this.checkAuthentication(idPostulante)
+        postulanteService.agregarOfertaFavorita(idPostulante, idOferta)
+        return ResponseEntity("Oferta favorita agregada exitosamente", HttpStatus.OK)
+    }
+
+    @PostMapping("/removeFavorito/{idPostulante}/{idOferta}")
+    fun removerOfertaFavorita(@PathVariable idPostulante: Long, @PathVariable idOferta: Long) : ResponseEntity<String> {
+        this.checkAuthentication(idPostulante)
+        postulanteService.removerOfertaFavorita(idPostulante, idOferta)
+        return ResponseEntity("Oferta favorita removida exitosamente", HttpStatus.OK)
+    }
+
+    fun checkAuthentication(idPostulante: Long) {
+        val auth = SecurityContextHolder.getContext().authentication
+            ?: throw AccessDeniedToFavoriteChangeException()
+        val userId = auth.details as Long
+        val isPostulante = auth.authorities.any { it.authority == "ROLE_POSTULANTE" }
+        if (userId != idPostulante || !isPostulante) {
+            throw AccessDeniedToFileException()
+        }
+    }
+
+    @DeleteMapping("/removeCV")
+    fun removerCvDePostulante(@RequestBody cvEntryRequestDTO : CvEntryRequestDTO) : ResponseEntity<String> {
+        postulanteService.removerCvIndicado(cvEntryRequestDTO)
+        return ResponseEntity("Se elimino el CV indicado", HttpStatus.OK)
     }
 }

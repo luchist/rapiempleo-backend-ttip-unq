@@ -10,4 +10,5 @@ interface OfertaService {
     fun recuperarOferta (idOferta : Long) : OfertaDTO
     fun recuperarTodasLasOfertas () : List<OfertaCardDTO>
     fun buscarOfertas (nombreOferta : String) : List<OfertaCardDTO>
+    fun recuperarTodasLasOfertasYFavoritos(idPostulante : Long) : List<OfertaCardDTO>
 }
