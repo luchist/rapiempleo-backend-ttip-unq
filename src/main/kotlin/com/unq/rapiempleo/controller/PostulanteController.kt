@@ -5,7 +5,7 @@ import com.unq.rapiempleo.dto.CvEntryRequestDTO
 import com.unq.rapiempleo.dto.PostulacionBoardItemDTO
 import com.unq.rapiempleo.dto.PostulanteDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
-import com.unq.rapiempleo.exceptions.AccessDeniedToFavortiteChangeException
+import com.unq.rapiempleo.exceptions.AccessDeniedToFavoriteChangeException
 import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.service.CvStorageService
 import com.unq.rapiempleo.service.ImageStorageService
@@ -14,7 +14,6 @@ import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -130,7 +129,7 @@ class PostulanteController {
 
     fun checkAuthentication(idPostulante: Long) {
         val auth = SecurityContextHolder.getContext().authentication
-            ?: throw AccessDeniedToFavortiteChangeException()
+            ?: throw AccessDeniedToFavoriteChangeException()
         val userId = auth.details as Long
         val isPostulante = auth.authorities.any { it.authority == "ROLE_POSTULANTE" }
         if (userId != idPostulante || !isPostulante) {
