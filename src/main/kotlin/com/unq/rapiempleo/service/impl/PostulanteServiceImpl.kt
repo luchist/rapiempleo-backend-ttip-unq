@@ -240,7 +240,8 @@ class PostulanteServiceImpl (
     }
 
     override fun removerCvIndicado(cvEntryReq : CvEntryRequestDTO) {
-        val postulante = postulanteRepository.findById(cvEntryReq.idPostulante).orElseThrow { throw PostulanteNotFoundException() }
+        val postulante = postulanteRepository.findById(cvEntryReq.idPostulante)
+            .orElseThrow { throw PostulanteNotFoundException() }
 
         if (postulante.cvFavorito == cvEntryReq.cvPath) {
             val postulanteModificado = this.removerYCambiarFavorito(postulante, cvEntryReq.cvPath)
