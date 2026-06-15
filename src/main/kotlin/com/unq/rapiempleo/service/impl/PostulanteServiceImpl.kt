@@ -225,8 +225,10 @@ class PostulanteServiceImpl (
         val ofertaAFavoritos = ofertaRepository.findById(idOferta).orElseThrow { throw OfferNotFoundException() }
         val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw PostulanteNotFoundException() }
 
-        postulante.favoritos.add(ofertaAFavoritos)
-        postulanteRepository.save(postulante)
+        if (!postulante.favoritos.any { oferta -> oferta.id_oferta == idOferta }) {
+            postulante.favoritos.add(ofertaAFavoritos)
+            postulanteRepository.save(postulante)
+        }
     }
 
     override fun removerOfertaFavorita(idPostulante: Long, idOferta: Long) {
@@ -252,6 +254,7 @@ class PostulanteServiceImpl (
     fun removerYCambiarFavorito(postulante : Postulante, cvName: String) : Postulante {
         if (postulante.cvEntries.size == 1) {
             postulante.cvEntries.removeFirst()
+            postulante.cvFavorito = null
             return postulante
         } else {
             postulante.cvEntries.removeIf{ cv -> cv.cvPath == cvName }

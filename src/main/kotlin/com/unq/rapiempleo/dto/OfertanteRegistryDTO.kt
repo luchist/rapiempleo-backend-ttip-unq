@@ -5,5 +5,4 @@ class OfertanteRegistryDTO (
     var company : String,
     var email : String,
     var password : String
-) {
-}
+)

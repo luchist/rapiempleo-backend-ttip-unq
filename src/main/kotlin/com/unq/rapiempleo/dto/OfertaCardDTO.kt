@@ -13,20 +13,19 @@ class OfertaCardDTO (
     var ubicacion : String,
     var favorito : Boolean
 ) {
-companion object {
-    fun desdeModelo (oferta : Oferta) : OfertaCardDTO {
-        var ofertaDTOres = OfertaCardDTO(
-            id = oferta.id_oferta!!,
-            titulo = oferta.titulo,
-            empresa = oferta.empresa,
-            modalidad = oferta.modalidad,
-            sueldoMin = oferta.sueldoMin,
-            sueldoMax = oferta.sueldoMax,
-            ubicacion = oferta.ubicacion,
-            favorito = oferta.favorito
-        )
-        return ofertaDTOres
+    companion object {
+        fun desdeModelo (oferta : Oferta) : OfertaCardDTO {
+            var ofertaDTOres = OfertaCardDTO(
+                id = oferta.id_oferta!!,
+                titulo = oferta.titulo,
+                empresa = oferta.empresa,
+                modalidad = oferta.modalidad,
+                sueldoMin = oferta.sueldoMin,
+                sueldoMax = oferta.sueldoMax,
+                ubicacion = oferta.ubicacion,
+                favorito = oferta.favorito
+            )
+            return ofertaDTOres
+        }
     }
-}
-
 }

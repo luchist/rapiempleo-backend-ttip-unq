@@ -6,5 +6,4 @@ class AvisoPostulanteDTO (
     var id_postulante : Long,
     var id_oferta : Long,
     var tipo_aviso : EstadoCvPostulado,
-){
-}
+)
