@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-@Profile("!test")
+@Profile(value = ["dev", "local"])
 @Component
 class DataBaseSeeder(
     private val postulanteRepository: PostulanteRepository,
@@ -37,9 +37,9 @@ class DataBaseSeeder(
     @Suppress("LongMethod")
     fun seed() {
         postulacionEstadoRepository.deleteAll()
-        ofertanteRepository.deleteAll()
-        postulanteRepository.deleteAll()
         ofertaRepository.deleteAll()
+        postulanteRepository.deleteAll()
+        ofertanteRepository.deleteAll()
         postulanteRepository.resetIdPostulante()
         ofertaRepository.resetIdOferta()
         ofertanteRepository.resetIdOfertante()
