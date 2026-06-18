@@ -92,13 +92,13 @@ class DataBaseSeeder(
             Oferta("Cloud Data Engineer", "Mero Marketing", "descriptions/CloudMeroOffer.md".readClasspathFile(),
                 Modalidad.Hibrido, "Abierto", 45000, 49000, "Capital Federal, Buenos Aires", favorito = false))
 
-        val ofertanteTest1 = ofertanteRepository.findById(1)
+        val ofertanteTest1 = ofertanteRepository.findById(1L)
             .orElseThrow { OfertanteNotFoundException() }
 
-        val ofertanteTest2 = ofertanteRepository.findById(2)
+        val ofertanteTest2 = ofertanteRepository.findById(2L)
             .orElseThrow { OfertanteNotFoundException() }
 
-        val ofertanteTest3 = ofertanteRepository.findById(3)
+        val ofertanteTest3 = ofertanteRepository.findById(3L)
             .orElseThrow { OfertanteNotFoundException() }
 
         ofertas[1].ofertante = ofertanteTest1

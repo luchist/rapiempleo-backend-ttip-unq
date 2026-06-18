@@ -133,4 +133,23 @@ class DataBaseSeederTest {
         verify(postulanteService).postularEnOferta(6L, leon.id_postulante!!)
         verify(postulanteService).postularEnOferta(2L, leon.id_postulante!!)
     }
+
+    @Test
+    fun seedActualizaLosEstadosDeLasPostulaciones() {
+        val estadoEntrevistando = PostulacionEstado(
+            oferta = ofertaEntrevistando, postulante = leon, estado = EstadoPostulacion.Aplicado
+        )
+        val estadoCerrado = PostulacionEstado(
+            oferta = ofertaCerrada, postulante = leon, estado = EstadoPostulacion.Aplicado
+        )
+
+        whenever(postulacionEstadoRepository.findByPostulante(leon))
+            .thenReturn(listOf(estadoEntrevistando, estadoCerrado))
+
+        seeder.seed()
+
+        assertEquals(EstadoPostulacion.Entrevistando, estadoEntrevistando.estado)
+        assertEquals(EstadoPostulacion.Cerrado, estadoCerrado.estado)
+        verify(postulacionEstadoRepository, times(2)).save(any())
+    }
 }
