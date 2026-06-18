@@ -68,6 +68,10 @@ class DataBaseSeederTest {
         whenever(postulanteRepository.findById(1L)).thenReturn(Optional.of(leon))
         whenever(ofertaRepository.findById(6L)).thenReturn(Optional.of(ofertaEntrevistando))
         whenever(ofertaRepository.findById(2L)).thenReturn(Optional.of(ofertaCerrada))
+        whenever(postulacionEstadoRepository.findByPostulante(leon)).thenReturn(listOf(
+            PostulacionEstado(oferta = ofertaEntrevistando, postulante = leon, estado = EstadoPostulacion.Aplicado),
+            PostulacionEstado(oferta = ofertaCerrada, postulante = leon, estado = EstadoPostulacion.Aplicado)
+        ))
     }
 
     @Test
@@ -123,14 +127,10 @@ class DataBaseSeederTest {
     }
 
     @Test
-    fun seedCreaEstadosDePostulacionParaLeon() {
-        val captor = argumentCaptor<PostulacionEstado>()
-
+    fun seedPostulaALeonEnLasOfertasCorrectas() {
         seeder.seed()
 
-        verify(postulacionEstadoRepository, times(2)).save(captor.capture())
-        val estados = captor.allValues
-        assertTrue(estados.any { it.estado == EstadoPostulacion.Entrevistando && it.oferta.id_oferta == 6L })
-        assertTrue(estados.any { it.estado == EstadoPostulacion.Cerrado && it.oferta.id_oferta == 2L })
+        verify(postulanteService).postularEnOferta(6L, leon.id_postulante!!)
+        verify(postulanteService).postularEnOferta(2L, leon.id_postulante!!)
     }
 }

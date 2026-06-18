@@ -3,13 +3,11 @@ package com.unq.rapiempleo
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
-import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
-import com.unq.rapiempleo.model.PostulacionEstado
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.repository.PostulacionEstadoRepository
@@ -128,20 +126,17 @@ class DataBaseSeeder(
         wesker.fotoPerfil = "ofertante/1/foto.jpg"
         ofertanteRepository.save(wesker)
 
-        val ofertaEntrevistando = ofertaRepository.findById(6).orElseThrow { OfferNotFoundException() }
-        postulacionEstadoRepository.save(
-            PostulacionEstado(
-                oferta = ofertaEntrevistando,
-                postulante = leon,
-                estado = EstadoPostulacion.Entrevistando)
-        )
+        postulanteService.postularEnOferta(6L, leon.id_postulante!!)
+        postulanteService.postularEnOferta(2L, leon.id_postulante!!)
 
-        val ofertaCerrada = ofertaRepository.findById(2).orElseThrow { OfferNotFoundException() }
-        postulacionEstadoRepository.save(
-            PostulacionEstado(
-                oferta = ofertaCerrada,
-                postulante = leon,
-                estado = EstadoPostulacion.Cerrado)
-        )
+        val estados = postulacionEstadoRepository.findByPostulante(leon)
+        estados.find { it.oferta.id_oferta == 6L }!!.let {
+            it.estado = EstadoPostulacion.Entrevistando
+            postulacionEstadoRepository.save(it)
+        }
+        estados.find { it.oferta.id_oferta == 2L }!!.let {
+            it.estado = EstadoPostulacion.Cerrado
+            postulacionEstadoRepository.save(it)
+        }
     }
 }
