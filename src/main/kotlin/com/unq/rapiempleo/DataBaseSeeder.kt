@@ -2,6 +2,9 @@ package com.unq.rapiempleo
 
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
+import com.unq.rapiempleo.exceptions.OfferNotFoundException
+import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.model.Modalidad
@@ -31,6 +34,7 @@ class DataBaseSeeder(
         object {}.javaClass.getResource("/$this")!!.readText()
 
     @Transactional
+    @Suppress("LongMethod")
     fun seed() {
         postulacionEstadoRepository.deleteAll()
         ofertanteRepository.deleteAll()
@@ -42,13 +46,28 @@ class DataBaseSeeder(
         postulacionEstadoRepository.resetIdPostulacionEstado()
 
         ofertanteService.registroOfertante(
-            OfertanteRegistryDTO("Albert Wesker", "Electro Smart", "wesker8180@gmail.com", "passpass"))
+            OfertanteRegistryDTO(
+                "Albert Wesker", "Electro Smart",
+                "wesker8180@gmail.com", "passpass")
+        )
+
         ofertanteService.registroOfertante(
-            OfertanteRegistryDTO("Ramon Salazar", "PixelLab", "salazar_ram@gmail.com", "wordpass"))
+            OfertanteRegistryDTO(
+                "Ramon Salazar", "PixelLab",
+                "salazar_ram@gmail.com", "wordpass")
+        )
+
         ofertanteService.registroOfertante(
-            OfertanteRegistryDTO("Jack Baker", "Tech.Inc", "baker_jack7@gmail.com", "wordpass"))
+            OfertanteRegistryDTO(
+                "Jack Baker", "Tech.Inc",
+                "baker_jack7@gmail.com", "wordpass")
+        )
         postulanteService.registrarUserPostulante(
-            PostulanteRegistryDTO("Leon Kennedy", "leon0126@gmail.com", "passpass"))
+            PostulanteRegistryDTO(
+                "Leon Kennedy",
+                "leon0126@gmail.com",
+                "passpass")
+        )
 
         val ofertas = listOf(
             Oferta("Desarrollador Sr Full Stack", "Tech.Inc", "descriptions/FullstackTechOffer.md".readClasspathFile(),
@@ -69,14 +88,21 @@ class DataBaseSeeder(
                 Modalidad.Hibrido, "Abierto", 52000, 57000, "Buenos Aires, Argentina", favorito = false),
             Oferta("Analista en Marketing", "Onsu", "descriptions/OnsuAnalistaOffer.md".readClasspathFile(),
                 Modalidad.Presencial, "Abierto", 35000, 39000, "Paraná, Entre Ríos", favorito = false),
-            Oferta("Lider de Automatización y Control", "Holm Argentina", "descriptions/AutomatizacionHolmOffer.md".readClasspathFile(),
+            Oferta("Lider de Automatización y Control", "Holm Argentina",
+                "descriptions/AutomatizacionHolmOffer.md".readClasspathFile(),
                 Modalidad.Presencial, "Abierto", 57000, 64000, "Mendoza, Argentina", favorito = false),
             Oferta("Cloud Data Engineer", "Mero Marketing", "descriptions/CloudMeroOffer.md".readClasspathFile(),
                 Modalidad.Hibrido, "Abierto", 45000, 49000, "Capital Federal, Buenos Aires", favorito = false))
 
-        val ofertanteTest1 = ofertanteRepository.findById(1).orElseThrow { RuntimeException() }
-        val ofertanteTest2 = ofertanteRepository.findById(2).orElseThrow { RuntimeException() }
-        val ofertanteTest3 = ofertanteRepository.findById(3).orElseThrow { RuntimeException() }
+        val ofertanteTest1 = ofertanteRepository.findById(1)
+            .orElseThrow { OfertanteNotFoundException() }
+
+        val ofertanteTest2 = ofertanteRepository.findById(2)
+            .orElseThrow { OfertanteNotFoundException() }
+
+        val ofertanteTest3 = ofertanteRepository.findById(3)
+            .orElseThrow { OfertanteNotFoundException() }
+
         ofertas[1].ofertante = ofertanteTest1
         ofertas[2].ofertante = ofertanteTest1
         ofertas[3].ofertante = ofertanteTest1
@@ -92,22 +118,30 @@ class DataBaseSeeder(
         ofertas[5].ofertante = ofertanteTest3
         ofertaRepository.saveAll(ofertas)
 
-        val leon = postulanteRepository.findById(1).orElseThrow { RuntimeException() }
+        val leon = postulanteRepository.findById(1).orElseThrow { PostulanteNotFoundException() }
         leon.fotoPerfil = "postulante/1/foto.jpg"
         leon.cvEntries.add(CvEntry("1/leon-kennedy-cv-english.pdf"))
         leon.cvFavorito = "1/leon-kennedy-cv-english.pdf"
         postulanteRepository.save(leon)
 
-        val wesker = ofertanteRepository.findById(1).orElseThrow { RuntimeException() }
+        val wesker = ofertanteRepository.findById(1).orElseThrow { OfertanteNotFoundException() }
         wesker.fotoPerfil = "ofertante/1/foto.jpg"
         ofertanteRepository.save(wesker)
 
-        val ofertaEntrevistando = ofertaRepository.findById(6).orElseThrow { RuntimeException() }
+        val ofertaEntrevistando = ofertaRepository.findById(6).orElseThrow { OfferNotFoundException() }
         postulacionEstadoRepository.save(
-            PostulacionEstado(oferta = ofertaEntrevistando, postulante = leon, estado = EstadoPostulacion.Entrevistando))
+            PostulacionEstado(
+                oferta = ofertaEntrevistando,
+                postulante = leon,
+                estado = EstadoPostulacion.Entrevistando)
+        )
 
-        val ofertaCerrada = ofertaRepository.findById(2).orElseThrow { RuntimeException() }
+        val ofertaCerrada = ofertaRepository.findById(2).orElseThrow { OfferNotFoundException() }
         postulacionEstadoRepository.save(
-            PostulacionEstado(oferta = ofertaCerrada, postulante = leon, estado = EstadoPostulacion.Cerrado))
+            PostulacionEstado(
+                oferta = ofertaCerrada,
+                postulante = leon,
+                estado = EstadoPostulacion.Cerrado)
+        )
     }
 }
