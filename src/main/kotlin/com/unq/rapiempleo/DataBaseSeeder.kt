@@ -98,6 +98,10 @@ class DataBaseSeeder(
         leon.cvFavorito = "1/leon-kennedy-cv-english.pdf"
         postulanteRepository.save(leon)
 
+        val wesker = ofertanteRepository.findById(1).orElseThrow { RuntimeException() }
+        wesker.fotoPerfil = "ofertante/1/foto.jpg"
+        ofertanteRepository.save(wesker)
+
         val ofertaEntrevistando = ofertaRepository.findById(6).orElseThrow { RuntimeException() }
         postulacionEstadoRepository.save(
             PostulacionEstado(oferta = ofertaEntrevistando, postulante = leon, estado = EstadoPostulacion.Entrevistando))
