@@ -3,6 +3,8 @@ package com.unq.rapiempleo
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.exceptions.CvNotFoundException
+import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
+import com.unq.rapiempleo.exceptions.PreferenciaLimitExceededException
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.repository.OfertaRepository
@@ -146,6 +148,50 @@ class PostulanteServiceTests {
 
         val postulante = postulanteService.getPostulante(1)
         Assertions.assertEquals("1//img_profile2.jpg", postulante.fotoPerfil)
+    }
+
+    @Test
+    fun actualizarPreferenciasPostulante() {
+        val nuevaPreferencia = "Busco trabajo remoto como desarrollador backend en Argentina."
+
+        postulanteService.actualizarPreferencias(1, nuevaPreferencia)
+
+        val preferencias = postulanteService.getPreferencias(1)
+        Assertions.assertEquals(nuevaPreferencia, preferencias)
+    }
+
+    @Test
+    fun actualizarPreferenciasVariosCambiosConservaElUltimo() {
+        postulanteService.actualizarPreferencias(1, "Primera preferencia")
+        postulanteService.actualizarPreferencias(1, "Segunda preferencia")
+
+        val preferencias = postulanteService.getPreferencias(1)
+        Assertions.assertEquals("Segunda preferencia", preferencias)
+    }
+
+    @Test
+    fun actualizarPreferenciasPostulanteInexistenteLanzaExcepcion() {
+        assertThrows<PostulanteNotFoundException> {
+            postulanteService.actualizarPreferencias(999, "Alguna preferencia")
+        }
+    }
+
+    @Test
+    fun actualizarPreferenciasConMasDe255CaracteresLanzaExcepcion() {
+        val preferenciaLarga = "a".repeat(256)
+
+        assertThrows<PreferenciaLimitExceededException> {
+            postulanteService.actualizarPreferencias(1, preferenciaLarga)
+        }
+    }
+
+    @Test
+    fun actualizarPreferenciasConExactamente255CaracteresEsValido() {
+        val preferencia255 = "a".repeat(255)
+
+        postulanteService.actualizarPreferencias(1, preferencia255)
+
+        Assertions.assertEquals(preferencia255, postulanteService.getPreferencias(1))
     }
 
 
