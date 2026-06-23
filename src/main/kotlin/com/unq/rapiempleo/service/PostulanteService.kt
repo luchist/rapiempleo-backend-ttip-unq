@@ -26,4 +26,5 @@ interface PostulanteService {
     fun agregarOfertaFavorita(idPostulante: Long, idOferta: Long)
     fun removerOfertaFavorita(idPostulante: Long, idOferta: Long)
     fun removerCvIndicado(cvEntryReq : CvEntryRequestDTO)
+    fun actualizarPreferencias(idPostulante: Long, preferencias: String)
 }

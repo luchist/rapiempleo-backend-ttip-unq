@@ -18,6 +18,7 @@ import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.PostulacionEstadoNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteAlreadyPostedOffer
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
+import com.unq.rapiempleo.exceptions.PreferenciaLimitExceededException
 import com.unq.rapiempleo.model.CvEntry
 import com.unq.rapiempleo.model.EstadoCvPostulado
 import com.unq.rapiempleo.model.EstadoPostulacion
@@ -238,6 +239,17 @@ class PostulanteServiceImpl (
         val postulante = postulanteRepository.findById(idPostulante).orElseThrow { throw PostulanteNotFoundException() }
 
         postulante.favoritos.remove(ofertaASacar)
+        postulanteRepository.save(postulante)
+    }
+
+    override fun actualizarPreferencias(idPostulante: Long, preferencias: String) {
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
+
+        if (preferencias.length > 255)
+            throw PreferenciaLimitExceededException()
+
+        postulante.preferencias = preferencias
         postulanteRepository.save(postulante)
     }
 

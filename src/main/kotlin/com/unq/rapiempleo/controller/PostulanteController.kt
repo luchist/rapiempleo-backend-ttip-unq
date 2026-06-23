@@ -137,6 +137,22 @@ class PostulanteController {
         }
     }
 
+    @PatchMapping("/{idPostulante}/preferencia")
+    fun actualizarPreferencias(
+        @PathVariable idPostulante: Long,
+        @RequestBody body: Map<String, String>
+    ): ResponseEntity<String> {
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        if (postulanteService.getIdPorEmail(email) != idPostulante)
+            throw AccessDeniedToFileException()
+
+        val preferencias = body["preferencias"] ?: ""
+        postulanteService.actualizarPreferencias(idPostulante, preferencias)
+        return ResponseEntity("Preferencias actualizadas", HttpStatus.OK)
+    }
+
     @DeleteMapping("/removeCV")
     fun removerCvDePostulante(@RequestBody cvEntryRequestDTO : CvEntryRequestDTO) : ResponseEntity<String> {
         postulanteService.removerCvIndicado(cvEntryRequestDTO)
