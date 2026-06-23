@@ -117,4 +117,19 @@ class ValidationExceptionHandler {
     fun handleAccessDenidToFavoritoChanceException(exc: AccessDeniedToFavoriteChangeException) : ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(AccessDeniedToUserPreferenceException::class)
+    fun handleAccessDeniedToUserPreferenceException(exc: AccessDeniedToUserPreferenceException) : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(PreferenciaLimitExceededException::class)
+    fun handlePreferenciaLimitExceededException(exc: PreferenciaLimitExceededException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(PreferenciasFieldRequiredException::class)
+    fun handlePreferenciasFieldRequiredException(exc: PreferenciasFieldRequiredException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
 }

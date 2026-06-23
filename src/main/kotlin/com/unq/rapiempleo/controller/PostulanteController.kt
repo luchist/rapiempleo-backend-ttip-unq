@@ -11,6 +11,8 @@ import com.unq.rapiempleo.service.CvStorageService
 import com.unq.rapiempleo.service.ImageStorageService
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.AccessDeniedToUserPreferenceException
+import com.unq.rapiempleo.exceptions.PreferenciasFieldRequiredException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -135,6 +137,25 @@ class PostulanteController {
         if (userId != idPostulante || !isPostulante) {
             throw AccessDeniedToFileException()
         }
+    }
+
+    @Suppress("ThrowsCount")
+    @PatchMapping("/{idPostulante}/preferencia")
+    fun actualizarPreferencias(
+        @PathVariable idPostulante: Long,
+        @RequestBody body: Map<String, String>
+    ): ResponseEntity<String> {
+        val email = SecurityContextHolder.getContext().authentication?.name
+            ?: throw UnauthenticatedException()
+
+        if (postulanteService.getIdPorEmail(email) != idPostulante)
+            throw AccessDeniedToUserPreferenceException()
+
+        val preferencias = body["preferencias"]
+            ?: throw PreferenciasFieldRequiredException()
+
+        postulanteService.actualizarPreferencias(idPostulante, preferencias)
+        return ResponseEntity("Preferencias actualizadas", HttpStatus.OK)
     }
 
     @DeleteMapping("/removeCV")
