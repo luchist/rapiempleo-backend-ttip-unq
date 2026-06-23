@@ -12,6 +12,7 @@ import com.unq.rapiempleo.service.ImageStorageService
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.AccessDeniedToUserPreferenceException
+import com.unq.rapiempleo.exceptions.PreferenciasFieldRequiredException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -149,7 +150,9 @@ class PostulanteController {
         if (postulanteService.getIdPorEmail(email) != idPostulante)
             throw AccessDeniedToUserPreferenceException()
 
-        val preferencias = body["preferencias"] ?: ""
+        val preferencias = body["preferencias"]
+            ?: throw PreferenciasFieldRequiredException()
+
         postulanteService.actualizarPreferencias(idPostulante, preferencias)
         return ResponseEntity("Preferencias actualizadas", HttpStatus.OK)
     }

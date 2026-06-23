@@ -127,4 +127,9 @@ class ValidationExceptionHandler {
     fun handlePreferenciaLimitExceededException(exc: PreferenciaLimitExceededException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(PreferenciasFieldRequiredException::class)
+    fun handlePreferenciasFieldRequiredException(exc: PreferenciasFieldRequiredException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
 }
