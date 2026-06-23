@@ -139,6 +139,7 @@ class PostulanteController {
         }
     }
 
+    @Suppress("ThrowsCount")
     @PatchMapping("/{idPostulante}/preferencia")
     fun actualizarPreferencias(
         @PathVariable idPostulante: Long,
