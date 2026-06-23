@@ -11,6 +11,7 @@ import com.unq.rapiempleo.service.CvStorageService
 import com.unq.rapiempleo.service.ImageStorageService
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.AccessDeniedToUserPreferenceException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -146,7 +147,7 @@ class PostulanteController {
             ?: throw UnauthenticatedException()
 
         if (postulanteService.getIdPorEmail(email) != idPostulante)
-            throw AccessDeniedToFileException()
+            throw AccessDeniedToUserPreferenceException()
 
         val preferencias = body["preferencias"] ?: ""
         postulanteService.actualizarPreferencias(idPostulante, preferencias)
