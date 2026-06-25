@@ -2,6 +2,7 @@ package com.unq.rapiempleo
 
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.model.EstadoPostulacion
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.model.Ofertante
@@ -53,11 +54,11 @@ class DataBaseSeederTest {
     ).also { it.id_postulante = 1L }
     private val ofertaEntrevistando = Oferta(
         "Backend Engineer", "CloudSync", "desc",
-        Modalidad.Remoto, "Abierto", 47000, 54000, "Ciudad de México", false
+        Modalidad.Remoto, EstadoOferta.Abierto, 47000, 54000, "Ciudad de México", false
     ).also { it.id_oferta = 6L }
     private val ofertaCerrada = Oferta(
         "Contador Sr", "Tepago SA", "desc",
-        Modalidad.Presencial, "Finalizado", 40000, 44000, "Temperley", false
+        Modalidad.Presencial, EstadoOferta.Cerrado, 40000, 44000, "Temperley", false
     ).also { it.id_oferta = 2L }
 
     @BeforeEach

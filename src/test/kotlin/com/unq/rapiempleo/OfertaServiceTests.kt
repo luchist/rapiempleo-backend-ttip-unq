@@ -1,5 +1,6 @@
 package com.unq.rapiempleo
 
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.repository.OfertaRepository
@@ -28,19 +29,19 @@ class OfertaServiceTests {
     @BeforeEach
     fun setUp() {
         val oferta1 = Oferta(
-            "Ayudante de cocina", "La Farola", "Vacio", Modalidad.Presencial, "Abierto",
+            "Ayudante de cocina", "La Farola", "Vacio", Modalidad.Presencial, EstadoOferta.Abierto,
             32000, 42000, "Lujan, Buenos Aires", true
         )
         val oferta2 = Oferta(
-            "Traductor de documentos", "CentiLab", "Vacio", Modalidad.Remoto, "Abierto",
+            "Traductor de documentos", "CentiLab", "Vacio", Modalidad.Remoto, EstadoOferta.Abierto,
             24000, 29000, "La Plata, Buenos Aires", false
         )
         val oferta3 = Oferta(
-            "Traductor en Eventos", "Embajada de Portugal", "Vacio", Modalidad.Hibrido, "Abierto",
+            "Traductor en Eventos", "Embajada de Portugal", "Vacio", Modalidad.Hibrido, EstadoOferta.Abierto,
             33000, 38000, "Retiro, Buenos Aires", true
         )
         val oferta4 = Oferta(
-            "Desarrollador Sr", "Tech.Inc", "Vacio", Modalidad.Hibrido, "Abierto",
+            "Desarrollador Sr", "Tech.Inc", "Vacio", Modalidad.Hibrido, EstadoOferta.Abierto,
             45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true
         )
         ofertaRepository.saveAll(listOf(oferta1, oferta2, oferta3, oferta4))

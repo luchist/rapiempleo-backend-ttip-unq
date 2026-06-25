@@ -5,6 +5,7 @@ import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.exceptions.CvNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.exceptions.PreferenciaLimitExceededException
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.repository.OfertaRepository
@@ -54,7 +55,7 @@ class PostulanteServiceTests {
         val ofertante = ofertanteRepository.findById(1).get()
 
         val oferta = Oferta("Desarrollador Sr", "Tech.Inc", "descriptions/FullstackTechOffer.md",
-            Modalidad.Hibrido, "Abierto", 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true)
+            Modalidad.Hibrido, EstadoOferta.Abierto, 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true)
         oferta.ofertante = ofertante
         ofertaRepository.save(oferta)
 
