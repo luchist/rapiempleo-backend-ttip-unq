@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.service.impl
 
 import com.unq.rapiempleo.dto.OfertaCardDTO
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
@@ -16,8 +17,8 @@ class SearchServiceImpl(
 
     @Transactional
     override fun searchByTitle(title: String): List<OfertaCardDTO> {
-        val ofertasBuscadas = ofertaRepository.findByTituloContainingIgnoreCase(title)
-        return ofertasBuscadas.map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
+        return ofertaRepository.findByTituloContainingIgnoreCaseAndEstado(title, EstadoOferta.Abierto)
+            .map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
     }
 
     @Transactional
@@ -35,9 +36,10 @@ class SearchServiceImpl(
             titulo = titulo?.ifBlank { null },
             empresa = empresa?.ifBlank { null },
             modalidad = modalidadEnum,
-            ubicacion = ubicacion?.ifBlank { null }
+            ubicacion = ubicacion?.ifBlank { null },
+            estado = EstadoOferta.Abierto
         )
-        var resultadoSegunUser = resultados.map { OfertaCardDTO.desdeModelo(it) }
+        val resultadoSegunUser = resultados.map { OfertaCardDTO.desdeModelo(it) }
         if (idPostulante != null) {
             val favoritos = postulanteRepository.favoritosDelPostulante(idPostulante)
             resultadoSegunUser.forEach { oferta -> if (favoritos.contains(oferta.id))  oferta.favorito = true }
