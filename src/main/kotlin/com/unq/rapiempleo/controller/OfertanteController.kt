@@ -52,12 +52,7 @@ class OfertanteController {
         @PathVariable idOfertante: Long,
         @RequestParam("file") archivo: MultipartFile
     ): ResponseEntity<Map<String, String>> {
-        val email = SecurityContextHolder.getContext().authentication?.name
-            ?: throw UnauthenticatedException()
-
-        if (ofertanteService.getIdPorEmail(email) != idOfertante)
-            throw AccessDeniedToFileException()
-
+        verificarOfertante(idOfertante)
         val fotoPath = imageStorageService.guardarImagenPerfilOfertante(idOfertante, archivo)
         ofertanteService.actualizarImagenPerfil(idOfertante, fotoPath)
         return ResponseEntity(mapOf("fotoPath" to fotoPath), HttpStatus.OK)
@@ -68,12 +63,7 @@ class OfertanteController {
         @PathVariable idOfertante: Long,
         @RequestBody request: OfertaCreateRequest
     ): ResponseEntity<OfertaCreadaDTO> {
-        val email = SecurityContextHolder.getContext().authentication?.name
-            ?: throw UnauthenticatedException()
-
-        if (ofertanteService.getIdPorEmail(email) != idOfertante)
-            throw AccessDeniedToFileException()
-
+        verificarOfertante(idOfertante)
         val oferta = ofertanteService.crearOferta(idOfertante, request)
         return ResponseEntity(oferta, HttpStatus.OK)
     }
@@ -83,14 +73,16 @@ class OfertanteController {
         @PathVariable idOfertante: Long,
         @PathVariable idOferta: Long
     ): ResponseEntity<OfertaCreadaDTO> {
-        val email = SecurityContextHolder.getContext().authentication?.name
-            ?: throw UnauthenticatedException()
-
-        if (ofertanteService.getIdPorEmail(email) != idOfertante)
-            throw AccessDeniedToFileException()
-
+        verificarOfertante(idOfertante)
         val oferta = ofertanteService.toggleEstadoOferta(idOfertante, idOferta)
         return ResponseEntity(oferta, HttpStatus.OK)
+    }
+
+    private fun verificarOfertante(idOfertante: Long) {
+        val auth = SecurityContextHolder.getContext().authentication
+            ?: throw UnauthenticatedException()
+        if (auth.details as Long != idOfertante)
+            throw AccessDeniedToFileException()
     }
 
     @DeleteMapping("/deleteNotify/{idOfertante}/{idNotify}")
