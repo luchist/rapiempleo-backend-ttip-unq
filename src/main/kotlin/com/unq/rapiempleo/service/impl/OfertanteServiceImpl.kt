@@ -8,6 +8,7 @@ import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.DuplicatedEmailException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
+import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.model.Ofertante
@@ -31,7 +32,9 @@ class OfertanteServiceImpl (
 
     @Transactional
     override fun recuperarOfertante(idOfertante: Long): OfertanteDTO {
-        val ofertante = ofertanteRepository.findById(idOfertante).orElseThrow { throw OfertanteNotFoundException() }
+        val ofertante = ofertanteRepository.findById(idOfertante)
+            .orElseThrow { throw OfertanteNotFoundException() }
+
         return OfertanteDTO.desdeModelo(ofertante)
     }
 
@@ -91,6 +94,23 @@ class OfertanteServiceImpl (
         )
 
         oferta.ofertante = ofertante
+        ofertaRepository.save(oferta)
+        return OfertaCreadaDTO.desdeModelo(oferta)
+    }
+
+    @Transactional
+    override fun toggleEstadoOferta(idOfertante: Long, idOferta: Long): OfertaCreadaDTO {
+        val ofertante = ofertanteRepository.findById(idOfertante)
+            .orElseThrow { OfertanteNotFoundException() }
+
+        val oferta = ofertaRepository.findById(idOferta)
+            .orElseThrow { OfferNotFoundException() }
+
+        if (oferta.ofertante?.id_ofertante != ofertante.id_ofertante)
+            throw AccessDeniedToFileException()
+
+        oferta.estado = if (oferta.estado == "Abierto") "Cerrado" else "Abierto"
+
         ofertaRepository.save(oferta)
         return OfertaCreadaDTO.desdeModelo(oferta)
     }
