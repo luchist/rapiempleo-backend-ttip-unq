@@ -108,9 +108,9 @@ class DataBaseSeeder(
         ofertas[9].ofertante = ofertanteTest1
 
         ofertas[6].ofertante = ofertanteTest1
-        ofertas[7].ofertante = ofertanteTest1
+        ofertas[7].ofertante = ofertanteTest2
         ofertas[8].ofertante = ofertanteTest1
-        ofertas[10].ofertante = ofertanteTest2
+        ofertas[10].ofertante = ofertanteTest1
 
         ofertas[0].ofertante = ofertanteTest3
         ofertas[5].ofertante = ofertanteTest3
