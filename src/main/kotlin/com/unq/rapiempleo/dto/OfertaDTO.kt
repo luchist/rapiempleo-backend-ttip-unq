@@ -1,6 +1,7 @@
 package com.unq.rapiempleo.dto
 
 
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 
@@ -10,6 +11,7 @@ class OfertaDTO (
     var empresa : String,
     var descripcion : String,
     var modalidad : Modalidad,
+    var estado : EstadoOferta,
     var sueldoMin : Int,
     var sueldoMax : Int,
     var ubicacion : String,
@@ -24,6 +26,7 @@ class OfertaDTO (
                 descripcion = oferta.descripcion,
                 empresa = oferta.empresa,
                 modalidad = oferta.modalidad,
+                estado = oferta.estado,
                 sueldoMin = oferta.sueldoMin,
                 sueldoMax = oferta.sueldoMax,
                 ubicacion = oferta.ubicacion,
