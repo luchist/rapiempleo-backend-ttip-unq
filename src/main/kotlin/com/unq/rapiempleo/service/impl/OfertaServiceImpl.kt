@@ -3,6 +3,7 @@ package com.unq.rapiempleo.service.impl
 import com.unq.rapiempleo.dto.OfertaCardDTO
 import com.unq.rapiempleo.dto.OfertaDTO
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulacionEstadoRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
@@ -35,20 +36,20 @@ class OfertaServiceImpl (
 
     @Transactional
     override fun recuperarTodasLasOfertas(): List<OfertaCardDTO> {
-        val ofertas = ofertaRepository.findAll()
-        return ofertas.map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
+        return ofertaRepository.findByEstado(EstadoOferta.Abierto)
+            .map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
     }
 
     override fun buscarOfertas(nombreOferta: String): List<OfertaCardDTO> {
-        val ofertasBuscadas = ofertaRepository.findByTituloContainingIgnoreCase(nombreOferta)
-        return ofertasBuscadas.map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
+        return ofertaRepository.findByTituloContainingIgnoreCaseAndEstado(nombreOferta, EstadoOferta.Abierto)
+            .map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
     }
 
     override fun recuperarTodasLasOfertasYFavoritos(idPostulante: Long): List<OfertaCardDTO> {
         val favoritosPostulante = postulanteRepository.favoritosDelPostulante(idPostulante)
-        val ofertas = ofertaRepository.findAll()
-        val ofertasCard = ofertas.map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
-        ofertasCard.forEach { oferta -> if (favoritosPostulante.contains(oferta.id))  oferta.favorito = true }
+        val ofertasCard = ofertaRepository.findByEstado(EstadoOferta.Abierto)
+            .map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
+        ofertasCard.forEach { oferta -> if (favoritosPostulante.contains(oferta.id)) oferta.favorito = true }
         return ofertasCard
     }
 }

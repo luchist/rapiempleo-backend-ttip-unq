@@ -14,4 +14,5 @@ interface OfertanteService {
     fun actualizarImagenPerfil(idOfertante: Long, fotoPath: String)
     fun getIdPorEmail(email: String): Long
     fun crearOferta(idOfertante: Long, request: OfertaCreateRequest): OfertaCreadaDTO
+    fun toggleEstadoOferta(idOfertante: Long, idOferta: Long): OfertaCreadaDTO
 }

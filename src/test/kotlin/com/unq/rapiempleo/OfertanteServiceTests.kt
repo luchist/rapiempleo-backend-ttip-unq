@@ -1,9 +1,13 @@
 package com.unq.rapiempleo
 
+import com.unq.rapiempleo.dto.OfertaCreadaDTO
 import com.unq.rapiempleo.dto.OfertaCreateRequest
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.UsuarioLoginDTO
+import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
+import com.unq.rapiempleo.exceptions.OfferNotFoundException
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.OfertanteRepository
@@ -38,6 +42,21 @@ class OfertanteServiceTests {
         ofertanteRepository.resetIdOfertante()
     }
 
+    private fun crearOfertanteConOferta(): OfertaCreadaDTO {
+        ofertanteService.registroOfertante(
+            OfertanteRegistryDTO("Mock", "Hyper-MegaRed", "marco@gmail.com", "pass")
+        )
+        return ofertanteService.crearOferta(
+            1, OfertaCreateRequest(
+                titulo = "Desarrollador Full Stack",
+                descripcion = "Descripción del puesto",
+                modalidad = Modalidad.Remoto,
+                sueldoMin = 1000,
+                sueldoMax = 2000,
+                ubicacion = "CABA"
+            )
+        )
+    }
 
     @Test
     fun crearOfertante() {
@@ -66,61 +85,87 @@ class OfertanteServiceTests {
 
     @Test
     fun crearOferta() {
-        val datosDeRegistro = OfertanteRegistryDTO("Mock", "Hyper-MegaRed", "marco@gmail.com", "pass")
-        ofertanteService.registroOfertante(datosDeRegistro)
-
-        val request = OfertaCreateRequest(
-            titulo = "Desarrollador Full Stack",
-            descripcion = "Descripción del puesto",
-            modalidad = Modalidad.Remoto,
-            sueldoMin = 1000,
-            sueldoMax = 2000,
-            ubicacion = "CABA"
-        )
-        val dto = ofertanteService.crearOferta(1, request)
+        val dto = crearOfertanteConOferta()
 
         Assertions.assertNotNull(dto.id)
-        Assertions.assertEquals(request.titulo, dto.titulo)
-        Assertions.assertEquals(datosDeRegistro.company, dto.empresa)
-        Assertions.assertEquals(request.modalidad, dto.modalidad)
-        Assertions.assertEquals(request.sueldoMin, dto.sueldoMin)
-        Assertions.assertEquals(request.sueldoMax, dto.sueldoMax)
-        Assertions.assertEquals(request.ubicacion, dto.ubicacion)
+        Assertions.assertEquals("Desarrollador Full Stack", dto.titulo)
+        Assertions.assertEquals("Hyper-MegaRed", dto.empresa)
+        Assertions.assertEquals(Modalidad.Remoto, dto.modalidad)
+        Assertions.assertEquals(1000, dto.sueldoMin)
+        Assertions.assertEquals(2000, dto.sueldoMax)
+        Assertions.assertEquals("CABA", dto.ubicacion)
         Assertions.assertEquals(0, dto.cvsRecibidos.size)
     }
 
     @Test
     fun crearOfertaApareceEnOfertasCreadas() {
-        val datosDeRegistro = OfertanteRegistryDTO("Mock", "Hyper-MegaRed", "marco@gmail.com", "pass")
-        ofertanteService.registroOfertante(datosDeRegistro)
-
-        val request = OfertaCreateRequest(
-            titulo = "Desarrollador Full Stack",
-            descripcion = "Descripción del puesto",
-            modalidad = Modalidad.Remoto,
-            sueldoMin = 1000,
-            sueldoMax = 2000,
-            ubicacion = "CABA"
-        )
-        ofertanteService.crearOferta(1, request)
+        val dto = crearOfertanteConOferta()
 
         val ofertante = ofertanteService.recuperarOfertante(1)
         Assertions.assertEquals(1, ofertante.ofertasCreadas.size)
-        Assertions.assertEquals(request.titulo, ofertante.ofertasCreadas[0].titulo)
+        Assertions.assertEquals(dto.titulo, ofertante.ofertasCreadas[0].titulo)
     }
 
     @Test
     fun crearOfertaOfertanteInexistente() {
-        val request = OfertaCreateRequest(
-            titulo = "Título",
-            descripcion = "Descripción",
-            modalidad = Modalidad.Presencial,
-            sueldoMin = 500,
-            sueldoMax = 1000,
-            ubicacion = "La Plata"
-        )
         assertThrows<OfertanteNotFoundException> {
-            ofertanteService.crearOferta(999, request)
+            ofertanteService.crearOferta(
+                999, OfertaCreateRequest(
+                    titulo = "Título",
+                    descripcion = "Descripción",
+                    modalidad = Modalidad.Presencial,
+                    sueldoMin = 500,
+                    sueldoMax = 1000,
+                    ubicacion = "La Plata"
+                )
+            )
+        }
+    }
+
+    @Test
+    fun toggleEstadoOfertaCierraOfertaAbierta() {
+        val oferta = crearOfertanteConOferta()
+
+        val resultado = ofertanteService.toggleEstadoOferta(1, oferta.id)
+
+        Assertions.assertEquals(EstadoOferta.Cerrado, resultado.estado)
+    }
+
+    @Test
+    fun toggleEstadoOfertaAbreOfertaCerrada() {
+        val oferta = crearOfertanteConOferta()
+        ofertanteService.toggleEstadoOferta(1, oferta.id)
+
+        val resultado = ofertanteService.toggleEstadoOferta(1, oferta.id)
+
+        Assertions.assertEquals(EstadoOferta.Abierto, resultado.estado)
+    }
+
+    @Test
+    fun toggleEstadoOfertaOfertanteInexistente() {
+        val oferta = crearOfertanteConOferta()
+
+        assertThrows<OfertanteNotFoundException> {
+            ofertanteService.toggleEstadoOferta(999, oferta.id)
+        }
+    }
+
+    @Test
+    fun toggleEstadoOfertaOfertaInexistente() {
+        ofertanteService.registroOfertante(OfertanteRegistryDTO("Mock", "Hyper-MegaRed", "marco@gmail.com", "pass"))
+
+        assertThrows<OfferNotFoundException> {
+            ofertanteService.toggleEstadoOferta(1, 999)
+        }
+    }
+
+    @Test
+    fun toggleEstadoOfertaOfertanteNoEsDuenio() {
+        val oferta = crearOfertanteConOferta()
+        ofertanteService.registroOfertante(OfertanteRegistryDTO("Otro", "OtraEmpresa", "otro@gmail.com", "pass"))
+
+        assertThrows<AccessDeniedToFileException> {
+            ofertanteService.toggleEstadoOferta(2, oferta.id)
         }
     }
 }

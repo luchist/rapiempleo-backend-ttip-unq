@@ -11,7 +11,8 @@ class Oferta (
     var descripcion : String,
     @Enumerated(EnumType.STRING)
     var modalidad : Modalidad,
-    var estado : String,
+    @Enumerated(EnumType.STRING)
+    var estado : EstadoOferta,
     var sueldoMin : Int,
     var sueldoMax : Int,
     var ubicacion : String,

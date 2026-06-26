@@ -1,6 +1,7 @@
 package com.unq.rapiempleo
 
 
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.repository.OfertaRepository
@@ -27,18 +28,22 @@ class SearchServiceTests {
     @BeforeEach
     fun setOffers(): Unit {
         val oferta1 = Oferta(
-            "Ayudante de cocina", "La Farola", "Vacio", Modalidad.Presencial, "Abierto",
+            "Ayudante de cocina", "La Farola", "Vacio", Modalidad.Presencial, EstadoOferta.Abierto,
             32000, 42000, "Lujan, Buenos Aires", true
         )
         val oferta2 = Oferta(
-            "Traductor de documentos", "CentiLab", "Vacio", Modalidad.Remoto, "Abierto",
+            "Traductor de documentos", "CentiLab", "Vacio", Modalidad.Remoto, EstadoOferta.Abierto,
             24000, 29000, "La Plata, Buenos Aires", false
         )
         val oferta3 = Oferta(
-            "Traductor en Eventos", "Embajada de Portugal", "Vacio", Modalidad.Hibrido, "Abierto",
+            "Traductor en Eventos", "Embajada de Portugal", "Vacio", Modalidad.Hibrido, EstadoOferta.Abierto,
             33000, 38000, "Retiro, Buenos Aires", true
         )
-        ofertaRepository.saveAll(listOf(oferta1, oferta2, oferta3))
+        val ofertaCerrada = Oferta(
+            "Contador Sr", "Tepago SA", "Vacio", Modalidad.Presencial, EstadoOferta.Cerrado,
+            40000, 44000, "Temperley, Buenos Aires", false
+        )
+        ofertaRepository.saveAll(listOf(oferta1, oferta2, oferta3, ofertaCerrada))
     }
 
     @AfterEach
@@ -120,6 +125,20 @@ class SearchServiceTests {
         val resultadoBusqAvanzada = this.searchService.buscarConFiltros("Ayudante de cocina", "La Farola",
                                                                         "Remoto", "Lujan, Buenos Aires", null)
         Assertions.assertEquals(0, resultadoBusqAvanzada.size)
+    }
+
+    @Test
+    fun ofertaCerradaNoApareceEnBusquedaPorTitulo() {
+        val resultado = searchService.searchByTitle("Contador")
+
+        Assertions.assertEquals(0, resultado.size)
+    }
+
+    @Test
+    fun ofertaCerradaNoApareceEnBusquedaAvanzada() {
+        val resultado = searchService.buscarConFiltros("", "Tepago", "", "", null)
+
+        Assertions.assertEquals(0, resultado.size)
     }
 
 }

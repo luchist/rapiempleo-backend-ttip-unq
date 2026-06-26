@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.repository
 
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import jakarta.transaction.Transactional
@@ -18,20 +19,24 @@ interface OfertaRepository : JpaRepository<Oferta, Long>{
     @Query(value = "ALTER TABLE oferta AUTO_INCREMENT = 1", nativeQuery = true)
     fun resetIdOferta()
 
-    fun findByTituloContainingIgnoreCase(titulo : String) : List<Oferta>
+    fun findByEstado(estado: EstadoOferta): List<Oferta>
+
+    fun findByTituloContainingIgnoreCaseAndEstado(titulo: String, estado: EstadoOferta): List<Oferta>
 
     @Query("""
     SELECT o FROM Oferta o WHERE
     (:titulo IS NULL OR LOWER(o.titulo) LIKE LOWER(CONCAT('%', :titulo, '%'))) AND
     (:empresa IS NULL OR LOWER(o.empresa) LIKE LOWER(CONCAT('%', :empresa, '%'))) AND
     (:modalidad IS NULL OR o.modalidad = :modalidad) AND
-    (:ubicacion IS NULL OR LOWER(o.ubicacion) LIKE LOWER(CONCAT('%', :ubicacion, '%')))
+    (:ubicacion IS NULL OR LOWER(o.ubicacion) LIKE LOWER(CONCAT('%', :ubicacion, '%'))) AND
+    o.estado = :estado
     """)
     fun buscarConFiltros(
         @Param("titulo") titulo: String?,
         @Param("empresa") empresa: String?,
         @Param("modalidad") modalidad: Modalidad?,
-        @Param("ubicacion") ubicacion: String?
+        @Param("ubicacion") ubicacion: String?,
+        @Param("estado") estado: EstadoOferta
     ): List<Oferta>
 
     @Query("""

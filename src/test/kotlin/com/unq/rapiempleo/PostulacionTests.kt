@@ -5,6 +5,7 @@ import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.model.EstadoCvPostulado
 import com.unq.rapiempleo.model.EstadoPostulacion
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.model.PostulacionEstado
@@ -68,7 +69,7 @@ class PostulacionTests {
         val ofertante = ofertanteRepository.findById(1).get()
 
         val oferta = Oferta("Desarrollador Sr", "Tech.Inc", "descriptions/FullstackTechOffer.md",
-            Modalidad.Hibrido, "Abierto", 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true)
+            Modalidad.Hibrido, EstadoOferta.Abierto, 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true)
         oferta.ofertante = ofertante
         ofertaRepository.save(oferta)
     }

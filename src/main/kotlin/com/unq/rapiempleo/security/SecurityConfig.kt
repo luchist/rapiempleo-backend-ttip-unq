@@ -34,6 +34,7 @@ class SecurityConfig (
                     .requestMatchers(HttpMethod.PATCH, "/postulante/*/cv/favorito").hasRole("POSTULANTE")
                     .requestMatchers(HttpMethod.POST, "/ofertante/*/foto").hasRole("OFERTANTE")
                     .requestMatchers(HttpMethod.POST, "/ofertante/*/oferta").hasRole("OFERTANTE")
+                    .requestMatchers(HttpMethod.PATCH, "/ofertante/*/oferta/*/estado").hasRole("OFERTANTE")
                     .requestMatchers("/postulante/*/board/**").hasRole("POSTULANTE")
                     .anyRequest().authenticated()
             }
