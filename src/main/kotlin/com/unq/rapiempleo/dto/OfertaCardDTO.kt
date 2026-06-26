@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.dto
 
+import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 
@@ -11,6 +12,7 @@ class OfertaCardDTO (
     var sueldoMin : Int,
     var sueldoMax : Int,
     var ubicacion : String,
+    var estado : EstadoOferta,
     var favorito : Boolean
 ) {
     companion object {
@@ -23,6 +25,7 @@ class OfertaCardDTO (
                 sueldoMin = oferta.sueldoMin,
                 sueldoMax = oferta.sueldoMax,
                 ubicacion = oferta.ubicacion,
+                estado = oferta.estado,
                 favorito = oferta.favorito
             )
             return ofertaDTOres
