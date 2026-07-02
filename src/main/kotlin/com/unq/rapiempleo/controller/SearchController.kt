@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -22,31 +21,16 @@ class SearchController {
     @Autowired
     private lateinit var searchService: SearchService
 
-    @GetMapping("/{title}")
-    fun buscarOfertas(@PathVariable title : String) : ResponseEntity<List<OfertaCardDTO>> {
-        val ofertas = searchService.searchByTitle(title)
-        return ResponseEntity(ofertas, HttpStatus.OK)
-    }
-
     @GetMapping
     fun buscarOfertas(
-        @RequestParam(required = false) title: String?,
-        @RequestParam(required = false) company: String?,
-        @RequestParam(required = false) workType: String?,
-        @RequestParam(required = false) location: String?,
-
+        @RequestParam(required = false) q: String?
     ): ResponseEntity<List<OfertaCardDTO>> {
         val auth = SecurityContextHolder.getContext().authentication
             ?: throw AccessDeniedToFileException()
         val userId = auth.details as Long
         val isPostulante = auth.authorities.any { it.authority == "ROLE_POSTULANTE" }
 
-        if (isPostulante) {
-            val ofertas = searchService.buscarConFiltros(title, company, workType, location, userId)
-            return ResponseEntity(ofertas, HttpStatus.OK)
-        } else {
-            val ofertas = searchService.buscarConFiltros(title, company, workType, location, null)
-            return ResponseEntity(ofertas, HttpStatus.OK)
-        }
+        val ofertas = searchService.busquedaInteligente(q, if (isPostulante) userId else null)
+        return ResponseEntity(ofertas, HttpStatus.OK)
     }
 }

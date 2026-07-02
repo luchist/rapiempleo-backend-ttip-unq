@@ -1,7 +1,6 @@
 package com.unq.rapiempleo.repository
 
 import com.unq.rapiempleo.model.EstadoOferta
-import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.JpaRepository
@@ -23,21 +22,16 @@ interface OfertaRepository : JpaRepository<Oferta, Long>{
 
     fun findByTituloContainingIgnoreCaseAndEstado(titulo: String, estado: EstadoOferta): List<Oferta>
 
-    @Query("""
-    SELECT o FROM Oferta o WHERE
-    (:titulo IS NULL OR LOWER(o.titulo) LIKE LOWER(CONCAT('%', :titulo, '%'))) AND
-    (:empresa IS NULL OR LOWER(o.empresa) LIKE LOWER(CONCAT('%', :empresa, '%'))) AND
-    (:modalidad IS NULL OR o.modalidad = :modalidad) AND
-    (:ubicacion IS NULL OR LOWER(o.ubicacion) LIKE LOWER(CONCAT('%', :ubicacion, '%'))) AND
-    o.estado = :estado
-    """)
-    fun buscarConFiltros(
-        @Param("titulo") titulo: String?,
-        @Param("empresa") empresa: String?,
-        @Param("modalidad") modalidad: Modalidad?,
-        @Param("ubicacion") ubicacion: String?,
-        @Param("estado") estado: EstadoOferta
-    ): List<Oferta>
+    // Full-text search over open offers ranked by relevance.
+    // Backed by the FULLTEXT index ft_oferta the MATCH() column list must match it exactly.
+    // estado is @Enumerated(STRING) so it is compared to the literal in this native query.
+    @Query(value = """
+    SELECT * FROM oferta
+    WHERE estado = 'Abierto'
+      AND MATCH(titulo, empresa, descripcion, ubicacion) AGAINST (:q IN BOOLEAN MODE)
+    ORDER BY MATCH(titulo, empresa, descripcion, ubicacion) AGAINST (:q IN BOOLEAN MODE) DESC
+    """, nativeQuery = true)
+    fun busquedaInteligente(@Param("q") q: String): List<Oferta>
 
     @Query("""
     SELECT CASE WHEN COUNT(o) > 0 THEN true ELSE false END

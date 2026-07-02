@@ -2,7 +2,6 @@ package com.unq.rapiempleo.service.impl
 
 import com.unq.rapiempleo.dto.OfertaCardDTO
 import com.unq.rapiempleo.model.EstadoOferta
-import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.SearchService
@@ -15,36 +14,42 @@ class SearchServiceImpl(
     private val postulanteRepository: PostulanteRepository
 ) : SearchService {
 
-    @Transactional
-    override fun searchByTitle(title: String): List<OfertaCardDTO> {
-        return ofertaRepository.findByTituloContainingIgnoreCaseAndEstado(title, EstadoOferta.Abierto)
-            .map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
-    }
+    // Characters that are operators in MySQL boolean full-text mode. Stripped from user input so a stray
+    // character can't break the query or change its meaning. The native query is parameterized, so this is
+    // about query correctness, not SQL injection.
+    private val booleanOperatorChars = Regex("""[+\-><()~*"@]""")
 
     @Transactional
-    override fun buscarConFiltros(
-        titulo: String?,
-        empresa: String?,
-        modalidad: String?,
-        ubicacion: String?,
-        idPostulante: Long?
-    ): List<OfertaCardDTO> {
-        val modalidadEnum: Modalidad? = modalidad?.let {
-            runCatching { Modalidad.valueOf(it.replaceFirstChar(Char::uppercase)) }.getOrNull()
+    override fun busquedaInteligente(q: String?, idPostulante: Long?): List<OfertaCardDTO> {
+        val terminoBusqueda = construirTerminoBooleano(q)
+
+        val ofertas = if (terminoBusqueda == null) {
+            ofertaRepository.findByEstado(EstadoOferta.Abierto)
+        } else {
+            ofertaRepository.busquedaInteligente(terminoBusqueda)
         }
-        val resultados = ofertaRepository.buscarConFiltros(
-            titulo = titulo?.ifBlank { null },
-            empresa = empresa?.ifBlank { null },
-            modalidad = modalidadEnum,
-            ubicacion = ubicacion?.ifBlank { null },
-            estado = EstadoOferta.Abierto
-        )
-        val resultadoSegunUser = resultados.map { OfertaCardDTO.desdeModelo(it) }
+
+        val resultado = ofertas.map { OfertaCardDTO.desdeModelo(it) }
         if (idPostulante != null) {
             val favoritos = postulanteRepository.favoritosDelPostulante(idPostulante)
-            resultadoSegunUser.forEach { oferta -> if (favoritos.contains(oferta.id))  oferta.favorito = true }
-            return resultadoSegunUser
+            resultado.forEach { oferta -> if (favoritos.contains(oferta.id)) oferta.favorito = true }
         }
-        return resultadoSegunUser
+        return resultado
+    }
+
+    // Turns free text into a boolean-mode term string with a prefix wildcard per word, e.g.
+    // "desarroll front" -> "desarroll* front*". Returns null when there is nothing to search for, which
+    // signals the caller to fall back to listing every open offer.
+    private fun construirTerminoBooleano(q: String?): String? {
+        val limpio = q?.replace(booleanOperatorChars, " ")?.trim().orEmpty()
+        if (limpio.isEmpty()) return null
+
+        val terminos = limpio.split(Regex("\\s+"))
+            .filter { it.isNotBlank() }
+            .map { "$it*" }
+
+        val terminoFinal = terminos.takeIf { it.isNotEmpty() }?.joinToString(" ")
+
+        return terminoFinal
     }
 }
