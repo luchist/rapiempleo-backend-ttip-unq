@@ -26,6 +26,9 @@ class Ofertante (
     @OneToMany(mappedBy = "ofertante")
     var ofertasCreadas: MutableList<Oferta> = mutableListOf()
 
+    @ElementCollection
+    var cvsGuardados: MutableList<CvSummary> = mutableListOf()
+
     fun addNuevaNotificacion( tituloOferta: String ) {
         avisosPostulacion.add(0, tituloOferta)
     }

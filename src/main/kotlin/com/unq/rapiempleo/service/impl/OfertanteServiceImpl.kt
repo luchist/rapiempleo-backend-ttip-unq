@@ -1,15 +1,19 @@
 package com.unq.rapiempleo.service.impl
 
 
+import com.unq.rapiempleo.dto.CvCollectRequestDTO
 import com.unq.rapiempleo.dto.OfertaCreadaDTO
 import com.unq.rapiempleo.dto.OfertaCreateRequest
 import com.unq.rapiempleo.dto.OfertanteDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.DuplicatedCVSavedException
 import com.unq.rapiempleo.exceptions.DuplicatedEmailException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
+import com.unq.rapiempleo.exceptions.SavedCVNotFoundException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
+import com.unq.rapiempleo.model.CvSummary
 import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.model.Ofertante
@@ -116,6 +120,27 @@ class OfertanteServiceImpl (
         return OfertaCreadaDTO.desdeModelo(oferta)
     }
 
+    override fun guardarCV(cvAGuardar: CvCollectRequestDTO) {
+        val ofertante = ofertanteRepository.findById(cvAGuardar.idOfertante).orElseThrow { throw OfertanteNotFoundException() }
+
+        if (ofertante.cvsGuardados.any { cv -> cv.cvPath == cvAGuardar.cvPath && cv.id_postulante == cvAGuardar.idPostulante }) {
+            throw DuplicatedCVSavedException()
+        }
+        val cvResumen = CvSummary(cvAGuardar.idPostulante, cvAGuardar.cvPath)
+        ofertante.cvsGuardados.add(cvResumen)
+        ofertanteRepository.save(ofertante)
+    }
+
+    override fun eliminarCVGuardado(cvAEliminar: CvCollectRequestDTO) {
+        val ofertante = ofertanteRepository.findById(cvAEliminar.idOfertante).orElseThrow { throw OfertanteNotFoundException() }
+
+        if (ofertante.cvsGuardados.none { cv -> cv.cvPath == cvAEliminar.cvPath }) { throw SavedCVNotFoundException() }
+        ofertante.cvsGuardados.removeIf { cv -> cv.cvPath == cvAEliminar.cvPath && cv.id_postulante == cvAEliminar.idPostulante }
+        ofertanteRepository.save(ofertante)
+    }
+
+
+
     override fun eliminarNotificacion(idOfertante: Long, idNotificacion: Long) {
         val userToModify = ofertanteRepository.findById(idOfertante).orElseThrow { throw OfertanteNotFoundException() }
         userToModify!!.eliminarNotificacionEn(idNotificacion.toInt())
@@ -124,5 +149,4 @@ class OfertanteServiceImpl (
         }
         ofertanteRepository.save(userToModify)
     }
-
 }
