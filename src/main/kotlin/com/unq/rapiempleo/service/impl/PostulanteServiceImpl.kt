@@ -179,7 +179,7 @@ class PostulanteServiceImpl (
             .orElseThrow { PostulanteNotFoundException() }
         val postulacion = ofertaPostulada.cvPostulantes.find { postulacion -> postulacion.id_postulante == avisoPostulacion.id_postulante}
 
-        if (postulacion!!.estadoCv == EstadoCvPostulado.ESPERA) {
+        if (postulacion!!.estadoCv == EstadoCvPostulado.ESPERA && avisoPostulacion.tipo_aviso == EstadoCvPostulado.VISTO) {
             postulacion.estadoCv = EstadoCvPostulado.VISTO
             postulanteANotificar.notificacionesCv.add(NotificationEntry(avisoPostulacion.tipo_aviso,ofertaPostulada.titulo))
             ofertaRepository.save(ofertaPostulada)
