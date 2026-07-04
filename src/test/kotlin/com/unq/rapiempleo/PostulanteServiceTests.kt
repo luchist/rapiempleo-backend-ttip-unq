@@ -17,7 +17,6 @@ import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertanteService
 import com.unq.rapiempleo.service.PostulanteService
-import io.jsonwebtoken.lang.Assert
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -244,8 +243,8 @@ class PostulanteServiceTests {
 
     @Test
     fun obtenerIdPostulantePorEmail() {
-        val postulante_id = postulanteService.getIdPorEmail("mock05@gmail.com")
-        Assertions.assertEquals(1, postulante_id)
+        val postulanteId = postulanteService.getIdPorEmail("mock05@gmail.com")
+        Assertions.assertEquals(1, postulanteId)
     }
 
     @Test

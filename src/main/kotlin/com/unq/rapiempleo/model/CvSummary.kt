@@ -4,6 +4,6 @@ import jakarta.persistence.Embeddable
 
 @Embeddable
 class CvSummary (
-    val id_postulante : Long,
+    val idPostulante : Long,
     val cvPath : String,
 )

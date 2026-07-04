@@ -56,11 +56,13 @@ class OfertaServiceImpl (
     }
 
     override fun eliminarCVPostulacion(cvAEliminar: DeleteCVRequestDTO) {
-        val ofertaAModificar = ofertaRepository.findById(cvAEliminar.id_oferta).orElseThrow { throw OfferNotFoundException() }
-        if (ofertaAModificar.cvPostulantes.none { cv -> cv.id_postulante ==  cvAEliminar.id_postulante }) {
+        val ofertaAModificar = ofertaRepository.findById(cvAEliminar.idOferta)
+            .orElseThrow { throw OfferNotFoundException() }
+
+        if (ofertaAModificar.cvPostulantes.none { cv -> cv.id_postulante ==  cvAEliminar.idPostulante }) {
             throw SavedCVNotFoundException()
         }
-        ofertaAModificar.cvPostulantes.removeIf { cv -> cv.id_postulante == cvAEliminar.id_postulante }
+        ofertaAModificar.cvPostulantes.removeIf { cv -> cv.id_postulante == cvAEliminar.idPostulante }
         ofertaRepository.save(ofertaAModificar)
     }
 }

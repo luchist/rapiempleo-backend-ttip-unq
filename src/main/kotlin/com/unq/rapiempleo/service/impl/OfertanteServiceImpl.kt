@@ -121,21 +121,34 @@ class OfertanteServiceImpl (
     }
 
     override fun guardarCV(cvAGuardar: CvCollectRequestDTO) {
-        val ofertante = ofertanteRepository.findById(cvAGuardar.idOfertante).orElseThrow { throw OfertanteNotFoundException() }
+        val ofertante = ofertanteRepository.findById(cvAGuardar.idOfertante)
+            .orElseThrow { throw OfertanteNotFoundException() }
 
-        if (ofertante.cvsGuardados.any { cv -> cv.cvPath == cvAGuardar.cvPath && cv.id_postulante == cvAGuardar.idPostulante }) {
+        if (ofertante.cvsGuardados.any { cv ->
+            cv.cvPath == cvAGuardar.cvPath
+            && cv.idPostulante == cvAGuardar.idPostulante })
+        {
             throw DuplicatedCVSavedException()
         }
+
         val cvResumen = CvSummary(cvAGuardar.idPostulante, cvAGuardar.cvPath)
         ofertante.cvsGuardados.add(cvResumen)
         ofertanteRepository.save(ofertante)
     }
 
     override fun eliminarCVGuardado(cvAEliminar: CvCollectRequestDTO) {
-        val ofertante = ofertanteRepository.findById(cvAEliminar.idOfertante).orElseThrow { throw OfertanteNotFoundException() }
+        val ofertante = ofertanteRepository.findById(cvAEliminar.idOfertante)
+            .orElseThrow { throw OfertanteNotFoundException() }
 
-        if (ofertante.cvsGuardados.none { cv -> cv.cvPath == cvAEliminar.cvPath }) { throw SavedCVNotFoundException() }
-        ofertante.cvsGuardados.removeIf { cv -> cv.cvPath == cvAEliminar.cvPath && cv.id_postulante == cvAEliminar.idPostulante }
+        if (ofertante.cvsGuardados.none { cv -> cv.cvPath == cvAEliminar.cvPath })
+        {
+            throw SavedCVNotFoundException()
+        }
+
+        ofertante.cvsGuardados.removeIf { cv ->
+            cv.cvPath == cvAEliminar.cvPath
+            && cv.idPostulante == cvAEliminar.idPostulante }
+        
         ofertanteRepository.save(ofertante)
     }
 

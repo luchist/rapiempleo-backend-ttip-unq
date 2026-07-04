@@ -157,9 +157,9 @@ class OfertanteServiceTests {
         val datosDeRegistro = OfertanteRegistryDTO("Mock", "RedMega", "mock@gmail.com", "pass")
         ofertanteService.registroOfertante(datosDeRegistro)
 
-        val id_ofertante = ofertanteService.getIdPorEmail("mock@gmail.com")
+        val idOfertante = ofertanteService.getIdPorEmail("mock@gmail.com")
 
-        Assertions.assertEquals(1, id_ofertante)
+        Assertions.assertEquals(1, idOfertante)
     }
 
     @Test

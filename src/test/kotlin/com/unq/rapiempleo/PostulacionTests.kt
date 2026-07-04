@@ -275,7 +275,7 @@ class PostulacionTests {
 
         Assertions.assertEquals(1, ofertante.cvsGuardados.size)
         Assertions.assertEquals("1//cv_spanish.pdf", ofertante.cvsGuardados[0].cvPath)
-        Assertions.assertEquals(1, ofertante.cvsGuardados[0].id_postulante)
+        Assertions.assertEquals(1, ofertante.cvsGuardados[0].idPostulante)
     }
 
     @Test
