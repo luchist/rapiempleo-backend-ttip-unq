@@ -1,10 +1,14 @@
 package com.unq.rapiempleo
 
+import com.unq.rapiempleo.dto.CvEntryRequestDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
+import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.exceptions.PreferenciaLimitExceededException
+import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
@@ -20,10 +24,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 
@@ -55,7 +63,7 @@ class PostulanteServiceTests {
         val ofertante = ofertanteRepository.findById(1).get()
 
         val oferta = Oferta("Desarrollador Sr", "Tech.Inc", "descriptions/FullstackTechOffer.md",
-            Modalidad.Hibrido, EstadoOferta.Abierto, 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true)
+            Modalidad.Hibrido, EstadoOferta.Abierto, 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = false)
         oferta.ofertante = ofertante
         ofertaRepository.save(oferta)
 
@@ -136,6 +144,12 @@ class PostulanteServiceTests {
 
     @Test
     fun subirImagenDePerfilPostulante() {
+        val authentication = mock(Authentication::class.java)
+        Mockito.`when`(authentication.name).thenReturn("mock05@gmail.com")
+        val securityContext = mock(SecurityContext::class.java)
+        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
+        SecurityContextHolder.setContext(securityContext)
+
         postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
 
         val postulante = postulanteService.getPostulante(1)
@@ -144,11 +158,43 @@ class PostulanteServiceTests {
 
     @Test
     fun subirSegundaImagenDePerfilPostulanteReemplazaLaAnterior() {
+        val authentication = mock(Authentication::class.java)
+        Mockito.`when`(authentication.name).thenReturn("mock05@gmail.com")
+        val securityContext = mock(SecurityContext::class.java)
+        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
+        SecurityContextHolder.setContext(securityContext)
+
         postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
         postulanteService.actualizarImagenPerfil(1, "1//img_profile2.jpg")
 
         val postulante = postulanteService.getPostulante(1)
         Assertions.assertEquals("1//img_profile2.jpg", postulante.fotoPerfil)
+    }
+
+    @Test
+    fun excepcionCambiarFotoDePerfilDePostulanteDistinto() {
+        val authentication = mock(Authentication::class.java)
+        Mockito.`when`(authentication.name).thenReturn("mock05@gmail.com")
+        val securityContext = mock(SecurityContext::class.java)
+        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
+        SecurityContextHolder.setContext(securityContext)
+
+        Assertions.assertThrows(AccessDeniedToFileException::class.java) {
+            postulanteService.actualizarImagenPerfil(99, "1//img_profile.jpg")
+        }
+    }
+
+    @Test
+    fun exceptionCambiarFotoDePerfilSinEstarLogueado() {
+        val authentication = mock(Authentication::class.java)
+        Mockito.`when`(authentication.name).thenReturn(null)
+        val securityContext = mock(SecurityContext::class.java)
+        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
+        SecurityContextHolder.setContext(securityContext)
+
+        Assertions.assertThrows(UnauthenticatedException::class.java) {
+            postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
+        }
     }
 
     @Test
@@ -193,6 +239,96 @@ class PostulanteServiceTests {
         postulanteService.actualizarPreferencias(1, preferencia255)
 
         Assertions.assertEquals(preferencia255, postulanteService.getPreferencias(1))
+    }
+
+    @Test
+    fun obtenerIdPostulantePorEmail() {
+        val postulanteId = postulanteService.getIdPorEmail("mock05@gmail.com")
+        Assertions.assertEquals(1, postulanteId)
+    }
+
+    @Test
+    fun agregarUnaOfertaFavorita() {
+        postulanteService.agregarOfertaFavorita(1, 1)
+        val postulanteConFavorito = postulanteRepository.findById(1).get()
+
+        Assertions.assertEquals(1, postulanteConFavorito.favoritos.size)
+        Assertions.assertEquals("Desarrollador Sr", postulanteConFavorito.favoritos[0].titulo)
+        Assertions.assertEquals("Tech.Inc", postulanteConFavorito.favoritos[0].empresa)
+    }
+
+    @Test
+    fun removerFavoritoAUnaOfertaFavorita() {
+        postulanteService.agregarOfertaFavorita(1, 1)
+        postulanteService.removerOfertaFavorita(1, 1)
+        val postulanteConFavorito = postulanteRepository.findById(1).get()
+
+        Assertions.assertEquals(0, postulanteConFavorito.favoritos.size)
+    }
+
+    @Test
+    fun excepcionRemoverOfertaInexistenteDeFavoritos() {
+        Assertions.assertThrows(OfferNotFoundException::class.java) {
+            postulanteService.removerOfertaFavorita(1, 99)
+        }
+    }
+
+    @Test
+    fun excepcionRemoverFavoritoComoPostulanteInexistente() {
+        Assertions.assertThrows(PostulanteNotFoundException::class.java) {
+            postulanteService.removerOfertaFavorita(99, 1)
+        }
+    }
+
+    @Test
+    fun removerUnicoCVDelPerfil() {
+        postulanteService.agregarCv(1, "1/cv_spanish.pdf")
+        val requestRemoveCV = CvEntryRequestDTO(1, "1/cv_spanish.pdf")
+
+        postulanteService.removerCvIndicado(requestRemoveCV)
+        val postulanteSinCV = postulanteService.getPostulante(1)
+        Assertions.assertEquals(0, postulanteSinCV.cvPaths.size)
+        Assertions.assertNull(postulanteSinCV.cvFavorito)
+    }
+
+    @Test
+    fun removerCVFavoritoConMasDeUnCVSubido() {
+        postulanteService.agregarCv(1, "1/cv_spanish.pdf")
+        postulanteService.agregarCv(1, "1/cv_english.pdf")
+        postulanteService.setearCvFavorito(1, "1/cv_english.pdf")
+
+        val requestRemoveCV = CvEntryRequestDTO(1, "1/cv_english.pdf")
+        postulanteService.removerCvIndicado(requestRemoveCV)
+        val postulanteConCV = postulanteService.getPostulante(1)
+
+        Assertions.assertEquals(1, postulanteConCV.cvPaths.size)
+        Assertions.assertEquals("1/cv_spanish.pdf", postulanteConCV.cvPaths[0])
+        Assertions.assertEquals("1/cv_spanish.pdf", postulanteConCV.cvFavorito)
+    }
+
+    @Test
+    fun excepcionPostulanteInexistenteEliminaUnCV() {
+        val requestRemoveCV = CvEntryRequestDTO(99, "1/cv_english.pdf")
+        Assertions.assertThrows(PostulanteNotFoundException::class.java) {
+            postulanteService.removerCvIndicado(requestRemoveCV)
+        }
+    }
+
+    @Test
+    fun excepcionSeIntentaEliminarUnCVInexistente() {
+        postulanteService.agregarCv(1, "1/cv_spanish.pdf")
+        val requestRemoveCV = CvEntryRequestDTO(1, "1/cv_japanese.pdf")
+
+        Assertions.assertThrows(CvNotFoundException::class.java) {
+            postulanteService.removerCvIndicado(requestRemoveCV)
+        }
+    }
+
+    @Test
+    fun excepcionAlObtenerBoardDeUsuarioInexistente() {
+        Assertions.assertThrows(PostulanteNotFoundException::class.java) {
+            postulanteService.getBoard(99)
+        }
     }
 
 

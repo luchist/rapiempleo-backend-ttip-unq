@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.service
 
+import com.unq.rapiempleo.dto.DeleteCVRequestDTO
 import com.unq.rapiempleo.dto.OfertaCardDTO
 import com.unq.rapiempleo.dto.OfertaDTO
 import org.springframework.stereotype.Service
@@ -11,4 +12,5 @@ interface OfertaService {
     fun recuperarTodasLasOfertas () : List<OfertaCardDTO>
     fun buscarOfertas (nombreOferta : String) : List<OfertaCardDTO>
     fun recuperarTodasLasOfertasYFavoritos(idPostulante : Long) : List<OfertaCardDTO>
+    fun eliminarCVPostulacion(cvAEliminar: DeleteCVRequestDTO)
 }

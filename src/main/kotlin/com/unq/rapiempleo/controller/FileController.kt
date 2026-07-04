@@ -41,9 +41,6 @@ class FileController(
         if (isPostulante) {
             if (userId != idPostulante)
                 throw AccessDeniedToFileException()
-        } else {
-            if (!ofertaRepository.existePostulanteEnOfertasDeOfertante(userId, idPostulante))
-                throw AccessDeniedToFileException()
         }
 
         // Path traversal

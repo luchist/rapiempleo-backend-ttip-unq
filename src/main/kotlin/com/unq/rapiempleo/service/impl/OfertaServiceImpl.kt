@@ -1,8 +1,10 @@
 package com.unq.rapiempleo.service.impl
 
+import com.unq.rapiempleo.dto.DeleteCVRequestDTO
 import com.unq.rapiempleo.dto.OfertaCardDTO
 import com.unq.rapiempleo.dto.OfertaDTO
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
+import com.unq.rapiempleo.exceptions.SavedCVNotFoundException
 import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulacionEstadoRepository
@@ -51,5 +53,16 @@ class OfertaServiceImpl (
             .map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
         ofertasCard.forEach { oferta -> if (favoritosPostulante.contains(oferta.id)) oferta.favorito = true }
         return ofertasCard
+    }
+
+    override fun eliminarCVPostulacion(cvAEliminar: DeleteCVRequestDTO) {
+        val ofertaAModificar = ofertaRepository.findById(cvAEliminar.idOferta)
+            .orElseThrow { throw OfferNotFoundException() }
+
+        if (ofertaAModificar.cvPostulantes.none { cv -> cv.id_postulante ==  cvAEliminar.idPostulante }) {
+            throw SavedCVNotFoundException()
+        }
+        ofertaAModificar.cvPostulantes.removeIf { cv -> cv.id_postulante == cvAEliminar.idPostulante }
+        ofertaRepository.save(ofertaAModificar)
     }
 }

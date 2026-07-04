@@ -1,11 +1,14 @@
 package com.unq.rapiempleo
 
+import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
 import com.unq.rapiempleo.repository.OfertaRepository
+import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.PostulanteService
+import io.jsonwebtoken.lang.Assert
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -25,6 +28,10 @@ class OfertaServiceTests {
     private lateinit var ofertaService: OfertaService
     @Autowired
     private lateinit var ofertaRepository: OfertaRepository
+    @Autowired
+    private lateinit var postulanteService: PostulanteService
+    @Autowired
+    private lateinit var postulanteRepository: PostulanteRepository
 
     @BeforeEach
     fun setUp() {
@@ -45,12 +52,17 @@ class OfertaServiceTests {
             45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true
         )
         ofertaRepository.saveAll(listOf(oferta1, oferta2, oferta3, oferta4))
+
+        val datosPostulante = PostulanteRegistryDTO("Mock Sanchez", "mock@gmail.com", "passpass")
+        postulanteService.registrarUserPostulante(datosPostulante)
     }
 
     @AfterEach
     fun cleanUp() {
         ofertaRepository.deleteAll()
         ofertaRepository.resetIdOferta()
+        postulanteRepository.deleteAll()
+        postulanteRepository.resetIdPostulante()
     }
 
     @Test
@@ -66,6 +78,14 @@ class OfertaServiceTests {
     fun obtenerTodasLasOfertas() {
         val todasLasOfertas = this.ofertaService.recuperarTodasLasOfertas()
         Assertions.assertEquals(4, todasLasOfertas.size)
+    }
+
+    @Test
+    fun buscarOfertasPorNombre() {
+        val ofertasObtenidas = ofertaService.buscarOfertas("Traductor")
+        Assertions.assertEquals(2, ofertasObtenidas.size)
+        Assertions.assertTrue( ofertasObtenidas.any { oferta -> oferta.titulo == "Traductor de documentos" })
+        Assertions.assertTrue( ofertasObtenidas.any { oferta -> oferta.titulo == "Traductor en Eventos" })
     }
 
 }

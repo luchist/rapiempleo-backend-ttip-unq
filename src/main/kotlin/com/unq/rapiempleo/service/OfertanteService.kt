@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.service
 
+import com.unq.rapiempleo.dto.CvCollectRequestDTO
 import com.unq.rapiempleo.dto.OfertaCreadaDTO
 import com.unq.rapiempleo.dto.OfertaCreateRequest
 import com.unq.rapiempleo.dto.OfertanteDTO
@@ -15,4 +16,6 @@ interface OfertanteService {
     fun getIdPorEmail(email: String): Long
     fun crearOferta(idOfertante: Long, request: OfertaCreateRequest): OfertaCreadaDTO
     fun toggleEstadoOferta(idOfertante: Long, idOferta: Long): OfertaCreadaDTO
+    fun guardarCV(cvAGuardar : CvCollectRequestDTO)
+    fun eliminarCVGuardado(cvAEliminar: CvCollectRequestDTO)
 }

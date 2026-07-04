@@ -132,4 +132,14 @@ class ValidationExceptionHandler {
     fun handlePreferenciasFieldRequiredException(exc: PreferenciasFieldRequiredException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
     }
+
+    @ExceptionHandler(DuplicatedCVSavedException::class)
+    fun handleDuplicatedCVSavedException(exc: DuplicatedCVSavedException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("message" to exc.message!!))
+    }
+
+    @ExceptionHandler(SavedCVNotFoundException::class)
+    fun handleSavedCVNotFoundException(exc: SavedCVNotFoundException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("message" to exc.message!!))
+    }
 }

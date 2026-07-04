@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.dto
 
+import com.unq.rapiempleo.model.EstadoCvPostulado
 import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
@@ -13,7 +14,8 @@ class OfertaCreadaDTO(var id : Long,
                       var sueldoMin : Int,
                       var sueldoMax : Int,
                       var ubicacion : String,
-                      var cvsRecibidos : List<PostulacionCv>
+                      var cvsRecibidos : List<PostulacionCv>,
+                      var cvsRevisados : List<PostulacionCv>
 ) {
     companion object {
         fun desdeModelo (oferta : Oferta) : OfertaCreadaDTO {
@@ -27,6 +29,11 @@ class OfertaCreadaDTO(var id : Long,
                 sueldoMax = oferta.sueldoMax,
                 ubicacion = oferta.ubicacion,
                 cvsRecibidos = oferta.cvPostulantes
+                    .filter { cv -> cv.estadoCv == EstadoCvPostulado.ESPERA
+                            || cv.estadoCv == EstadoCvPostulado.VISTO },
+                cvsRevisados = oferta.cvPostulantes
+                    .filter { cv -> cv.estadoCv == EstadoCvPostulado.CONSIDERACION
+                            || cv.estadoCv == EstadoCvPostulado.RECHAZADO }
             )
             return ofertaCreadaDTOres
         }
