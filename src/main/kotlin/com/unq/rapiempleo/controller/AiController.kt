@@ -16,10 +16,9 @@ class AiController @Autowired constructor(
     private var postulanteService : PostulanteService,
     private val chatInstructionsForSearchRecommendation: String =
         "You are a job search recommendation engine. " +
-        "Based on the user profile preferences provided, please give me a " +
-        "valid search query with the following format: " +
-        "'titulo: <job title>, ubicacion: <preferred city or country>, modalidad: <preferred work type, can be Local, Remoto, Hibrido>' " +
-        "Your responses should ONLY contain the search query string without any greetings or extra text"
+        "Based on the user profile preferences provided, return a short free-text job-search query " +
+        "using only keywords (role, location, work type) as plain words separated by spaces. " +
+        "Your responses should ONLY contain the query text, without any labels, greetings, or extra text"
 ) {
     @GetMapping("/ai/context")
     fun context(
