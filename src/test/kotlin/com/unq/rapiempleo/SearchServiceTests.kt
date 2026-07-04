@@ -39,11 +39,15 @@ class SearchServiceTests {
             "Traductor en Eventos", "Embajada de Portugal", "Vacio", Modalidad.Hibrido, EstadoOferta.Abierto,
             33000, 38000, "Retiro, Buenos Aires", true
         )
+        val ofertaConTecnologia = Oferta(
+            "Desarrollador Backend", "CloudSync", "Buscamos experiencia solida en Kubernetes y microservicios",
+            Modalidad.Remoto, EstadoOferta.Abierto, 50000, 60000, "Cordoba, Argentina", false
+        )
         val ofertaCerrada = Oferta(
             "Contador Sr", "Tepago SA", "Vacio", Modalidad.Presencial, EstadoOferta.Cerrado,
             40000, 44000, "Temperley, Buenos Aires", false
         )
-        ofertaRepository.saveAll(listOf(oferta1, oferta2, oferta3, ofertaCerrada))
+        ofertaRepository.saveAll(listOf(oferta1, oferta2, oferta3, ofertaConTecnologia, ofertaCerrada))
     }
 
     @AfterEach
@@ -52,94 +56,66 @@ class SearchServiceTests {
         ofertaRepository.resetIdOferta()
     }
 
-    //@Transactional
     @Test
-    fun busquedaPorNombre() {
-        val resultadoBusqueda = this.searchService.searchByTitle("ayudante de cocina")
-        val verificacionBusqueda = resultadoBusqueda.filter { oferta -> oferta.titulo.contains("ayudante de cocina", true) }
+    fun busquedaPorTituloEncuentraLaOferta() {
+        val resultado = searchService.busquedaInteligente("cocina", null)
+        val verificacion = resultado.filter { it.titulo.contains("cocina", true) }
 
-        Assertions.assertEquals(1, resultadoBusqueda.size)
-        Assertions.assertEquals(resultadoBusqueda.size, verificacionBusqueda.size)
-
-        Assertions.assertEquals("La Farola", verificacionBusqueda.first().empresa)
-        Assertions.assertTrue(verificacionBusqueda.first().ubicacion.contains("Lujan"))
-        Assertions.assertEquals(Modalidad.Presencial, verificacionBusqueda.first().modalidad)
+        Assertions.assertEquals(1, resultado.size)
+        Assertions.assertEquals(resultado.size, verificacion.size)
+        Assertions.assertEquals("La Farola", verificacion.first().empresa)
+        Assertions.assertTrue(verificacion.first().ubicacion.contains("Lujan"))
+        Assertions.assertEquals(Modalidad.Presencial, verificacion.first().modalidad)
     }
 
-    //@Transactional
     @Test
     fun busquedaConMultiplesResultados() {
-        val resultadoBusqueda = this.searchService.searchByTitle("traductor")
-        val verificacionBusqueda = resultadoBusqueda.filter { oferta -> oferta.titulo.contains("traductor", true) }
+        val resultado = searchService.busquedaInteligente("traductor", null)
+        val verificacion = resultado.filter { it.titulo.contains("traductor", true) }
 
-        Assertions.assertEquals(resultadoBusqueda.size, 2)
-        Assertions.assertEquals(resultadoBusqueda.size, verificacionBusqueda.size)
+        Assertions.assertEquals(2, resultado.size)
+        Assertions.assertEquals(resultado.size, verificacion.size)
     }
 
     @Test
-    fun busquedaAvanzadaSoloPorTitulo() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("ayudante", "", "", "", null)
-        Assertions.assertEquals(1, resultadoBusqAvanzada.size)
+    fun busquedaPorPalabraParcialUsaElComodin() {
+        // "traduc" must still match "Traductor ..." thanks to the boolean-mode prefix wildcard.
+        val resultado = searchService.busquedaInteligente("traduc", null)
+        Assertions.assertEquals(2, resultado.size)
     }
 
     @Test
-    fun busquedaAvanzadaPorEmpresa() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "Farola", "", "", null)
-        Assertions.assertEquals(1, resultadoBusqAvanzada.size)
-        Assertions.assertEquals("La Farola", resultadoBusqAvanzada.first().empresa)
+    fun busquedaPorEmpresa() {
+        val resultado = searchService.busquedaInteligente("Farola", null)
+        Assertions.assertEquals(1, resultado.size)
+        Assertions.assertEquals("La Farola", resultado.first().empresa)
     }
 
     @Test
-    fun busquedaAvanzadaPorModalidad() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "", "Hibrido", "", null)
-        val verificacionBusqueda = resultadoBusqAvanzada.filter { oferta -> oferta.modalidad == Modalidad.Hibrido }
-        val ofertaAComprobar = resultadoBusqAvanzada.filter { oferta -> oferta.titulo.contains("traductor", true) }
-
-        Assertions.assertEquals(1, resultadoBusqAvanzada.size)
-        Assertions.assertEquals(1, verificacionBusqueda.size)
-        Assertions.assertEquals(1, ofertaAComprobar.size)
-        Assertions.assertEquals("Traductor en Eventos", ofertaAComprobar.first().titulo)
+    fun busquedaPorUbicacion() {
+        val resultado = searchService.busquedaInteligente("Buenos Aires", null)
+        Assertions.assertEquals(3, resultado.size)
+        Assertions.assertTrue(resultado.any { it.titulo == "Ayudante de cocina" })
+        Assertions.assertTrue(resultado.any { it.titulo == "Traductor de documentos" })
+        Assertions.assertTrue(resultado.any { it.titulo == "Traductor en Eventos" })
     }
 
     @Test
-    fun busquedaAvanzadaPorUbicacion() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("", "", "", "Buenos Aires", null)
-        Assertions.assertEquals(3, resultadoBusqAvanzada.size)
-        Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -> oferta.titulo == "Ayudante de cocina"}.isNotEmpty())
-        Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -> oferta.titulo == "Traductor de documentos"}.isNotEmpty())
-        Assertions.assertTrue(resultadoBusqAvanzada.filter{ oferta -> oferta.titulo == "Traductor en Eventos"}.isNotEmpty())
+    fun busquedaCoincideConElCuerpoDeLaDescripcion() {
+        val resultado = searchService.busquedaInteligente("Kubernetes", null)
+        Assertions.assertEquals(1, resultado.size)
+        Assertions.assertEquals("Desarrollador Backend", resultado.first().titulo)
     }
 
     @Test
-    fun busquedaAvanzadaPorMultiplesCampos() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("cocina", "La Farola", "Presencial", "", null)
-        Assertions.assertEquals(1, resultadoBusqAvanzada.size)
-        Assertions.assertEquals("Ayudante de cocina", resultadoBusqAvanzada.first().titulo)
-        Assertions.assertEquals(32000, resultadoBusqAvanzada.first().sueldoMin)
-        Assertions.assertEquals(42000, resultadoBusqAvanzada.first().sueldoMax)
-        Assertions.assertEquals("Lujan, Buenos Aires", resultadoBusqAvanzada.first().ubicacion)
+    fun busquedaVaciaDevuelveTodasLasOfertasAbiertas() {
+        Assertions.assertEquals(4, searchService.busquedaInteligente("", null).size)
+        Assertions.assertEquals(4, searchService.busquedaInteligente(null, null).size)
     }
 
     @Test
-    fun busquedaAvanzadaPorMultiplesCamposSinResultados() {
-        val resultadoBusqAvanzada = this.searchService.buscarConFiltros("Ayudante de cocina", "La Farola",
-                                                                        "Remoto", "Lujan, Buenos Aires", null)
-        Assertions.assertEquals(0, resultadoBusqAvanzada.size)
+    fun ofertaCerradaNoApareceEnLaBusqueda() {
+        Assertions.assertEquals(0, searchService.busquedaInteligente("Contador", null).size)
+        Assertions.assertEquals(0, searchService.busquedaInteligente("Tepago", null).size)
     }
-
-    @Test
-    fun ofertaCerradaNoApareceEnBusquedaPorTitulo() {
-        val resultado = searchService.searchByTitle("Contador")
-
-        Assertions.assertEquals(0, resultado.size)
-    }
-
-    @Test
-    fun ofertaCerradaNoApareceEnBusquedaAvanzada() {
-        val resultado = searchService.buscarConFiltros("", "Tepago", "", "", null)
-
-        Assertions.assertEquals(0, resultado.size)
-    }
-
 }
-
