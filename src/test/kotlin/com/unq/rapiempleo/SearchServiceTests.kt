@@ -26,7 +26,7 @@ class SearchServiceTests {
     private lateinit var ofertaRepository: OfertaRepository
 
     @BeforeEach
-    fun setOffers(): Unit {
+    fun setOffers() {
         val oferta1 = Oferta(
             "Ayudante de cocina", "La Farola", "Vacio", Modalidad.Presencial, EstadoOferta.Abierto,
             32000, 42000, "Lujan, Buenos Aires", true
@@ -117,5 +117,13 @@ class SearchServiceTests {
     fun ofertaCerradaNoApareceEnLaBusqueda() {
         Assertions.assertEquals(0, searchService.busquedaInteligente("Contador", null).size)
         Assertions.assertEquals(0, searchService.busquedaInteligente("Tepago", null).size)
+    }
+
+    @Test
+    fun busquedaConIdPostulanteSinFavoritosNoMarcaFavoritos() {
+        val resultado = searchService.busquedaInteligente("Kubernetes", 999L)
+
+        Assertions.assertEquals(1, resultado.size)
+        Assertions.assertTrue(resultado.none { it.favorito })
     }
 }

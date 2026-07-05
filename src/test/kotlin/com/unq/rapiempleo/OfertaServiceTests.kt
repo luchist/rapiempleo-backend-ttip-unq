@@ -1,6 +1,9 @@
 package com.unq.rapiempleo
 
+import com.unq.rapiempleo.dto.DeleteCVRequestDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
+import com.unq.rapiempleo.exceptions.OfferNotFoundException
+import com.unq.rapiempleo.exceptions.SavedCVNotFoundException
 import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
@@ -8,18 +11,16 @@ import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.PostulanteService
-import io.jsonwebtoken.lang.Assert
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @SpringBootTest
 class OfertaServiceTests {
@@ -59,10 +60,10 @@ class OfertaServiceTests {
 
     @AfterEach
     fun cleanUp() {
-        ofertaRepository.deleteAll()
-        ofertaRepository.resetIdOferta()
         postulanteRepository.deleteAll()
         postulanteRepository.resetIdPostulante()
+        ofertaRepository.deleteAll()
+        ofertaRepository.resetIdOferta()
     }
 
     @Test
@@ -86,6 +87,43 @@ class OfertaServiceTests {
         Assertions.assertEquals(2, ofertasObtenidas.size)
         Assertions.assertTrue( ofertasObtenidas.any { oferta -> oferta.titulo == "Traductor de documentos" })
         Assertions.assertTrue( ofertasObtenidas.any { oferta -> oferta.titulo == "Traductor en Eventos" })
+    }
+
+    @Test
+    fun excepcionRecuperarOfertaInexistente() {
+        assertThrows<OfferNotFoundException> {
+            ofertaService.recuperarOferta(999)
+        }
+    }
+
+    @Test
+    fun excepcionEliminarCvPostulacionDeOfertaInexistente() {
+        val request = DeleteCVRequestDTO(1, 999)
+        assertThrows<OfferNotFoundException> {
+            ofertaService.eliminarCVPostulacion(request)
+        }
+    }
+
+    @Transactional
+    @Test
+    fun excepcionEliminarCvPostulacionInexistenteEnLaOferta() {
+        val idOferta = ofertaService.recuperarTodasLasOfertas().first().id
+        val request = DeleteCVRequestDTO(99, idOferta)
+        assertThrows<SavedCVNotFoundException> {
+            ofertaService.eliminarCVPostulacion(request)
+        }
+    }
+
+    @Test
+    fun recuperarTodasLasOfertasConFavoritosMarcaElFavorito() {
+        val idPostulante = postulanteService.getIdPorEmail("mock@gmail.com")
+        val idOfertaFavorita = ofertaService.recuperarTodasLasOfertas().first { !it.favorito }.id
+        postulanteService.agregarOfertaFavorita(idPostulante, idOfertaFavorita)
+
+        val ofertas = ofertaService.recuperarTodasLasOfertasYFavoritos(idPostulante)
+
+        Assertions.assertTrue(ofertas.first { it.id == idOfertaFavorita }.favorito)
+        postulanteService.removerOfertaFavorita(idPostulante, idOfertaFavorita)
     }
 
 }

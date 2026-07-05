@@ -1,13 +1,18 @@
 package com.unq.rapiempleo
 
+import com.unq.rapiempleo.dto.CvCollectRequestDTO
 import com.unq.rapiempleo.dto.OfertaCreadaDTO
 import com.unq.rapiempleo.dto.OfertaCreateRequest
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
+import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.dto.UsuarioLoginDTO
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.DuplicatedEmailException
+import com.unq.rapiempleo.exceptions.InvalidEmailException
+import com.unq.rapiempleo.exceptions.InvalidPasswordException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
+import com.unq.rapiempleo.exceptions.SavedCVNotFoundException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Modalidad
@@ -15,6 +20,8 @@ import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.service.LoginService
 import com.unq.rapiempleo.service.OfertanteService
+import com.unq.rapiempleo.service.PostulanteService
+import jakarta.transaction.Transactional
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.assertThrows
@@ -40,6 +47,8 @@ class OfertanteServiceTests {
     private lateinit var ofertaRepository: OfertaRepository
     @Autowired
     private lateinit var loginService : LoginService
+    @Autowired
+    private lateinit var postulanteService : PostulanteService
 
     @AfterEach
     fun cleanUp() {
@@ -253,5 +262,64 @@ class OfertanteServiceTests {
         assertThrows<AccessDeniedToFileException> {
             ofertanteService.toggleEstadoOferta(2, oferta.id)
         }
+    }
+
+    @Test
+    fun excepcionRecuperarOfertanteInexistente() {
+        assertThrows<OfertanteNotFoundException> {
+            ofertanteService.recuperarOfertante(999)
+        }
+    }
+
+    @Test
+    fun excepcionGuardarCvComoOfertanteInexistente() {
+        assertThrows<OfertanteNotFoundException> {
+            ofertanteService.guardarCV(CvCollectRequestDTO(999, 1, "1/cv_spanish.pdf"))
+        }
+    }
+
+    @Test
+    fun excepcionEliminarCvGuardadoComoOfertanteInexistente() {
+        assertThrows<OfertanteNotFoundException> {
+            ofertanteService.eliminarCVGuardado(CvCollectRequestDTO(999, 1, "1/cv_spanish.pdf"))
+        }
+    }
+
+    @Transactional
+    @Test
+    fun excepcionEliminarCvGuardadoNoExistente() {
+        ofertanteService.registroOfertante(OfertanteRegistryDTO("Mock", "RedMega", "marco@gmail.com", "pass"))
+
+        assertThrows<SavedCVNotFoundException> {
+            ofertanteService.eliminarCVGuardado(CvCollectRequestDTO(1, 1, "1/inexistente.pdf"))
+        }
+    }
+
+    @Test
+    fun excepcionLoginConEmailNoRegistrado() {
+        assertThrows<InvalidEmailException> {
+            loginService.loginDeUser(UsuarioLoginDTO("noexiste@gmail.com", "pass"))
+        }
+    }
+
+    @Test
+    fun excepcionLoginConPasswordIncorrecta() {
+        ofertanteService.registroOfertante(OfertanteRegistryDTO("Mock", "RedMega", "marco@gmail.com", "pass"))
+
+        assertThrows<InvalidPasswordException> {
+            loginService.loginDeUser(UsuarioLoginDTO("marco@gmail.com", "passwordIncorrecta"))
+        }
+    }
+
+    @Transactional
+    @Test
+    fun loginPostulante() {
+        postulanteService.registrarUserPostulante(PostulanteRegistryDTO("Mock Post", "post@gmail.com", "passpost"))
+
+        val userLogueado = loginService.loginDeUser(UsuarioLoginDTO("post@gmail.com", "passpost"))
+
+        Assertions.assertEquals("Mock Post", userLogueado.nombre)
+        Assertions.assertTrue(userLogueado.typeUser)
+        Assertions.assertTrue(userLogueado.token.isNotEmpty())
     }
 }
