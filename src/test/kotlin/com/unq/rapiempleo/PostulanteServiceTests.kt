@@ -4,16 +4,24 @@ import com.unq.rapiempleo.dto.CvEntryRequestDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
 import com.unq.rapiempleo.dto.PostulanteRegistryDTO
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.AccessDeniedToPostulacionException
+import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
+import com.unq.rapiempleo.exceptions.DuplicatedEmailException
+import com.unq.rapiempleo.exceptions.EstadoSinCambiosException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
+import com.unq.rapiempleo.exceptions.PostulacionEstadoNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.exceptions.PreferenciaLimitExceededException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.model.EstadoOferta
+import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.model.Modalidad
 import com.unq.rapiempleo.model.Oferta
+import com.unq.rapiempleo.model.PostulacionEstado
 import com.unq.rapiempleo.repository.OfertaRepository
 import com.unq.rapiempleo.repository.OfertanteRepository
+import com.unq.rapiempleo.repository.PostulacionEstadoRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertanteService
 import com.unq.rapiempleo.service.PostulanteService
@@ -51,6 +59,8 @@ class PostulanteServiceTests {
     private lateinit var ofertanteService: OfertanteService
     @Autowired
     private lateinit var ofertanteRepository: OfertanteRepository
+    @Autowired
+    private lateinit var postulacionEstadoRepository: PostulacionEstadoRepository
 
 
     @BeforeEach
@@ -76,6 +86,8 @@ class PostulanteServiceTests {
 
     @AfterEach
     fun cleanUp() {
+        postulacionEstadoRepository.deleteAll()
+        postulacionEstadoRepository.resetIdPostulacionEstado()
         postulanteRepository.deleteAll()
         postulanteRepository.resetIdPostulante()
         ofertaRepository.deleteAll()
@@ -331,5 +343,147 @@ class PostulanteServiceTests {
         }
     }
 
+    @Test
+    fun excepcionRegistrarPostulanteConEmailDuplicado() {
+        val datosDuplicados = PostulanteRegistryDTO("Otro Mock", "mock05@gmail.com", "otrapass")
+        assertThrows<DuplicatedEmailException> {
+            postulanteService.registrarUserPostulante(datosDuplicados)
+        }
+    }
+
+    @Test
+    fun excepcionGetPostulanteInexistente() {
+        assertThrows<PostulanteNotFoundException> {
+            postulanteService.getPostulante(999)
+        }
+    }
+
+    @Test
+    fun excepcionGetPreferenciasDePostulanteInexistente() {
+        assertThrows<PostulanteNotFoundException> {
+            postulanteService.getPreferencias(999)
+        }
+    }
+
+    @Test
+    fun excepcionGetIdPorEmailNoRegistrado() {
+        assertThrows<PostulanteNotFoundException> {
+            postulanteService.getIdPorEmail("noexiste@gmail.com")
+        }
+    }
+
+    @Test
+    fun excepcionAgregarCvConPathDeOtroPostulante() {
+        assertThrows<AccessDeniedToFileException> {
+            postulanteService.agregarCv(1, "99/cv_spanish.pdf")
+        }
+    }
+
+    @Test
+    fun excepcionAgregarQuintoCvSuperaElLimite() {
+        postulanteService.agregarCv(1, "1/cv1.pdf")
+        postulanteService.agregarCv(1, "1/cv2.pdf")
+        postulanteService.agregarCv(1, "1/cv3.pdf")
+        postulanteService.agregarCv(1, "1/cv4.pdf")
+
+        assertThrows<CvLimitExceededException> {
+            postulanteService.agregarCv(1, "1/cv5.pdf")
+        }
+    }
+
+    @Test
+    fun excepcionSetearCvFavoritoConPathDeOtroPostulante() {
+        assertThrows<AccessDeniedToFileException> {
+            postulanteService.setearCvFavorito(1, "99/cv_spanish.pdf")
+        }
+    }
+
+    @Test
+    fun excepcionAgregarOfertaFavoritaInexistente() {
+        assertThrows<OfferNotFoundException> {
+            postulanteService.agregarOfertaFavorita(1, 999)
+        }
+    }
+
+    @Test
+    fun excepcionAgregarOfertaFavoritaComoPostulanteInexistente() {
+        assertThrows<PostulanteNotFoundException> {
+            postulanteService.agregarOfertaFavorita(999, 1)
+        }
+    }
+
+    @Test
+    fun excepcionActualizarImagenPerfilConEmailNoRegistrado() {
+        mockAutenticacion("fantasma@gmail.com")
+
+        assertThrows<PostulanteNotFoundException> {
+            postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
+        }
+    }
+
+    @Test
+    fun updateEstadoPostulacionSinLoguearLanzaExcepcion() {
+        mockAutenticacion(null)
+
+        assertThrows<UnauthenticatedException> {
+            postulanteService.updateEstadoPostulacion(1, 1, EstadoPostulacion.Entrevistando)
+        }
+    }
+
+    @Test
+    fun updateEstadoPostulacionDeOtroPostulanteLanzaExcepcion() {
+        mockAutenticacion("mock05@gmail.com")
+
+        assertThrows<AccessDeniedToPostulacionException> {
+            postulanteService.updateEstadoPostulacion(99, 1, EstadoPostulacion.Entrevistando)
+        }
+    }
+
+    @Test
+    fun updateEstadoPostulacionInexistenteLanzaExcepcion() {
+        mockAutenticacion("mock05@gmail.com")
+
+        assertThrows<PostulacionEstadoNotFoundException> {
+            postulanteService.updateEstadoPostulacion(1, 9999, EstadoPostulacion.Entrevistando)
+        }
+    }
+
+    @Test
+    fun updateEstadoPostulacionCambiaElEstado() {
+        mockAutenticacion("mock05@gmail.com")
+        val idEstado = crearPostulacionEstado(EstadoPostulacion.Aplicado)
+
+        postulanteService.updateEstadoPostulacion(1, idEstado, EstadoPostulacion.Entrevistando)
+
+        val actualizado = postulacionEstadoRepository.findById(idEstado).get()
+        Assertions.assertEquals(EstadoPostulacion.Entrevistando, actualizado.estado)
+    }
+
+    @Test
+    fun updateEstadoPostulacionAlMismoEstadoLanzaExcepcion() {
+        mockAutenticacion("mock05@gmail.com")
+        val idEstado = crearPostulacionEstado(EstadoPostulacion.Aplicado)
+
+        assertThrows<EstadoSinCambiosException> {
+            postulanteService.updateEstadoPostulacion(1, idEstado, EstadoPostulacion.Aplicado)
+        }
+    }
+
+    private fun crearPostulacionEstado(estado: EstadoPostulacion): Long {
+        val postulante = postulanteRepository.findById(1).get()
+        val oferta = ofertaRepository.findById(1).get()
+        val postulacionEstado = postulacionEstadoRepository.save(
+            PostulacionEstado(oferta, postulante, estado)
+        )
+        return postulacionEstado.id_postulacion_estado!!
+    }
+
+    private fun mockAutenticacion(email: String?) {
+        val authentication = mock(Authentication::class.java)
+        Mockito.`when`(authentication.name).thenReturn(email)
+        val securityContext = mock(SecurityContext::class.java)
+        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
+        SecurityContextHolder.setContext(securityContext)
+    }
 
 }
