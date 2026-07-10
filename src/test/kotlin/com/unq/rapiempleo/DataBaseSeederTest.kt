@@ -110,7 +110,7 @@ class DataBaseSeederTest {
 
         verify(ofertaRepository).saveAll(captor.capture())
         val ofertas = captor.firstValue.toList()
-        assertEquals(11, ofertas.size)
+        assertEquals(14, ofertas.size)
         assertEquals(ofertante3, ofertas[0].ofertante)  // Desarrollador Sr Full Stack -> Tech.Inc
         assertEquals(ofertante1, ofertas[2].ofertante)  // Desarrollador FrontEnd -> Electro Smart
         assertEquals(ofertante2, ofertas[7].ofertante)  // UX Designer -> PixelLab

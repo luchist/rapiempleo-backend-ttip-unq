@@ -67,6 +67,18 @@ class DataBaseSeeder(
                 "leon0126@gmail.com",
                 "passpass")
         )
+        postulanteService.registrarUserPostulante(
+            PostulanteRegistryDTO(
+                "Chris Redfield",
+                "chris94@gmail.com",
+                "passpass")
+        )
+        postulanteService.registrarUserPostulante(
+            PostulanteRegistryDTO(
+                "Ethan Winters",
+                "ethan19@gmail.com",
+                "passpass")
+        )
 
         val ofertas = listOf(
             Oferta("Desarrollador Sr Full Stack", "Tech.Inc", "descriptions/FullstackTechOffer.md".readClasspathFile(),
@@ -93,6 +105,18 @@ class DataBaseSeeder(
                 Modalidad.Presencial, EstadoOferta.Abierto, 57000, 64000, "Mendoza, Argentina", favorito = false),
             Oferta("Cloud Data Engineer", "Mero Marketing", "descriptions/CloudMeroOffer.md".readClasspathFile(),
                 Modalidad.Hibrido, EstadoOferta.Abierto, 45000, 49000, "Capital Federal, Buenos Aires",
+                favorito = false),
+            Oferta("Coordinador de Mantenimiento", "ManPower Group",
+                "descriptions/CoordinadorManPowerOffer.md".readClasspathFile(),
+                Modalidad.Presencial, EstadoOferta.Abierto, 55000, 59000, "Rosario, Argentina",
+                favorito = false),
+            Oferta("Lider de Ecommerce", "Mercado Libre",
+                "descriptions/EcommerceMercadoLibreOffer.md".readClasspathFile(),
+                Modalidad.Presencial, EstadoOferta.Abierto, 50000, 54000, "Campana, Buenos Aires",
+                favorito = false),
+            Oferta("Pandadero-Pastelero", "Excelencia Laboral S.A.",
+                "descriptions/PanaderoExcelenciaOffer.md".readClasspathFile(),
+                Modalidad.Presencial, EstadoOferta.Abierto, 42000, 46000, "Haedo, Buenos Aires",
                 favorito = false))
 
         val ofertanteTest1 = ofertanteRepository.findById(1L)
@@ -117,6 +141,10 @@ class DataBaseSeeder(
 
         ofertas[0].ofertante = ofertanteTest3
         ofertas[5].ofertante = ofertanteTest3
+
+        ofertas[11].ofertante = ofertanteTest2
+        ofertas[12].ofertante = ofertanteTest3
+        ofertas[13].ofertante = ofertanteTest3
         ofertaRepository.saveAll(ofertas)
 
         val leon = postulanteRepository.findById(1).orElseThrow { PostulanteNotFoundException() }
