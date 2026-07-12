@@ -1,15 +1,11 @@
 package com.unq.rapiempleo.controller
 
-import com.unq.rapiempleo.dto.AvisoPostulanteDTO
 import com.unq.rapiempleo.dto.CvCollectRequestDTO
 import com.unq.rapiempleo.dto.DeleteCVRequestDTO
 import com.unq.rapiempleo.dto.OfertaCreadaDTO
 import com.unq.rapiempleo.dto.OfertaCreateRequest
 import com.unq.rapiempleo.dto.OfertanteDTO
 import com.unq.rapiempleo.dto.OfertanteRegistryDTO
-import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
-import com.unq.rapiempleo.exceptions.UnauthenticatedException
-import com.unq.rapiempleo.model.CvSummary
 import com.unq.rapiempleo.service.ImageStorageService
 import com.unq.rapiempleo.service.OfertaService
 import com.unq.rapiempleo.service.OfertanteService
@@ -17,7 +13,7 @@ import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -41,6 +37,7 @@ class OfertanteController {
     @Autowired
     private lateinit var ofertaService: OfertaService
 
+    @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#idOfertante, authentication)")
     @GetMapping("/{idOfertante}")
     fun obtenerOfertante(@PathVariable idOfertante : Long) : ResponseEntity<OfertanteDTO> {
         val ofertante = ofertanteService.recuperarOfertante(idOfertante)
@@ -53,62 +50,59 @@ class OfertanteController {
         return ResponseEntity(mapOf("message" to "Su registro fue exitoso"), HttpStatus.OK)
     }
 
+    @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#idOfertante, authentication)")
     @PostMapping("/{idOfertante}/foto")
     fun subirImagenPerfil(
         @PathVariable idOfertante: Long,
         @RequestParam("file") archivo: MultipartFile
     ): ResponseEntity<Map<String, String>> {
-        verificarOfertante(idOfertante)
         val fotoPath = imageStorageService.guardarImagenPerfilOfertante(idOfertante, archivo)
         ofertanteService.actualizarImagenPerfil(idOfertante, fotoPath)
         return ResponseEntity(mapOf("fotoPath" to fotoPath), HttpStatus.OK)
     }
 
+    @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#idOfertante, authentication)")
     @PostMapping("/{idOfertante}/oferta")
     fun crearOferta(
         @PathVariable idOfertante: Long,
         @RequestBody request: OfertaCreateRequest
     ): ResponseEntity<OfertaCreadaDTO> {
-        verificarOfertante(idOfertante)
         val oferta = ofertanteService.crearOferta(idOfertante, request)
         return ResponseEntity(oferta, HttpStatus.OK)
     }
 
+    @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#idOfertante, authentication)")
     @PatchMapping("/{idOfertante}/oferta/{idOferta}/estado")
     fun toggleEstadoOferta(
         @PathVariable idOfertante: Long,
         @PathVariable idOferta: Long
     ): ResponseEntity<OfertaCreadaDTO> {
-        verificarOfertante(idOfertante)
         val oferta = ofertanteService.toggleEstadoOferta(idOfertante, idOferta)
         return ResponseEntity(oferta, HttpStatus.OK)
     }
 
-    private fun verificarOfertante(idOfertante: Long) {
-        val auth = SecurityContextHolder.getContext().authentication
-            ?: throw UnauthenticatedException()
-        if (auth.details as Long != idOfertante)
-            throw AccessDeniedToFileException()
-    }
-
+    @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#idOfertante, authentication)")
     @DeleteMapping("/deleteNotify/{idOfertante}/{idNotify}")
     fun deleteNotificaction(@PathVariable idOfertante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
         ofertanteService.eliminarNotificacion(idOfertante, idNotify)
         return ResponseEntity("Notificación eliminada exitosa", HttpStatus.OK)
     }
 
+    @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#cvAGuardar.idOfertante, authentication)")
     @PostMapping("/saveCV")
     fun saveCurriculum(@RequestBody cvAGuardar : CvCollectRequestDTO) : ResponseEntity<String> {
         ofertanteService.guardarCV(cvAGuardar)
         return ResponseEntity("Se guardo el CV exitosamente", HttpStatus.OK)
     }
 
+    @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#cvAEliminar.idOfertante, authentication)")
     @DeleteMapping("/deleteSavedCV")
     fun deleteCurriculum(@RequestBody cvAEliminar : CvCollectRequestDTO) : ResponseEntity<String> {
         ofertanteService.eliminarCVGuardado(cvAEliminar)
         return ResponseEntity("Se elimino el CV exitosamente", HttpStatus.OK)
     }
 
+    @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.gestionaOferta(#cvAEliminar.idOferta, authentication)")
     @DeleteMapping("/deletePostulationCV")
     fun deletePostulationCV(@RequestBody cvAEliminar: DeleteCVRequestDTO) : ResponseEntity<String> {
         ofertaService.eliminarCVPostulacion(cvAEliminar)
