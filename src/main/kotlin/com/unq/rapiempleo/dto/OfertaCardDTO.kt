@@ -16,7 +16,9 @@ class OfertaCardDTO (
     var favorito : Boolean
 ) {
     companion object {
-        fun desdeModelo (oferta : Oferta) : OfertaCardDTO {
+        // favorito depende del postulante que consulta, no de la oferta, lo recibimos resuelto en vez de
+        // leerlo del modelo.
+        fun desdeModelo (oferta : Oferta, favorito : Boolean = false) : OfertaCardDTO {
             var ofertaDTOres = OfertaCardDTO(
                 id = oferta.id_oferta!!,
                 titulo = oferta.titulo,
@@ -26,7 +28,7 @@ class OfertaCardDTO (
                 sueldoMax = oferta.sueldoMax,
                 ubicacion = oferta.ubicacion,
                 estado = oferta.estado,
-                favorito = oferta.favorito
+                favorito = favorito
             )
             return ofertaDTOres
         }

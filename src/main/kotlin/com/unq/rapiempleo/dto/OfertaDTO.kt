@@ -19,7 +19,9 @@ class OfertaDTO (
     var yaPostulado : Boolean
 ) {
     companion object {
-        fun desdeModelo (oferta : Oferta, yaPostulado: Boolean) : OfertaDTO {
+        // favorito y yaPostulado dependen del postulante que consulta, no de la oferta, los recibimos
+        // resueltos en vez de leerlos del modelo.
+        fun desdeModelo (oferta : Oferta, yaPostulado: Boolean, favorito: Boolean) : OfertaDTO {
             val ofertaDTOres = OfertaDTO(
                 id = oferta.id_oferta!!,
                 titulo = oferta.titulo,
@@ -30,7 +32,7 @@ class OfertaDTO (
                 sueldoMin = oferta.sueldoMin,
                 sueldoMax = oferta.sueldoMax,
                 ubicacion = oferta.ubicacion,
-                favorito = oferta.favorito,
+                favorito = favorito,
                 yaPostulado = yaPostulado
             )
             return ofertaDTOres

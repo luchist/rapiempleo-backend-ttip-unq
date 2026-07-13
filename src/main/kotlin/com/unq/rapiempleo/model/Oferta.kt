@@ -16,7 +16,6 @@ class Oferta (
     var sueldoMin : Int,
     var sueldoMax : Int,
     var ubicacion : String,
-    var favorito : Boolean,
     @ElementCollection
     val cvPostulantes: MutableList<PostulacionCv> = mutableListOf()
 ) {

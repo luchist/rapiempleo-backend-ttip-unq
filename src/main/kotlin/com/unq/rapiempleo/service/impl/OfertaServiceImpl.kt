@@ -25,7 +25,11 @@ class OfertaServiceImpl (
     override fun recuperarOferta(idOferta: Long, idPostulante: Long?): OfertaDTO {
         val oferta =
             ofertaRepository.findById(idOferta).orElseThrow { throw OfferNotFoundException() }
-        return OfertaDTO.desdeModelo(oferta, ofertaYaPostulada(oferta.id_oferta, idPostulante))
+        return OfertaDTO.desdeModelo(
+            oferta,
+            ofertaYaPostulada(oferta.id_oferta, idPostulante),
+            esFavorito(oferta.id_oferta, idPostulante)
+        )
     }
 
     private fun ofertaYaPostulada(ofertaId: Long?, idPostulante: Long?): Boolean {
@@ -33,6 +37,11 @@ class OfertaServiceImpl (
             ?: return false
         return postulacionEstadoRepository.findByPostulante(postulante)
             .any { postulacion -> postulacion.oferta.id_oferta == ofertaId }
+    }
+
+    private fun esFavorito(ofertaId: Long?, idPostulante: Long?): Boolean {
+        if (ofertaId == null || idPostulante == null) return false
+        return postulanteRepository.favoritosDelPostulante(idPostulante).contains(ofertaId)
     }
 
     @Transactional
@@ -48,10 +57,8 @@ class OfertaServiceImpl (
 
     override fun recuperarTodasLasOfertasYFavoritos(idPostulante: Long): List<OfertaCardDTO> {
         val favoritosPostulante = postulanteRepository.favoritosDelPostulante(idPostulante)
-        val ofertasCard = ofertaRepository.findByEstado(EstadoOferta.Abierto)
-            .map { oferta -> OfertaCardDTO.desdeModelo(oferta) }
-        ofertasCard.forEach { oferta -> if (favoritosPostulante.contains(oferta.id)) oferta.favorito = true }
-        return ofertasCard
+        return ofertaRepository.findByEstado(EstadoOferta.Abierto)
+            .map { oferta -> OfertaCardDTO.desdeModelo(oferta, favoritosPostulante.contains(oferta.id_oferta)) }
     }
 
     override fun eliminarCVPostulacion(cvAEliminar: DeleteCVRequestDTO) {
