@@ -68,7 +68,7 @@ class OfertaServiceTests {
 
     @Test
     fun obtenerUnaOferta() {
-        val ofertaRecuperada = this.ofertaService.recuperarOferta(1)
+        val ofertaRecuperada = this.ofertaService.recuperarOferta(1, null)
         Assertions.assertEquals("Ayudante de cocina", ofertaRecuperada.titulo)
         Assertions.assertEquals("La Farola", ofertaRecuperada.empresa)
         Assertions.assertEquals("Lujan, Buenos Aires", ofertaRecuperada.ubicacion)
@@ -92,7 +92,7 @@ class OfertaServiceTests {
     @Test
     fun excepcionRecuperarOfertaInexistente() {
         assertThrows<OfferNotFoundException> {
-            ofertaService.recuperarOferta(999)
+            ofertaService.recuperarOferta(999, null)
         }
     }
 

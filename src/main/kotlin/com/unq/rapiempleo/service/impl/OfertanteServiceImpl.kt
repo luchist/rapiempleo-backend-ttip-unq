@@ -12,7 +12,6 @@ import com.unq.rapiempleo.exceptions.DuplicatedEmailException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.SavedCVNotFoundException
-import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.model.CvSummary
 import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.Oferta
@@ -22,7 +21,6 @@ import com.unq.rapiempleo.repository.OfertanteRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertanteService
 import jakarta.transaction.Transactional
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -61,15 +59,8 @@ class OfertanteServiceImpl (
 
 
     override fun actualizarImagenPerfil(idOfertante: Long, fotoPath: String) {
-        val email = SecurityContextHolder.getContext().authentication?.name
-            ?: throw UnauthenticatedException()
-
-        val ofertante = ofertanteRepository.findByEmail(email)
-            ?: throw OfertanteNotFoundException()
-
-        if (ofertante.id_ofertante != idOfertante) {
-            throw AccessDeniedToFileException()
-        }
+        val ofertante = ofertanteRepository.findById(idOfertante)
+            .orElseThrow { OfertanteNotFoundException() }
 
         ofertante.fotoPerfil = fotoPath
         ofertanteRepository.save(ofertante)

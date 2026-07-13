@@ -12,7 +12,6 @@ import com.unq.rapiempleo.exceptions.CvLimitExceededException
 import com.unq.rapiempleo.exceptions.CvNotFoundException
 import com.unq.rapiempleo.exceptions.DuplicatedEmailException
 import com.unq.rapiempleo.exceptions.EstadoSinCambiosException
-import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.exceptions.NoCvAvailableException
 import com.unq.rapiempleo.exceptions.OfertanteNotFoundException
 import com.unq.rapiempleo.exceptions.PostulacionEstadoNotFoundException
@@ -34,7 +33,6 @@ import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.PostulanteService
 import com.unq.rapiempleo.service.auxiliar.PostulationEvent
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -210,15 +208,8 @@ class PostulanteServiceImpl (
     }
 
     override fun actualizarImagenPerfil(idPostulante: Long, imagePath: String) {
-        val email = SecurityContextHolder.getContext().authentication?.name
-            ?: throw UnauthenticatedException()
-
-        val postulante = postulanteRepository.findByEmail(email)
-            ?: throw PostulanteNotFoundException()
-
-        if (postulante.id_postulante != idPostulante) {
-            throw AccessDeniedToFileException()
-        }
+        val postulante = postulanteRepository.findById(idPostulante)
+            .orElseThrow { PostulanteNotFoundException() }
 
         postulante.fotoPerfil = imagePath
         postulanteRepository.save(postulante)
@@ -293,20 +284,10 @@ class PostulanteServiceImpl (
         idPostulacionEstado: Long,
         nuevoEstado: EstadoPostulacion
     ) {
-        val email = SecurityContextHolder.getContext().authentication?.name
-            ?: throw UnauthenticatedException()
-
-        val postulante = postulanteRepository.findByEmail(email)
-            ?: throw PostulanteNotFoundException()
-
-        if (postulante.id_postulante != idPostulante) {
-            throw AccessDeniedToPostulacionException()
-        }
-
         val postulacionEstado = postulacionEstadoRepository.findById(idPostulacionEstado)
             .orElseThrow { PostulacionEstadoNotFoundException() }
 
-        if (postulacionEstado.postulante.id_postulante != postulante.id_postulante) {
+        if (postulacionEstado.postulante.id_postulante != idPostulante) {
             throw AccessDeniedToPostulacionException()
         }
 
