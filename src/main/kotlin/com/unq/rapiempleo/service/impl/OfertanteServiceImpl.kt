@@ -86,7 +86,6 @@ class OfertanteServiceImpl (
             sueldoMin = request.sueldoMin,
             sueldoMax = request.sueldoMax,
             ubicacion = request.ubicacion,
-            favorito = false,
         )
 
         oferta.ofertante = ofertante

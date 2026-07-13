@@ -29,12 +29,11 @@ class SearchServiceImpl(
             ofertaRepository.busquedaInteligente(terminoBusqueda)
         }
 
-        val resultado = ofertas.map { OfertaCardDTO.desdeModelo(it) }
-        if (idPostulante != null) {
-            val favoritos = postulanteRepository.favoritosDelPostulante(idPostulante)
-            resultado.forEach { oferta -> if (favoritos.contains(oferta.id)) oferta.favorito = true }
-        }
-        return resultado
+        val favoritos = idPostulante
+            ?.let { postulanteRepository.favoritosDelPostulante(it) }
+            .orEmpty()
+
+        return ofertas.map { OfertaCardDTO.desdeModelo(it, favoritos.contains(it.id_oferta)) }
     }
 
     // Turns free text into a boolean-mode term string with a prefix wildcard per word, e.g.

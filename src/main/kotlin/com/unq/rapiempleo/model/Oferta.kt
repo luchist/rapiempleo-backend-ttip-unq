@@ -16,16 +16,12 @@ class Oferta (
     var sueldoMin : Int,
     var sueldoMax : Int,
     var ubicacion : String,
-    var favorito : Boolean,
     @ElementCollection
     val cvPostulantes: MutableList<PostulacionCv> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id_oferta: Long? = null
-
-    //@ManyToMany
-    //var postulantes : MutableList<Postulante> = mutableListOf()
 
     @ManyToOne
     @JoinColumn(name = "id_ofertante")

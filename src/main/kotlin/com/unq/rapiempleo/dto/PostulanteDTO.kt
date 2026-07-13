@@ -20,7 +20,8 @@ class PostulanteDTO (
                 id = postulante.id_postulante!!,
                 nombre = postulante.nombrPostulante,
                 preferencia = postulante.preferencias,
-                ofertasFavoritas = postulante.favoritos.map { oferta -> OfertaCardDTO.desdeModelo(oferta) },
+                // Todas las ofertas en postulante.favoritos son favoritas de este
+                ofertasFavoritas = postulante.favoritos.map { oferta -> OfertaCardDTO.desdeModelo(oferta, true) },
                 notificacionesCv = postulante.notificacionesCv,
                 cvPaths = postulante.cvEntries.map { it.cvPath },
                 cvFavorito = postulante.cvFavorito,
