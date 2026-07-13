@@ -11,7 +11,6 @@ import com.unq.rapiempleo.repository.PostulacionEstadoRepository
 import com.unq.rapiempleo.repository.PostulanteRepository
 import com.unq.rapiempleo.service.OfertaService
 import jakarta.transaction.Transactional
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 
@@ -23,15 +22,15 @@ class OfertaServiceImpl (
 ): OfertaService {
 
     @Transactional
-    override fun recuperarOferta(idOferta: Long): OfertaDTO {
+    override fun recuperarOferta(idOferta: Long, idPostulante: Long?): OfertaDTO {
         val oferta =
             ofertaRepository.findById(idOferta).orElseThrow { throw OfferNotFoundException() }
-        return OfertaDTO.desdeModelo(oferta, ofertaYaPostulada(oferta.id_oferta))
+        return OfertaDTO.desdeModelo(oferta, ofertaYaPostulada(oferta.id_oferta, idPostulante))
     }
 
-    private fun ofertaYaPostulada(ofertaId: Long?): Boolean {
-        val email = SecurityContextHolder.getContext().authentication?.name ?: return false
-        val postulante = postulanteRepository.findByEmail(email) ?: return false
+    private fun ofertaYaPostulada(ofertaId: Long?, idPostulante: Long?): Boolean {
+        val postulante = idPostulante?.let { postulanteRepository.findById(it).orElse(null) }
+            ?: return false
         return postulacionEstadoRepository.findByPostulante(postulante)
             .any { postulacion -> postulacion.oferta.id_oferta == ofertaId }
     }

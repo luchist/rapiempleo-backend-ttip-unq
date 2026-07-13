@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 interface OfertaService {
 
-    fun recuperarOferta (idOferta : Long) : OfertaDTO
+    fun recuperarOferta (idOferta : Long, idPostulante : Long?) : OfertaDTO
     fun recuperarTodasLasOfertas () : List<OfertaCardDTO>
     fun buscarOfertas (nombreOferta : String) : List<OfertaCardDTO>
     fun recuperarTodasLasOfertasYFavoritos(idPostulante : Long) : List<OfertaCardDTO>

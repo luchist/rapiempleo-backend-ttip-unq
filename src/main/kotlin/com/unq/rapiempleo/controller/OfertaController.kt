@@ -24,7 +24,11 @@ class OfertaController {
 
     @GetMapping("/{idOferta}")
     fun obtenerOferta(@PathVariable idOferta : Long) : ResponseEntity<OfertaDTO> {
-        val oferta = ofertaService.recuperarOferta(idOferta)
+        val auth = SecurityContextHolder.getContext().authentication
+            ?: throw AccessDeniedToFileException()
+        val userId = auth.details as Long
+        val isPostulante = auth.authorities.any { it.authority == "ROLE_POSTULANTE" }
+        val oferta = ofertaService.recuperarOferta(idOferta, if (isPostulante) userId else null)
         return ResponseEntity(oferta, HttpStatus.OK)
     }
 
