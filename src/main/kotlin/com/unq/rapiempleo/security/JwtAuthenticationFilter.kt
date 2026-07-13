@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 
 class JwtAuthenticationFilter (
-    private val jwtTokenProvider: JwtTokenProvider // you should already have this
+    private val jwtTokenProvider: JwtTokenProvider
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -26,8 +26,6 @@ class JwtAuthenticationFilter (
         }
 
         val token = header.substring(7)
-
-        //val username = jwtTokenProvider.extractUsername(token)
 
         val username = try {
             jwtTokenProvider.extractUsername(token)
