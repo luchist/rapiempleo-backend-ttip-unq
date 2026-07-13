@@ -32,7 +32,7 @@ class OwnershipAuthorizerTest {
         val ofertante = Ofertante("Emp", "Empresa", "e@e.com", "pass")
         ofertante.id_ofertante = ofertanteId
         val oferta = Oferta(
-            "titulo", "Empresa", "desc", Modalidad.Remoto, EstadoOferta.Abierto, 1, 2, "CABA", favorito = false
+            "titulo", "Empresa", "desc", Modalidad.Remoto, EstadoOferta.Abierto, 1, 2, "CABA"
         )
         oferta.ofertante = ofertante
         return oferta

@@ -54,11 +54,11 @@ class DataBaseSeederTest {
     ).also { it.id_postulante = 1L }
     private val ofertaEntrevistando = Oferta(
         "Backend Engineer", "CloudSync", "desc",
-        Modalidad.Remoto, EstadoOferta.Abierto, 47000, 54000, "Ciudad de México", false
+        Modalidad.Remoto, EstadoOferta.Abierto, 47000, 54000, "Ciudad de México"
     ).also { it.id_oferta = 6L }
     private val ofertaCerrada = Oferta(
         "Contador Sr", "Tepago SA", "desc",
-        Modalidad.Presencial, EstadoOferta.Cerrado, 40000, 44000, "Temperley", false
+        Modalidad.Presencial, EstadoOferta.Cerrado, 40000, 44000, "Temperley"
     ).also { it.id_oferta = 2L }
 
     @BeforeEach

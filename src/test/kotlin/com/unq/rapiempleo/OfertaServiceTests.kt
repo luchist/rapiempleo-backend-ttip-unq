@@ -38,19 +38,19 @@ class OfertaServiceTests {
     fun setUp() {
         val oferta1 = Oferta(
             "Ayudante de cocina", "La Farola", "Vacio", Modalidad.Presencial, EstadoOferta.Abierto,
-            32000, 42000, "Lujan, Buenos Aires", true
+            32000, 42000, "Lujan, Buenos Aires"
         )
         val oferta2 = Oferta(
             "Traductor de documentos", "CentiLab", "Vacio", Modalidad.Remoto, EstadoOferta.Abierto,
-            24000, 29000, "La Plata, Buenos Aires", false
+            24000, 29000, "La Plata, Buenos Aires"
         )
         val oferta3 = Oferta(
             "Traductor en Eventos", "Embajada de Portugal", "Vacio", Modalidad.Hibrido, EstadoOferta.Abierto,
-            33000, 38000, "Retiro, Buenos Aires", true
+            33000, 38000, "Retiro, Buenos Aires"
         )
         val oferta4 = Oferta(
             "Desarrollador Sr", "Tech.Inc", "Vacio", Modalidad.Hibrido, EstadoOferta.Abierto,
-            45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true
+            45000, 55000, "Lomas de Zamora, Buenos Aires"
         )
         ofertaRepository.saveAll(listOf(oferta1, oferta2, oferta3, oferta4))
 
@@ -124,6 +124,41 @@ class OfertaServiceTests {
 
         Assertions.assertTrue(ofertas.first { it.id == idOfertaFavorita }.favorito)
         postulanteService.removerOfertaFavorita(idPostulante, idOfertaFavorita)
+    }
+
+    @Test
+    fun recuperarOfertaMarcaFavoritoParaElPostulanteQueLaMarco() {
+        val idPostulante = postulanteService.getIdPorEmail("mock@gmail.com")
+        val idOferta = ofertaService.recuperarTodasLasOfertas().first().id
+        postulanteService.agregarOfertaFavorita(idPostulante, idOferta)
+
+        val oferta = ofertaService.recuperarOferta(idOferta, idPostulante)
+
+        Assertions.assertTrue(oferta.favorito)
+        postulanteService.removerOfertaFavorita(idPostulante, idOferta)
+    }
+
+    @Test
+    fun recuperarOfertaNoMarcaFavoritoSiElPostulanteNoLaMarco() {
+        val idPostulante = postulanteService.getIdPorEmail("mock@gmail.com")
+        val idOferta = ofertaService.recuperarTodasLasOfertas().first().id
+
+        val oferta = ofertaService.recuperarOferta(idOferta, idPostulante)
+
+        Assertions.assertFalse(oferta.favorito)
+    }
+
+    @Test
+    fun recuperarOfertaSinPostulanteNuncaMarcaFavorito() {
+        // El favorito de un postulante no debe filtrarse a quien consulta sin ser postulante (ofertante).
+        val idPostulante = postulanteService.getIdPorEmail("mock@gmail.com")
+        val idOferta = ofertaService.recuperarTodasLasOfertas().first().id
+        postulanteService.agregarOfertaFavorita(idPostulante, idOferta)
+
+        val oferta = ofertaService.recuperarOferta(idOferta, null)
+
+        Assertions.assertFalse(oferta.favorito)
+        postulanteService.removerOfertaFavorita(idPostulante, idOferta)
     }
 
 }

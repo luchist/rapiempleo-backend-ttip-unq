@@ -77,7 +77,7 @@ class PostulacionTests {
         val ofertante = ofertanteRepository.findById(1).get()
 
         val oferta = Oferta("Desarrollador Sr", "Tech.Inc", "descriptions/FullstackTechOffer.md",
-            Modalidad.Hibrido, EstadoOferta.Abierto, 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = true)
+            Modalidad.Hibrido, EstadoOferta.Abierto, 45000, 55000, "Lomas de Zamora, Buenos Aires")
         oferta.ofertante = ofertante
         ofertaRepository.save(oferta)
     }

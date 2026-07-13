@@ -29,23 +29,23 @@ class SearchServiceTests {
     fun setOffers() {
         val oferta1 = Oferta(
             "Ayudante de cocina", "La Farola", "Vacio", Modalidad.Presencial, EstadoOferta.Abierto,
-            32000, 42000, "Lujan, Buenos Aires", true
+            32000, 42000, "Lujan, Buenos Aires"
         )
         val oferta2 = Oferta(
             "Traductor de documentos", "CentiLab", "Vacio", Modalidad.Remoto, EstadoOferta.Abierto,
-            24000, 29000, "La Plata, Buenos Aires", false
+            24000, 29000, "La Plata, Buenos Aires"
         )
         val oferta3 = Oferta(
             "Traductor en Eventos", "Embajada de Portugal", "Vacio", Modalidad.Hibrido, EstadoOferta.Abierto,
-            33000, 38000, "Retiro, Buenos Aires", true
+            33000, 38000, "Retiro, Buenos Aires"
         )
         val ofertaConTecnologia = Oferta(
             "Desarrollador Backend", "CloudSync", "Buscamos experiencia solida en Kubernetes y microservicios",
-            Modalidad.Remoto, EstadoOferta.Abierto, 50000, 60000, "Cordoba, Argentina", false
+            Modalidad.Remoto, EstadoOferta.Abierto, 50000, 60000, "Cordoba, Argentina"
         )
         val ofertaCerrada = Oferta(
             "Contador Sr", "Tepago SA", "Vacio", Modalidad.Presencial, EstadoOferta.Cerrado,
-            40000, 44000, "Temperley, Buenos Aires", false
+            40000, 44000, "Temperley, Buenos Aires"
         )
         ofertaRepository.saveAll(listOf(oferta1, oferta2, oferta3, ofertaConTecnologia, ofertaCerrada))
     }
