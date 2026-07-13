@@ -19,10 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -207,6 +209,26 @@ class AuthorizationSecurityTest {
                 .header("Authorization", "Bearer ${tokenOfertante2()}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
+        ).andExpect(status().isForbidden)
+    }
+
+    // ---- esUsuarioActual on the foto endpoints (@PreAuthorize denies before the storage service runs) ----
+
+    @Test
+    fun fotoDeOtroPostulanteEsProhibida() {
+        val archivo = MockMultipartFile("file", "foto.jpg", "image/jpeg", byteArrayOf(1, 2, 3))
+        mockMvc.perform(
+            multipart("/postulante/1/foto").file(archivo)
+                .header("Authorization", "Bearer ${tokenPostulante2()}")
+        ).andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun fotoDeOtroOfertanteEsProhibida() {
+        val archivo = MockMultipartFile("file", "foto.jpg", "image/jpeg", byteArrayOf(1, 2, 3))
+        mockMvc.perform(
+            multipart("/ofertante/1/foto").file(archivo)
+                .header("Authorization", "Bearer ${tokenOfertante2()}")
         ).andExpect(status().isForbidden)
     }
 }

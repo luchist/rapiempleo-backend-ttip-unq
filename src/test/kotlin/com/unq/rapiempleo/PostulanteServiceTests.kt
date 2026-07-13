@@ -13,7 +13,6 @@ import com.unq.rapiempleo.exceptions.OfferNotFoundException
 import com.unq.rapiempleo.exceptions.PostulacionEstadoNotFoundException
 import com.unq.rapiempleo.exceptions.PostulanteNotFoundException
 import com.unq.rapiempleo.exceptions.PreferenciaLimitExceededException
-import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.model.EstadoOferta
 import com.unq.rapiempleo.model.EstadoPostulacion
 import com.unq.rapiempleo.model.Modalidad
@@ -32,15 +31,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito
-import org.mockito.Mockito.mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.context.SecurityContext
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 
 @Transactional
@@ -76,12 +68,6 @@ class PostulanteServiceTests {
             Modalidad.Hibrido, EstadoOferta.Abierto, 45000, 55000, "Lomas de Zamora, Buenos Aires", favorito = false)
         oferta.ofertante = ofertante
         ofertaRepository.save(oferta)
-
-        //mock de autenticación postulante
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "mock05@gmail.com", null,
-            listOf(SimpleGrantedAuthority("ROLE_POSTULANTE")
-        ))
     }
 
     @AfterEach
@@ -156,12 +142,6 @@ class PostulanteServiceTests {
 
     @Test
     fun subirImagenDePerfilPostulante() {
-        val authentication = mock(Authentication::class.java)
-        Mockito.`when`(authentication.name).thenReturn("mock05@gmail.com")
-        val securityContext = mock(SecurityContext::class.java)
-        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
-        SecurityContextHolder.setContext(securityContext)
-
         postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
 
         val postulante = postulanteService.getPostulante(1)
@@ -170,43 +150,11 @@ class PostulanteServiceTests {
 
     @Test
     fun subirSegundaImagenDePerfilPostulanteReemplazaLaAnterior() {
-        val authentication = mock(Authentication::class.java)
-        Mockito.`when`(authentication.name).thenReturn("mock05@gmail.com")
-        val securityContext = mock(SecurityContext::class.java)
-        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
-        SecurityContextHolder.setContext(securityContext)
-
         postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
         postulanteService.actualizarImagenPerfil(1, "1//img_profile2.jpg")
 
         val postulante = postulanteService.getPostulante(1)
         Assertions.assertEquals("1//img_profile2.jpg", postulante.fotoPerfil)
-    }
-
-    @Test
-    fun excepcionCambiarFotoDePerfilDePostulanteDistinto() {
-        val authentication = mock(Authentication::class.java)
-        Mockito.`when`(authentication.name).thenReturn("mock05@gmail.com")
-        val securityContext = mock(SecurityContext::class.java)
-        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
-        SecurityContextHolder.setContext(securityContext)
-
-        Assertions.assertThrows(AccessDeniedToFileException::class.java) {
-            postulanteService.actualizarImagenPerfil(99, "1//img_profile.jpg")
-        }
-    }
-
-    @Test
-    fun exceptionCambiarFotoDePerfilSinEstarLogueado() {
-        val authentication = mock(Authentication::class.java)
-        Mockito.`when`(authentication.name).thenReturn(null)
-        val securityContext = mock(SecurityContext::class.java)
-        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
-        SecurityContextHolder.setContext(securityContext)
-
-        Assertions.assertThrows(UnauthenticatedException::class.java) {
-            postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
-        }
     }
 
     @Test
@@ -413,36 +361,23 @@ class PostulanteServiceTests {
     }
 
     @Test
-    fun excepcionActualizarImagenPerfilConEmailNoRegistrado() {
-        mockAutenticacion("fantasma@gmail.com")
-
+    fun excepcionActualizarImagenPerfilDePostulanteInexistente() {
         assertThrows<PostulanteNotFoundException> {
-            postulanteService.actualizarImagenPerfil(1, "1//img_profile.jpg")
+            postulanteService.actualizarImagenPerfil(999, "1//img_profile.jpg")
         }
     }
 
     @Test
-    fun updateEstadoPostulacionSinLoguearLanzaExcepcion() {
-        mockAutenticacion(null)
-
-        assertThrows<UnauthenticatedException> {
-            postulanteService.updateEstadoPostulacion(1, 1, EstadoPostulacion.Entrevistando)
-        }
-    }
-
-    @Test
-    fun updateEstadoPostulacionDeOtroPostulanteLanzaExcepcion() {
-        mockAutenticacion("mock05@gmail.com")
+    fun updateEstadoDeUnaPostulacionAjenaLanzaExcepcion() {
+        val idEstado = crearPostulacionEstado(EstadoPostulacion.Aplicado)
 
         assertThrows<AccessDeniedToPostulacionException> {
-            postulanteService.updateEstadoPostulacion(99, 1, EstadoPostulacion.Entrevistando)
+            postulanteService.updateEstadoPostulacion(2, idEstado, EstadoPostulacion.Entrevistando)
         }
     }
 
     @Test
     fun updateEstadoPostulacionInexistenteLanzaExcepcion() {
-        mockAutenticacion("mock05@gmail.com")
-
         assertThrows<PostulacionEstadoNotFoundException> {
             postulanteService.updateEstadoPostulacion(1, 9999, EstadoPostulacion.Entrevistando)
         }
@@ -450,7 +385,6 @@ class PostulanteServiceTests {
 
     @Test
     fun updateEstadoPostulacionCambiaElEstado() {
-        mockAutenticacion("mock05@gmail.com")
         val idEstado = crearPostulacionEstado(EstadoPostulacion.Aplicado)
 
         postulanteService.updateEstadoPostulacion(1, idEstado, EstadoPostulacion.Entrevistando)
@@ -461,7 +395,6 @@ class PostulanteServiceTests {
 
     @Test
     fun updateEstadoPostulacionAlMismoEstadoLanzaExcepcion() {
-        mockAutenticacion("mock05@gmail.com")
         val idEstado = crearPostulacionEstado(EstadoPostulacion.Aplicado)
 
         assertThrows<EstadoSinCambiosException> {
@@ -476,14 +409,6 @@ class PostulanteServiceTests {
             PostulacionEstado(oferta, postulante, estado)
         )
         return postulacionEstado.id_postulacion_estado!!
-    }
-
-    private fun mockAutenticacion(email: String?) {
-        val authentication = mock(Authentication::class.java)
-        Mockito.`when`(authentication.name).thenReturn(email)
-        val securityContext = mock(SecurityContext::class.java)
-        Mockito.`when`(securityContext.authentication).thenReturn(authentication)
-        SecurityContextHolder.setContext(securityContext)
     }
 
 }
