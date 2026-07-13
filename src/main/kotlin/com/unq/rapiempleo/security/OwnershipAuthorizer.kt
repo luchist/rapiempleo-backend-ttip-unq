@@ -11,13 +11,13 @@ class OwnershipAuthorizer(
 
     /** Si el id matchea con el usuario autenticado. */
     fun esUsuarioActual(id: Long, authentication: Authentication?): Boolean {
-        val callerId = authentication?.details as? Long ?: return false
+        val callerId = (authentication?.principal as? UsuarioAutenticado)?.id ?: return false
         return callerId == id
     }
 
     /** Si el idOferta pertenece al ofertante autenticado */
     fun gestionaOferta(idOferta: Long, authentication: Authentication?): Boolean {
-        val callerId = authentication?.details as? Long ?: return false
+        val callerId = (authentication?.principal as? UsuarioAutenticado)?.id ?: return false
         val oferta = ofertaRepository.findById(idOferta).orElse(null)
         return oferta?.ofertante?.id_ofertante == callerId
     }

@@ -3,6 +3,7 @@ package com.unq.rapiempleo.controller
 import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
 import com.unq.rapiempleo.exceptions.FileNotFoundException
 import com.unq.rapiempleo.repository.OfertaRepository
+import com.unq.rapiempleo.security.UsuarioAutenticado
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
@@ -10,7 +11,7 @@ import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -29,18 +30,14 @@ class FileController(
     @GetMapping("/cvs/{idPostulante}/{filename}")
     fun servirCv(
         @PathVariable idPostulante: Long,
-        @PathVariable filename: String
+        @PathVariable filename: String,
+        @AuthenticationPrincipal usuario: UsuarioAutenticado?
     ): ResponseEntity<Resource> {
 
-        val auth = SecurityContextHolder.getContext().authentication
-            ?: throw AccessDeniedToFileException()
+        val user = usuario ?: throw AccessDeniedToFileException()
 
-        val userId = auth.details as Long
-        val isPostulante = auth.authorities.any { it.authority == "ROLE_POSTULANTE" }
-
-        if (isPostulante) {
-            if (userId != idPostulante)
-                throw AccessDeniedToFileException()
+        if (user.esPostulante && user.id != idPostulante) {
+            throw AccessDeniedToFileException()
         }
 
         // Path traversal
@@ -66,12 +63,12 @@ class FileController(
     fun servirImagenPerfil(
         @PathVariable tipo: String,
         @PathVariable idUsuario: Long,
-        @PathVariable filename: String
+        @PathVariable filename: String,
+        @AuthenticationPrincipal usuario: UsuarioAutenticado?
     ): ResponseEntity<Resource> {
 
         // Validations
-        SecurityContextHolder.getContext().authentication?.principal as? String
-            ?: throw AccessDeniedToFileException()
+        usuario ?: throw AccessDeniedToFileException()
 
         // Path traversal
         val TIPOS_VALIDOS = setOf("postulante", "ofertante")

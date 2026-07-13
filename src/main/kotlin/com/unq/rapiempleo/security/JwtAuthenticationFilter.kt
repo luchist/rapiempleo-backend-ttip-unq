@@ -42,12 +42,12 @@ class JwtAuthenticationFilter (
                 val typeUser = jwtTokenProvider.extractTypeUser(token)
                 val role = if (typeUser) "ROLE_POSTULANTE" else "ROLE_OFERTANTE"
 
+                val principal = UsuarioAutenticado(userId, username, typeUser)
                 val auth = UsernamePasswordAuthenticationToken(
-                    username,
+                    principal,
                     null,
                     listOf(SimpleGrantedAuthority(role))
                 )
-                auth.details = userId
 
                 SecurityContextHolder.getContext().authentication = auth
             }
