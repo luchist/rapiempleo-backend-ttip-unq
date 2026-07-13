@@ -108,6 +108,13 @@ class ValidationExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("message" to exc.message!!))
     }
 
+    @ExceptionHandler(PostulanteRoleRequiredException::class)
+    fun handlePostulanteRoleRequiredException(
+        exc: PostulanteRoleRequiredException
+    ): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("message" to exc.message!!))
+    }
+
     @ExceptionHandler(EstadoSinCambiosException::class)
     fun handleEstadoSinCambiosException(exc: EstadoSinCambiosException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.OK).body(mapOf("message" to exc.message!!))

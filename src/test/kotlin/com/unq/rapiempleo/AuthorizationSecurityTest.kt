@@ -231,4 +231,27 @@ class AuthorizationSecurityTest {
                 .header("Authorization", "Bearer ${tokenOfertante2()}")
         ).andExpect(status().isForbidden)
     }
+
+    // ---- endpoints gated to the postulante role (esPostulante) ----
+
+    @Test
+    fun favoritosDelPropioPostulanteEsPermitido() {
+        mockMvc.perform(
+            get("/oferta/recuperarOfertasYFavoritos").header("Authorization", "Bearer ${tokenPostulante1()}")
+        ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun favoritosConRolOfertanteEsProhibido() {
+        mockMvc.perform(
+            get("/oferta/recuperarOfertasYFavoritos").header("Authorization", "Bearer ${tokenOfertante1()}")
+        ).andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun aiContextConRolOfertanteEsProhibido() {
+        mockMvc.perform(
+            get("/ai/context").header("Authorization", "Bearer ${tokenOfertante1()}")
+        ).andExpect(status().isForbidden)
+    }
 }

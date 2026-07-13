@@ -80,4 +80,9 @@ class OwnershipAuthorizerTest {
     fun gestionaOfertaEsFalseSinAutenticacion() {
         Assertions.assertFalse(autorizacion.gestionaOferta(10L, null))
     }
+
+    @Test
+    fun gestionaOfertaEsFalseSiPrincipalNoEsUsuarioAutenticado() {
+        Assertions.assertFalse(autorizacion.gestionaOferta(10L, authConPrincipal("no-soy-un-principal")))
+    }
 }

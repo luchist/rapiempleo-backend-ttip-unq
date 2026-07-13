@@ -1,5 +1,6 @@
 package com.unq.rapiempleo.controller
 
+import com.unq.rapiempleo.exceptions.PostulanteRoleRequiredException
 import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.security.UsuarioAutenticado
 import com.unq.rapiempleo.service.PostulanteService
@@ -28,9 +29,10 @@ class AiController @Autowired constructor(
         @RequestParam(value = "message", defaultValue = "") message: String,
         @AuthenticationPrincipal usuario: UsuarioAutenticado?
     ) : Map<String, String> {
-        val idPostulante = usuario?.id ?: throw UnauthenticatedException()
+        val user = usuario ?: throw UnauthenticatedException()
+        if (!user.esPostulante) throw PostulanteRoleRequiredException()
 
-        val context = postulanteService.getPreferencias(idPostulante)
+        val context = postulanteService.getPreferencias(user.id)
 
         val userMessage = UserMessage.builder()
             .text(chatInstructionsForSearchRecommendation + "User context:" + context )

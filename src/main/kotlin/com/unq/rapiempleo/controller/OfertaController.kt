@@ -2,7 +2,8 @@ package com.unq.rapiempleo.controller
 
 import com.unq.rapiempleo.dto.OfertaCardDTO
 import com.unq.rapiempleo.dto.OfertaDTO
-import com.unq.rapiempleo.exceptions.AccessDeniedToFileException
+import com.unq.rapiempleo.exceptions.PostulanteRoleRequiredException
+import com.unq.rapiempleo.exceptions.UnauthenticatedException
 import com.unq.rapiempleo.security.UsuarioAutenticado
 import com.unq.rapiempleo.service.OfertaService
 import jakarta.transaction.Transactional
@@ -43,8 +44,10 @@ class OfertaController {
     fun obtenerOfertasConFavoritos(
         @AuthenticationPrincipal usuario: UsuarioAutenticado?
     ) : ResponseEntity<List<OfertaCardDTO>> {
-        val userId = usuario?.id ?: throw AccessDeniedToFileException()
-        val ofertas = ofertaService.recuperarTodasLasOfertasYFavoritos(userId)
+        val user = usuario ?: throw UnauthenticatedException()
+        if (!user.esPostulante) throw PostulanteRoleRequiredException()
+
+        val ofertas = ofertaService.recuperarTodasLasOfertasYFavoritos(user.id)
         return ResponseEntity(ofertas, HttpStatus.OK)
     }
 }

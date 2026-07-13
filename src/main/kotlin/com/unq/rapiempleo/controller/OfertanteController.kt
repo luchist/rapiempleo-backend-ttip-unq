@@ -71,7 +71,10 @@ class OfertanteController {
         return ResponseEntity(oferta, HttpStatus.OK)
     }
 
-    @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#idOfertante, authentication)")
+    @PreAuthorize(
+        "hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#idOfertante, authentication) " +
+            "and @autorizacion.gestionaOferta(#idOferta, authentication)"
+    )
     @PatchMapping("/{idOfertante}/oferta/{idOferta}/estado")
     fun toggleEstadoOferta(
         @PathVariable idOfertante: Long,
@@ -83,7 +86,7 @@ class OfertanteController {
 
     @PreAuthorize("hasRole('OFERTANTE') and @autorizacion.esUsuarioActual(#idOfertante, authentication)")
     @DeleteMapping("/deleteNotify/{idOfertante}/{idNotify}")
-    fun deleteNotificaction(@PathVariable idOfertante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
+    fun deleteNotification(@PathVariable idOfertante: Long, @PathVariable idNotify: Long) : ResponseEntity<String> {
         ofertanteService.eliminarNotificacion(idOfertante, idNotify)
         return ResponseEntity("Notificación eliminada exitosa", HttpStatus.OK)
     }
